@@ -1,0 +1,398 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --vi-a:#667eea; --vi-b:#764ba2; --vi-mid:#6f72c3;
+  --bg:#f5f4fb; --card:#fff; --text:#1e1b3a; --muted:#6b7280;
+  --border:#e8e6f4; --radius:16px; --radius-sm:10px;
+  --sh-sm:0 2px 12px rgba(102,126,234,.10);
+  --sh-md:0 6px 28px rgba(102,126,234,.16);
+  --urgent:#ef4444; --urgent-bg:#fef2f2;
+}
+*,*::before,*::after{box-sizing:border-box;}
+.srh-wrap{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;padding-bottom:80px;}
+
+/* ── HERO ── */
+.srh-hero{
+  background:linear-gradient(135deg,var(--vi-a) 0%,var(--vi-b) 100%);
+  padding:60px 0 52px;position:relative;overflow:hidden;color:#fff;
+}
+.srh-hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 15% 55%,rgba(255,255,255,.07) 0%,transparent 50%),
+             radial-gradient(circle at 82% 18%,rgba(255,255,255,.05) 0%,transparent 45%);
+}
+.srh-hero::after{
+  content:'';position:absolute;bottom:-1px;left:0;right:0;height:44px;
+  background:var(--bg);clip-path:ellipse(55% 100% at 50% 100%);
+}
+.srh-hero-inner{position:relative;z-index:1;}
+.srh-crumb{font-size:.8rem;opacity:.7;margin-bottom:14px;}
+.srh-crumb a{color:#fff;text-decoration:none;}
+.srh-crumb span{margin:0 7px;opacity:.45;}
+.srh-hero h1{font-size:clamp(1.9rem,4.5vw,2.9rem);font-weight:800;letter-spacing:-.5px;margin:0 0 8px;}
+.srh-hero p{font-size:.95rem;opacity:.82;margin:0 0 28px;max-width:500px;line-height:1.6;}
+.srh-chips{display:flex;flex-wrap:wrap;gap:10px;}
+.srh-chip{
+  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);
+  backdrop-filter:blur(6px);border-radius:50px;
+  padding:7px 18px;font-size:.8rem;font-weight:600;color:#fff;
+  display:inline-flex;align-items:center;gap:7px;
+}
+
+/* ── BODY ── */
+.srh-body{padding:34px 0;}
+
+/* Flash */
+.srh-flash{
+  border-radius:var(--radius-sm);border:none;
+  font-size:.87rem;font-weight:500;padding:12px 18px;
+  display:flex;align-items:center;gap:10px;margin-bottom:12px;
+}
+.srh-flash.success{background:#ecfdf5;color:#065f46;}
+.srh-flash.danger {background:var(--urgent-bg);color:#991b1b;}
+.srh-flash.info   {background:#eff6ff;color:#1e40af;}
+
+/* Toolbar */
+.srh-toolbar{
+  background:var(--card);border-radius:var(--radius);
+  box-shadow:var(--sh-sm);border:1px solid var(--border);
+  padding:14px 18px;display:flex;align-items:center;flex-wrap:wrap;gap:10px;
+  margin-bottom:18px;
+}
+.srh-search{position:relative;flex:1;min-width:160px;}
+.srh-search i{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.85rem;}
+.srh-search input{
+  width:100%;padding:9px 14px 9px 38px;
+  border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  font-family:'Inter',sans-serif;font-size:.87rem;outline:none;
+  color:var(--text);background:var(--bg);transition:border-color .2s,box-shadow .2s;
+}
+.srh-search input:focus{border-color:var(--vi-a);box-shadow:0 0 0 3px rgba(102,126,234,.12);background:#fff;}
+
+/* Pills */
+.srh-pills{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px;}
+.srh-pill{
+  border:1.5px solid var(--border);background:var(--card);color:var(--muted);
+  border-radius:50px;padding:5px 15px;font-size:.79rem;font-weight:600;
+  cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block;
+}
+.srh-pill:hover,.srh-pill.active{
+  background:linear-gradient(135deg,var(--vi-a),var(--vi-b));
+  border-color:transparent;color:#fff;
+  box-shadow:0 3px 10px rgba(102,126,234,.28);
+}
+
+/* Section head */
+.srh-sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.srh-sec-title{
+  font-size:.92rem;font-weight:700;color:var(--text);
+  display:flex;align-items:center;gap:8px;
+}
+.srh-sec-title::before{
+  content:'';display:block;width:4px;height:17px;border-radius:4px;
+  background:linear-gradient(to bottom,var(--vi-a),var(--vi-b));
+}
+.srh-cnt{
+  background:linear-gradient(135deg,var(--vi-a),var(--vi-b));
+  color:#fff;font-size:.7rem;font-weight:700;padding:2px 10px;border-radius:20px;
+}
+
+/* ── DISCUSSION CARD ── */
+.srh-card{
+  background:var(--card);border-radius:var(--radius);
+  box-shadow:var(--sh-sm);border:1px solid var(--border);
+  padding:18px 22px;margin-bottom:12px;
+  transition:transform .22s,box-shadow .22s;
+  border-left:4px solid transparent;
+}
+.srh-card:hover{transform:translateY(-2px);box-shadow:var(--sh-md);}
+.srh-card.urgent{border-left-color:var(--urgent);}
+.srh-card-title{
+  font-size:.97rem;font-weight:700;color:var(--text);
+  text-decoration:none;display:block;margin-bottom:6px;line-height:1.35;
+}
+.srh-card-title:hover{color:var(--vi-a);}
+
+/* Badges */
+.srh-brow{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:0;}
+.srh-b{
+  font-size:.68rem;font-weight:700;padding:2px 9px;border-radius:20px;
+  display:inline-flex;align-items:center;gap:3px;
+}
+.srh-b-0{background:#ede9fe;color:#5b21b6;}
+.srh-b-1{background:#dbeafe;color:#1d4ed8;}
+.srh-b-2{background:#fce7f3;color:#9d174d;}
+.srh-b-3{background:#dcfce7;color:#166534;}
+.srh-b-4{background:#fff7ed;color:#9a3412;}
+.srh-b-5{background:#f0fdf4;color:#14532d;}
+.srh-b-d{background:#f3f4f6;color:#374151;}
+.srh-b-urg{background:var(--urgent-bg);color:var(--urgent);border:1px solid #fecaca;}
+
+/* Meta */
+.srh-meta{display:flex;flex-wrap:wrap;gap:12px;font-size:.76rem;color:var(--muted);margin:8px 0 0;}
+.srh-meta span{display:flex;align-items:center;gap:4px;}
+
+/* Excerpt */
+.srh-excerpt{
+  font-size:.86rem;color:#4b5563;line-height:1.6;margin-top:9px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+
+/* Actions */
+.srh-acts{
+  display:flex;gap:7px;flex-wrap:wrap;
+  margin-top:13px;padding-top:13px;border-top:1px solid var(--border);
+}
+.srh-av{
+  background:linear-gradient(135deg,var(--vi-a),var(--vi-b));
+  color:#fff;border:none;border-radius:8px;
+  font-size:.76rem;font-weight:600;padding:6px 13px;
+  text-decoration:none;display:inline-flex;align-items:center;gap:4px;transition:all .2s;
+}
+.srh-av:hover{opacity:.9;transform:translateY(-1px);color:#fff;}
+.srh-ae{
+  background:#fff;border:1.5px solid var(--border);color:var(--vi-mid);
+  border-radius:8px;font-size:.76rem;font-weight:600;padding:5px 12px;
+  text-decoration:none;display:inline-flex;align-items:center;gap:4px;transition:all .2s;
+}
+.srh-ae:hover{border-color:var(--vi-a);background:#f5f4fb;color:var(--vi-a);}
+.srh-ad{
+  background:#fff;border:1.5px solid var(--border);color:var(--urgent);
+  border-radius:8px;font-size:.76rem;font-weight:600;padding:5px 12px;
+  display:inline-flex;align-items:center;gap:4px;transition:all .2s;cursor:pointer;
+}
+.srh-ad:hover{border-color:var(--urgent);background:var(--urgent-bg);}
+
+/* Empty */
+.srh-empty{
+  background:var(--card);border-radius:var(--radius);
+  box-shadow:var(--sh-sm);border:1px solid var(--border);
+  padding:56px 24px;text-align:center;
+}
+.srh-empty-ico{
+  width:64px;height:64px;border-radius:50%;
+  background:linear-gradient(135deg,rgba(102,126,234,.10),rgba(118,75,162,.10));
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.7rem;color:var(--vi-a);margin:0 auto 16px;
+}
+.srh-empty h5{font-weight:700;color:var(--text);margin-bottom:5px;}
+.srh-empty p{font-size:.86rem;color:var(--muted);margin-bottom:18px;}
+
+/* ── SIDEBAR ── */
+.srh-sc{
+  background:var(--card);border-radius:var(--radius);
+  box-shadow:var(--sh-sm);border:1px solid var(--border);
+  padding:20px;margin-bottom:16px;
+}
+.srh-st{
+  font-size:.83rem;font-weight:700;color:var(--text);
+  margin-bottom:12px;display:flex;align-items:center;gap:6px;
+}
+.srh-st i{color:var(--vi-a);}
+.srh-btn-new{
+  background:linear-gradient(135deg,var(--vi-a),var(--vi-b));
+  color:#fff;border:none;border-radius:var(--radius-sm);
+  font-family:'Inter',sans-serif;
+  font-size:.86rem;font-weight:700;padding:11px 18px;width:100%;
+  text-decoration:none;display:flex;align-items:center;justify-content:center;gap:7px;
+  transition:all .2s;box-shadow:0 4px 14px rgba(102,126,234,.26);cursor:pointer;
+}
+.srh-btn-new:hover{opacity:.92;transform:translateY(-1px);box-shadow:0 8px 22px rgba(102,126,234,.36);color:#fff;}
+
+.srh-hot{
+  background:linear-gradient(135deg,var(--vi-a),var(--vi-b));
+  border-radius:var(--radius);padding:20px;color:#fff;
+  position:relative;overflow:hidden;margin-bottom:16px;
+}
+.srh-hot::before{
+  content:'';position:absolute;top:-28px;right:-28px;
+  width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.09);
+}
+.srh-hot .in{position:relative;z-index:1;}
+.srh-hot .lbl{font-size:.67rem;text-transform:uppercase;letter-spacing:.1em;opacity:.72;}
+.srh-hot .num{font-size:2.7rem;font-weight:800;letter-spacing:2px;line-height:1.05;margin:3px 0 5px;}
+.srh-hot .desc{font-size:.78rem;opacity:.76;}
+
+.srh-rl{
+  display:flex;align-items:center;gap:7px;
+  font-size:.81rem;color:var(--muted);text-decoration:none;
+  padding:7px 0;border-bottom:1px solid var(--border);transition:color .2s;
+}
+.srh-rl:last-child{border-bottom:none;}
+.srh-rl:hover{color:var(--vi-a);}
+
+.srh-sl{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 0;border-bottom:1px solid var(--border);font-size:.81rem;
+}
+.srh-sl:last-child{border-bottom:none;}
+.srh-sl .l{color:var(--muted);}
+.srh-sl .v{font-weight:700;color:var(--text);}
+.srh-sl .v.r{color:var(--urgent);}
+
+@media(max-width:575px){
+  .srh-hero{padding:44px 0 38px;}
+  .srh-body{padding:20px 0;}
+  .srh-card{padding:14px 16px;}
+}
+</style>
+
+<div class="srh-wrap">
+
+  <!-- HERO -->
+  <section class="srh-hero">
+    <div class="container srh-hero-inner">
+      <div class="srh-crumb">
+        <a href="{{ path('app_home') }}">Accueil</a><span>/</span>Forum
+      </div>
+      <h1>Forum des discussions</h1>
+      <p>Un espace bienveillant pour partager, s'écouter et progresser ensemble.</p>
+      <div class="srh-chips">
+        <div class="srh-chip"><i class="fa-regular fa-comments"></i>{{ posts|length }} discussion{{ posts|length != 1 ? 's' : '' }}</div>
+        <div class="srh-chip"><i class="fa-solid fa-triangle-exclamation"></i>{{ posts|filter(p => (p.urgent ?? false))|length }} urgente{{ posts|filter(p => (p.urgent ?? false))|length != 1 ? 's' : '' }}</div>
+        <div class="srh-chip"><i class="fa-regular fa-circle-user"></i>Communauté active</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BODY -->
+  <div class="srh-body">
+    <div class="container">
+
+      {% for type, messages in app.flashes %}
+        {% for msg in messages %}
+          <div class="srh-flash {{ type == 'error' ? 'danger' : type }}">
+            <i class="fa-solid fa-{{ type == 'success' ? 'circle-check' : (type == 'error' or type == 'danger' ? 'circle-xmark' : 'circle-info') }}"></i>{{ msg }}
+          </div>
+        {% endfor %}
+      {% endfor %}
+
+      <div class="row g-4">
+
+        <!-- MAIN -->
+        <div class="col-lg-8">
+
+          <div class="srh-toolbar">
+            <div class="srh-search">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="srhQ" placeholder="Rechercher une discussion…">
+            </div>
+            <a href="{{ path('post_new') }}" class="srh-btn-new" style="width:auto;padding:9px 18px;">
+              <i class="fa-solid fa-plus"></i>Nouvelle discussion
+            </a>
+          </div>
+
+          <div class="srh-pills">
+            <a href="{{ path('post_index') }}" class="srh-pill active">Toutes</a>
+            {% for c in ['Anxiété','Stress','Dépression','Méditation','Sommeil','Estime de soi'] %}
+              <a href="{{ path('post_index', {category: c}) }}" class="srh-pill">{{ c }}</a>
+            {% endfor %}
+          </div>
+
+          <div class="srh-sec-head">
+            <div class="srh-sec-title">Dernières discussions</div>
+            <span class="srh-cnt">{{ posts|length }}</span>
+          </div>
+
+          {% if posts is empty %}
+            <div class="srh-empty">
+              <div class="srh-empty-ico"><i class="fa-regular fa-comment-dots"></i></div>
+              <h5>Aucune discussion pour le moment</h5>
+              <p>Soyez le premier à lancer une conversation.</p>
+              <a href="{{ path('post_new') }}" class="srh-btn-new" style="display:inline-flex;width:auto;">
+                <i class="fa-solid fa-plus"></i>Créer une discussion
+              </a>
+            </div>
+          {% else %}
+            {% set cm = {'Anxiété':'0','Stress':'1','Dépression':'2','Méditation':'3','Sommeil':'4','Estime de soi':'5'} %}
+            {% for post in posts|sort((a,b) => b.createdAt <=> a.createdAt) %}
+              {% set cat    = post.categorie ?? post.category ?? '' %}
+              {% set auteur = post.auteur    ?? post.author   ?? 'Anonyme' %}
+              {% set ctn    = post.contenu   ?? post.content  ?? '' %}
+              {% set vues   = post.vues      ?? post.views    ?? 0 %}
+              {% set urg    = post.urgent    ?? false %}
+              {% set titre  = post.title     ?? post.nom      ?? 'Sans titre' %}
+              {% set ci     = cm[cat] ?? 'd' %}
+
+              <div class="srh-card {{ urg ? 'urgent' : '' }}" data-q="{{ (titre~' '~cat)|lower }}">
+                <a href="{{ path('post_show', {id: post.id}) }}" class="srh-card-title">{{ titre }}</a>
+                <div class="srh-brow">
+                  {% if cat %}<span class="srh-b srh-b-{{ ci }}"><i class="fa-solid fa-tag"></i>{{ cat }}</span>{% endif %}
+                  {% if urg %}<span class="srh-b srh-b-urg"><i class="fa-solid fa-triangle-exclamation"></i>Urgent</span>{% endif %}
+                </div>
+                <div class="srh-meta">
+                  <span><i class="fa-regular fa-user"></i>{{ auteur }}</span>
+                  <span><i class="fa-regular fa-calendar"></i>{{ post.createdAt|date('d/m/Y') }}</span>
+                  {% if vues %}<span><i class="fa-regular fa-eye"></i>{{ vues }} vue{{ vues > 1 ? 's' : '' }}</span>{% endif %}
+                </div>
+                {% if ctn %}<p class="srh-excerpt">{{ ctn|striptags|slice(0,100) }}{% if ctn|length > 100 %}…{% endif %}</p>{% endif %}
+                <div class="srh-acts">
+                  <a href="{{ path('post_show', {id: post.id}) }}" class="srh-av"><i class="fa-regular fa-eye"></i>Voir</a>
+                  <a href="{{ path('post_edit', {id: post.id}) }}" class="srh-ae"><i class="fa-regular fa-pen-to-square"></i>Modifier</a>
+                  <form method="POST" action="{{ path('post_delete', {id: post.id}) }}" style="display:inline"
+                        onsubmit="return confirm('Supprimer cette discussion ?')">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete'~post.id) }}">
+                    <button type="submit" class="srh-ad"><i class="fa-regular fa-trash-can"></i>Supprimer</button>
+                  </form>
+                </div>
+              </div>
+            {% endfor %}
+          {% endif %}
+
+        </div>
+
+        <!-- SIDEBAR -->
+        <div class="col-lg-4">
+
+          <div class="srh-sc" style="text-align:center;">
+            <div style="width:50px;height:50px;border-radius:13px;background:linear-gradient(135deg,rgba(102,126,234,.11),rgba(118,75,162,.11));display:flex;align-items:center;justify-content:center;margin:0 auto 11px;font-size:1.35rem;color:var(--vi-a);">
+              <i class="fa-regular fa-pen-to-square"></i>
+            </div>
+            <div class="srh-st" style="justify-content:center;">Participez</div>
+            <p style="font-size:.81rem;color:var(--muted);margin-bottom:14px;">Partagez votre expérience et soutenez la communauté.</p>
+            <a href="{{ path('post_new') }}" class="srh-btn-new"><i class="fa-solid fa-plus"></i>Nouvelle discussion</a>
+          </div>
+
+          <div class="srh-hot">
+            <div class="in">
+              <div class="lbl">Prévention du suicide</div>
+              <div class="num">3114</div>
+              <div class="desc">Disponible 24h/24, 7j/7 — Des professionnels vous écoutent.</div>
+            </div>
+          </div>
+
+          <div class="srh-sc">
+            <div class="srh-st"><i class="fa-solid fa-link"></i>Ressources utiles</div>
+            <a href="https://www.psycom.org" target="_blank" rel="noopener" class="srh-rl"><i class="fa-solid fa-arrow-up-right-from-square"></i>Psycom.org</a>
+            <a href="https://www.santepsy.etudiant.gouv.fr" target="_blank" rel="noopener" class="srh-rl"><i class="fa-solid fa-arrow-up-right-from-square"></i>Santé Psy Étudiant</a>
+            <a href="https://www.mindline.fr" target="_blank" rel="noopener" class="srh-rl"><i class="fa-solid fa-arrow-up-right-from-square"></i>Mindline.fr</a>
+          </div>
+
+          <div class="srh-sc">
+            <div class="srh-st"><i class="fa-solid fa-chart-bar"></i>Statistiques</div>
+            <div class="srh-sl"><span class="l">Total discussions</span><span class="v">{{ posts|length }}</span></div>
+            <div class="srh-sl"><span class="l">Urgentes</span><span class="v r">{{ posts|filter(p => (p.urgent ?? false))|length }}</span></div>
+            <div class="srh-sl"><span class="l">Catégories</span><span class="v">6</span></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('srhQ').addEventListener('input',function(){
+  const q=this.value.toLowerCase().trim();
+  document.querySelectorAll('.srh-card').forEach(c=>{
+    c.style.display=(c.dataset.q||'').includes(q)?'':'none';
+  });
+});
+</script>
+{% endblock %}

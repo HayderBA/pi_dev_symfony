@@ -1,0 +1,299 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --vi-a:#667eea;--vi-b:#764ba2;--vi-mid:#6f72c3;
+  --bg:#f5f4fb;--card:#fff;--text:#1e1b3a;--muted:#6b7280;
+  --border:#e8e6f4;--radius:16px;--radius-sm:10px;
+  --sh-sm:0 2px 12px rgba(102,126,234,.10);
+  --urgent:#ef4444;--urgent-bg:#fef2f2;
+}
+*,*::before,*::after{box-sizing:border-box;}
+.srh-wrap{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;padding-bottom:80px;}
+
+/* HERO */
+.srh-hero{background:linear-gradient(135deg,var(--vi-a) 0%,var(--vi-b) 100%);padding:56px 0 48px;position:relative;overflow:hidden;color:#fff;}
+.srh-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 15% 55%,rgba(255,255,255,.07) 0%,transparent 50%),radial-gradient(circle at 85% 20%,rgba(255,255,255,.05) 0%,transparent 45%);}
+.srh-hero::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:44px;background:var(--bg);clip-path:ellipse(55% 100% at 50% 100%);}
+.srh-hero-in{position:relative;z-index:1;}
+.srh-crumb{font-size:.79rem;opacity:.7;margin-bottom:12px;}
+.srh-crumb a{color:#fff;text-decoration:none;}
+.srh-crumb span{margin:0 7px;opacity:.45;}
+.srh-hero h1{font-size:clamp(1.6rem,4vw,2.5rem);font-weight:800;letter-spacing:-.4px;margin:0 0 7px;}
+.srh-hero p{font-size:.93rem;opacity:.8;margin:0;max-width:480px;line-height:1.55;}
+.srh-orig{
+  display:inline-flex;align-items:center;gap:7px;margin-top:13px;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);
+  border-radius:50px;padding:6px 16px;font-size:.8rem;color:rgba(255,255,255,.85);
+}
+.srh-orig i{font-size:.8rem;}
+
+/* BODY */
+.srh-body{padding:34px 0;}
+
+/* Form card */
+.srh-fcard{background:var(--card);border-radius:var(--radius);box-shadow:var(--sh-sm);border:1px solid var(--border);overflow:hidden;}
+.srh-fcard-head{background:linear-gradient(135deg,#f8f7ff,#f2f0f9);border-bottom:1px solid var(--border);padding:15px 24px;font-size:.83rem;color:var(--muted);display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.srh-fcard-head i{color:var(--vi-mid);}
+.srh-fcard-head strong{color:var(--text);}
+.srh-fcard-body{padding:28px 24px;}
+
+/* Section divider */
+.srh-fsec{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--vi-mid);padding-bottom:9px;border-bottom:2px solid #ece9f8;margin-bottom:20px;display:flex;align-items:center;gap:6px;}
+
+/* Labels */
+.srh-lbl{font-size:.85rem;font-weight:600;color:var(--text);margin-bottom:5px;display:block;}
+.srh-lbl .req{color:var(--urgent);margin-left:3px;}
+
+/* Controls */
+.srh-fcard-body .form-control,
+.srh-fcard-body .form-select{
+  border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  font-family:'Inter',sans-serif;font-size:.9rem;
+  background:var(--bg);color:var(--text);
+  padding:10px 14px;transition:border-color .2s,box-shadow .2s;
+}
+.srh-fcard-body .form-control:focus,
+.srh-fcard-body .form-select:focus{border-color:var(--vi-a);box-shadow:0 0 0 3px rgba(102,126,234,.11);background:#fff;outline:none;}
+.srh-fcard-body textarea.form-control{min-height:200px;resize:vertical;line-height:1.65;}
+.srh-fcard-body .form-control.is-invalid,
+.srh-fcard-body .form-select.is-invalid{border-color:var(--urgent);}
+.srh-fcard-body .form-control.modified{border-color:#f59e0b;background:#fffbeb;}
+
+/* Error / counter */
+.srh-err{font-size:.78rem;font-weight:600;color:#dc2626;margin-top:4px;display:flex;align-items:center;gap:5px;}
+.srh-cnt{font-size:.73rem;color:var(--muted);text-align:right;margin-top:3px;}
+
+/* Urgent toggle */
+.srh-urg-box{border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:14px 18px;cursor:pointer;transition:border-color .2s,background .2s;display:flex;align-items:flex-start;gap:12px;user-select:none;}
+.srh-urg-box:hover{border-color:var(--vi-a);}
+.srh-urg-box.on{border-color:var(--urgent);background:var(--urgent-bg);}
+.srh-urg-box input{display:none;}
+.srh-urg-ind{width:20px;height:20px;border:2px solid #d1d5db;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-top:1px;}
+.srh-urg-box.on .srh-urg-ind{background:var(--urgent);border-color:var(--urgent);color:#fff;}
+.srh-urg-t{font-weight:700;font-size:.88rem;color:var(--text);}
+.srh-urg-d{font-size:.79rem;color:var(--muted);margin-top:2px;}
+
+/* Buttons */
+.srh-btn-save{background:linear-gradient(135deg,var(--vi-a),var(--vi-b));color:#fff;border:none;border-radius:var(--radius-sm);font-family:'Inter',sans-serif;font-size:.9rem;font-weight:700;padding:11px 28px;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:7px;box-shadow:0 4px 14px rgba(102,126,234,.28);}
+.srh-btn-save:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(102,126,234,.38);}
+.srh-btn-view{background:var(--bg);border:1.5px solid var(--border);color:var(--vi-mid);border-radius:var(--radius-sm);font-family:'Inter',sans-serif;font-size:.88rem;font-weight:600;padding:9px 18px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .2s;}
+.srh-btn-view:hover{border-color:var(--vi-a);background:#fff;color:var(--vi-a);}
+.srh-btn-cancel{background:var(--card);border:1.5px solid var(--border);color:var(--muted);border-radius:var(--radius-sm);font-family:'Inter',sans-serif;font-size:.88rem;font-weight:600;padding:9px 18px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .2s;}
+.srh-btn-cancel:hover{border-color:var(--vi-a);color:var(--vi-a);}
+
+/* Sidebar */
+.srh-sc{background:var(--card);border-radius:var(--radius);box-shadow:var(--sh-sm);border:1px solid var(--border);padding:20px;margin-bottom:16px;}
+.srh-st{font-size:.83rem;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.srh-st i{color:var(--vi-a);}
+.srh-il{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:.81rem;}
+.srh-il:last-child{border-bottom:none;}
+.srh-il .l{color:var(--muted);}
+.srh-il .v{font-weight:700;color:var(--text);}
+
+/* Danger zone */
+.srh-danger{background:var(--urgent-bg);border:1.5px solid #fecaca;border-radius:var(--radius);padding:20px;}
+.srh-danger h6{color:#dc2626;font-weight:700;font-size:.88rem;margin-bottom:7px;display:flex;align-items:center;gap:6px;}
+.srh-danger p{font-size:.8rem;color:var(--muted);margin-bottom:13px;}
+.srh-btn-del{background:#fff;border:1.5px solid #fca5a5;color:#dc2626;border-radius:var(--radius-sm);font-family:'Inter',sans-serif;font-size:.84rem;font-weight:700;padding:9px 16px;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .2s;cursor:pointer;width:100%;}
+.srh-btn-del:hover{background:var(--urgent-bg);border-color:var(--urgent);}
+</style>
+
+{% set titre   = post.title    ?? post.nom      ?? 'Discussion' %}
+{% set auteur  = post.auteur   ?? post.author   ?? 'Anonyme' %}
+{% set cat     = post.categorie ?? post.category ?? '' %}
+{% set vues    = post.vues     ?? post.views    ?? 0 %}
+{% set urg     = post.urgent   ?? false %}
+
+<div class="srh-wrap">
+
+  <!-- HERO -->
+  <section class="srh-hero">
+    <div class="container srh-hero-in">
+      <div class="srh-crumb">
+        <a href="{{ path('app_home') }}">Accueil</a><span>/</span>
+        <a href="{{ path('post_index') }}">Forum</a><span>/</span>
+        <a href="{{ path('post_show', {id: post.id}) }}">Discussion</a><span>/</span>Modifier
+      </div>
+      <h1>Modifier la discussion</h1>
+      <p>Mettez à jour les informations de votre discussion.</p>
+      <div class="srh-orig">
+        <i class="fa-regular fa-clock"></i>
+        Créée le {{ post.createdAt|date('d/m/Y') }} par {{ auteur }}
+      </div>
+    </div>
+  </section>
+
+  <!-- BODY -->
+  <div class="srh-body">
+    <div class="container">
+
+      {% for type, messages in app.flashes %}
+        {% for msg in messages %}
+          <div class="alert alert-{{ type == 'error' ? 'danger' : type }} rounded-3 mb-3">
+            <i class="fa-solid fa-{{ type == 'success' ? 'circle-check' : 'circle-xmark' }} me-2"></i>{{ msg }}
+          </div>
+        {% endfor %}
+      {% endfor %}
+
+      <div class="row g-4">
+
+        <!-- FORM -->
+        <div class="col-lg-8">
+          <div class="srh-fcard">
+            <div class="srh-fcard-head">
+              <i class="fa-regular fa-pen-to-square"></i>
+              Modification de : <strong>{{ titre|slice(0,60) }}{% if titre|length > 60 %}…{% endif %}</strong>
+            </div>
+            <div class="srh-fcard-body">
+
+              {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'id': 'srhForm'}}) }}
+
+              <!-- Identification -->
+              <div class="srh-fsec"><i class="fa-regular fa-user"></i>Identification</div>
+
+              <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                  <label class="srh-lbl">Nom / Pseudo<span class="req">*</span></label>
+                  {% if form.nom is defined %}
+                    {{ form_widget(form.nom, {attr: {class: 'form-control'~(form.nom.vars.errors|length > 0 ? ' is-invalid' : ''), 'data-orig': post.nom ?? ''}}) }}
+                    {% for e in form.nom.vars.errors %}<div class="srh-err"><i class="fa-solid fa-circle-exclamation"></i>{{ e.message }}</div>{% endfor %}
+                  {% else %}
+                    {{ form_widget(form.author, {attr: {class: 'form-control'~(form.author.vars.errors|length > 0 ? ' is-invalid' : ''), 'data-orig': post.author ?? ''}}) }}
+                    {% for e in form.author.vars.errors %}<div class="srh-err"><i class="fa-solid fa-circle-exclamation"></i>{{ e.message }}</div>{% endfor %}
+                  {% endif %}
+                </div>
+                {% if form.role is defined %}
+                  <div class="col-md-6">
+                    <label class="srh-lbl">Rôle<span class="req">*</span></label>
+                    {{ form_widget(form.role, {attr: {class: 'form-select'~(form.role.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                    {% for e in form.role.vars.errors %}<div class="srh-err"><i class="fa-solid fa-circle-exclamation"></i>{{ e.message }}</div>{% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- Contenu -->
+              <div class="srh-fsec"><i class="fa-regular fa-comment-dots"></i>Contenu</div>
+
+              {% if form.title is defined %}
+                <div class="mb-4">
+                  <label class="srh-lbl">Titre<span class="req">*</span></label>
+                  {{ form_widget(form.title, {attr: {class: 'form-control'~(form.title.vars.errors|length > 0 ? ' is-invalid' : ''), maxlength: 120, id: 'srhTitle', 'data-orig': post.title ?? ''}}) }}
+                  {% for e in form.title.vars.errors %}<div class="srh-err"><i class="fa-solid fa-circle-exclamation"></i>{{ e.message }}</div>{% endfor %}
+                  <div class="srh-cnt" id="srhTCnt">0 / 120</div>
+                </div>
+              {% endif %}
+
+              <div class="mb-4">
+                <label class="srh-lbl">Catégorie<span class="req">*</span></label>
+                {% if form.categorie is defined %}
+                  {{ form_widget(form.categorie, {attr: {class: 'form-select'~(form.categorie.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                  {% for e in form.categorie.vars.errors %}<div class="srh-err"><i class="fa-solid fa-circle-exclamation"></i>{{ e.message }}</div>{% endfor %}
+                {% else %}
+                  {{ form_widget(form.category, {attr: {class: 'form-select'~(form.category.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                  {% for e in form.category.vars.errors %}<div class="srh-err"><i class="fa-solid fa-circle-exclamation"></i>{{ e.message }}</div>{% endfor %}
+                {% endif %}
+              </div>
+
+              <div class="mb-4">
+                <label class="srh-lbl">Contenu<span class="req">*</span></label>
+                {% if form.contenu is defined %}
+                  {{ form_widget(form.contenu, {attr: {class: 'form-control'~(form.contenu.vars.errors|length > 0 ? ' is-invalid' : ''), rows: 9, maxlength: 5000, id: 'srhCont', 'data-orig': post.contenu ?? ''}}) }}
+                  {% for e in form.contenu.vars.errors %}<div class="srh-err"><i class="fa-solid fa-circle-exclamation"></i>{{ e.message }}</div>{% endfor %}
+                {% else %}
+                  {{ form_widget(form.content, {attr: {class: 'form-control'~(form.content.vars.errors|length > 0 ? ' is-invalid' : ''), rows: 9, maxlength: 5000, id: 'srhCont', 'data-orig': post.content ?? ''}}) }}
+                  {% for e in form.content.vars.errors %}<div class="srh-err"><i class="fa-solid fa-circle-exclamation"></i>{{ e.message }}</div>{% endfor %}
+                {% endif %}
+                <div class="srh-cnt" id="srhCCnt">0 / 5000</div>
+              </div>
+
+              <!-- Urgent -->
+              {% if form.urgent is defined %}
+                <div class="srh-fsec"><i class="fa-solid fa-sliders"></i>Options</div>
+                <div class="mb-4">
+                  <div class="srh-urg-box {{ urg ? 'on' : '' }}" id="srhUrgBox" onclick="srhToggleUrg()">
+                    {{ form_widget(form.urgent, {attr: {id: 'srhUrgChk'}}) }}
+                    <div class="srh-urg-ind" id="srhUrgInd"><i class="fa-solid fa-check fa-xs"></i></div>
+                    <div>
+                      <div class="srh-urg-t"><i class="fa-solid fa-triangle-exclamation" style="color:var(--urgent);margin-right:5px;"></i>Marquer comme urgent</div>
+                      <div class="srh-urg-d">Activez uniquement si vous avez besoin d'une aide immédiate.</div>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+
+              {{ form_rest(form) }}
+
+              <div class="d-flex gap-3 flex-wrap align-items-center mt-2">
+                <button type="submit" class="srh-btn-save"><i class="fa-solid fa-floppy-disk"></i>Enregistrer</button>
+                <a href="{{ path('post_show', {id: post.id}) }}" class="srh-btn-view"><i class="fa-regular fa-eye"></i>Voir</a>
+                <a href="{{ path('post_index') }}" class="srh-btn-cancel"><i class="fa-solid fa-xmark"></i>Annuler</a>
+              </div>
+
+              {{ form_end(form) }}
+            </div>
+          </div>
+        </div>
+
+        <!-- SIDEBAR -->
+        <div class="col-lg-4">
+
+          <div class="srh-sc">
+            <div class="srh-st"><i class="fa-solid fa-circle-info"></i>Informations actuelles</div>
+            <div class="srh-il"><span class="l">Auteur</span><span class="v">{{ auteur }}</span></div>
+            {% if cat %}<div class="srh-il"><span class="l">Catégorie</span><span class="v">{{ cat }}</span></div>{% endif %}
+            {% if post.role is defined and post.role %}<div class="srh-il"><span class="l">Rôle</span><span class="v">{{ post.role }}</span></div>{% endif %}
+            <div class="srh-il"><span class="l">Créée le</span><span class="v">{{ post.createdAt|date('d/m/Y') }}</span></div>
+            {% if vues %}<div class="srh-il"><span class="l">Vues</span><span class="v">{{ vues }}</span></div>{% endif %}
+            <div class="srh-il">
+              <span class="l">Statut</span>
+              <span class="v" style="{{ urg ? 'color:var(--urgent)' : 'color:#059669' }}">{{ urg ? 'Urgent' : 'Normal' }}</span>
+            </div>
+          </div>
+
+          <div class="srh-danger">
+            <h6><i class="fa-solid fa-triangle-exclamation"></i>Zone de suppression</h6>
+            <p>Cette action est irréversible. La discussion sera définitivement supprimée.</p>
+            <form method="POST" action="{{ path('post_delete', {id: post.id}) }}"
+                  onsubmit="return confirm('Supprimer définitivement cette discussion ?')">
+              <input type="hidden" name="_token" value="{{ csrf_token('delete'~post.id) }}">
+              <button type="submit" class="srh-btn-del">
+                <i class="fa-regular fa-trash-can"></i>Supprimer cette discussion
+              </button>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function srhCnt(id,cid,max){
+  const el=document.getElementById(id),ct=document.getElementById(cid);
+  if(!el||!ct)return;
+  const u=()=>{const n=el.value.length;ct.textContent=n+' / '+max;ct.style.color=n>max*.9?'var(--urgent)':'';};
+  el.addEventListener('input',u);u();
+}
+srhCnt('srhTitle','srhTCnt',120);
+srhCnt('srhCont','srhCCnt',5000);
+
+// Highlight modifiés
+document.querySelectorAll('[data-orig]').forEach(el=>{
+  el.addEventListener('input',function(){this.classList.toggle('modified',this.value!==this.dataset.orig);});
+});
+
+function srhToggleUrg(){
+  const b=document.getElementById('srhUrgBox'),c=document.getElementById('srhUrgChk');
+  if(!b||!c)return;c.checked=!c.checked;b.classList.toggle('on',c.checked);
+}
+// Init depuis serveur
+(function(){const b=document.getElementById('srhUrgBox'),c=document.getElementById('srhUrgChk');if(b&&c)b.classList.toggle('on',c.checked);})();
+</script>
+{% endblock %}
