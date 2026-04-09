@@ -1,0 +1,28 @@
+{% extends 'back/admin_layout.html.twig' %}
+
+{% block admin_menu_active %}rendezvous{% endblock %}
+
+{% block admin_html_title %}Ajouter un rendez-vous{% endblock %}
+{% block admin_topbar_title %}Ajouter un rendez-vous{% endblock %}
+
+{% block admin_content %}
+<div class="page-header-admin">
+    <h1><i class="bi bi-plus-circle me-2"></i>Nouveau rendez-vous</h1>
+    <p>Créez un rendez-vous depuis l’administration. Validation Symfony sur l’entité.</p>
+</div>
+
+<div class="gm-card admin-crud-card" style="max-width: 820px;">
+    <div class="gm-card-body">
+        {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
+        {{ form_errors(form) }}
+        {% for child in form %}
+            {{ form_row(child) }}
+        {% endfor %}
+        <div class="mt-4 d-flex gap-2 flex-wrap">
+            <button type="submit" class="btn-gm-primary"><i class="bi bi-check2"></i> Enregistrer</button>
+            <a href="{{ path('admin_rendezvous_index') }}" class="btn-gm-outline">Retour</a>
+        </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

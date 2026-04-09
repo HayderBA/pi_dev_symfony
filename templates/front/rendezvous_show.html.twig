@@ -1,0 +1,30 @@
+{% extends 'front/front_layout.html.twig' %}
+
+{% block front_html_title %}Détail rendez-vous{% endblock %}
+{% block front_heading %}Rendez-vous #{{ rdv.idRdv }}{% endblock %}
+{% block front_subheading %}Récapitulatif de votre demande{% endblock %}
+
+{% block front_content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="front-panel-card">
+            <div class="card-header-theme">
+                <h2 class="h5 mb-0"><i class="bi bi-calendar-check me-2"></i>Détails</h2>
+            </div>
+            <div class="card-body">
+                <p><strong>Patient :</strong> {{ rdv.prenomPatient }} {{ rdv.nomPatient }}</p>
+                <p><strong>Email :</strong> {{ rdv.emailPatient }}</p>
+                <p><strong>Téléphone :</strong> {{ rdv.telephonePatient }}</p>
+                <p><strong>Date :</strong> {{ rdv.dateRdv|date('d/m/Y') }}</p>
+                <p><strong>Heure :</strong> {{ rdv.heure|date('H:i') }}</p>
+                <p><strong>Type :</strong> {{ rdv.typeCons }}</p>
+                <p><strong>Statut :</strong> <span class="badge bg-secondary">{{ rdv.statut }}</span></p>
+            </div>
+            <div class="card-body border-top d-flex flex-wrap gap-2">
+                <a href="{{ path('front_rendezvous_edit', {id: rdv.idRdv}) }}" class="btn btn-primary">Modifier</a>
+                <a href="{{ path('front_rendezvous_index') }}" class="btn btn-outline-secondary">Retour à la liste</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

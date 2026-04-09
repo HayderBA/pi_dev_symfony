@@ -1,0 +1,55 @@
+{% extends 'front/front_layout.html.twig' %}
+
+{% block front_html_title %}{{ cabinet ? cabinet.nomcabinet : 'Cabinet' }}{% endblock %}
+{% block front_heading %}{{ cabinet ? cabinet.nomcabinet : 'Cabinet' }}{% endblock %}
+{% block front_subheading %}Informations et contact{% endblock %}
+
+{% block front_content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        {% if cabinet %}
+            <div class="front-panel-card">
+                <div class="card-header-theme text-center py-4">
+                    <h2 class="h3 mb-0">{{ cabinet.nomcabinet }}</h2>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <h4 class="h6 text-uppercase" style="color: var(--heading-color);"><i class="bi bi-info-circle me-1"></i> Informations</h4>
+                            <hr>
+                            <p><strong><i class="bi bi-geo-alt me-1"></i> Adresse</strong><br>
+                            {{ cabinet.adresse }}<br>{{ cabinet.ville }}</p>
+                            <p><strong><i class="bi bi-telephone me-1"></i> Téléphone</strong><br>
+                            <a href="tel:{{ cabinet.telephone }}">{{ cabinet.telephone }}</a></p>
+                            <p><strong><i class="bi bi-envelope me-1"></i> Email</strong><br>
+                            <a href="mailto:{{ cabinet.email }}">{{ cabinet.email }}</a></p>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <h4 class="h6 text-uppercase" style="color: var(--heading-color);"><i class="bi bi-file-text me-1"></i> Description</h4>
+                            <hr>
+                            <p class="mb-0">{{ cabinet.description|nl2br }}</p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-wrap justify-content-center gap-2 mt-3 pt-3 border-top">
+                        <a href="{{ path('front_cabinet_index') }}" class="btn btn-outline-secondary">Retour à la liste</a>
+                        <a href="{{ path('front_rendezvous_new') }}" class="btn btn-primary"><i class="bi bi-calendar-check me-1"></i> Prendre rendez-vous</a>
+                        {# BOUTON MODIFIER DESACTIVE POUR LE FRONT #}
+                        {#
+                        <a href="{{ path('front_cabinet_edit', {id: cabinet.idCabinet}) }}" class="btn btn-outline-primary">Modifier</a>
+                        #}
+                    </div>
+                    <p class="text-center small text-muted mt-3 mb-0">
+                        <a href="{{ path('admin_cabinet_index') }}" class="text-muted">Gestion cabinets (admin)</a>
+                        ·
+                        <a href="{{ path('admin_rendezvous_index') }}" class="text-muted">Gestion rendez-vous (admin)</a>
+                    </p>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-warning text-center">
+                <i class="bi bi-exclamation-triangle"></i> Les informations du cabinet ne sont pas disponibles.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

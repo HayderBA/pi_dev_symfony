@@ -12,47 +12,7 @@
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
 
-  <header id="header" class="header fixed-top">
-
-    <div class="branding d-flex align-items-cente">
-
-      <div class="container position-relative d-flex align-items-center justify-content-between">
-        <a href="index.html" class="logo d-flex align-items-center">
-          <!-- Uncomment the line below if you also wish to use an image logo -->
-          <!--<img src="{{asset('assets/img/logoGrowmind.png')}}" alt="">-->
-          <h1 class="sitename">GrowMind</h1>
-        </a>
-
-        <nav id="navmenu" class="navmenu">
-          
-        <ul>
-          <li><a href="{{ path('app_home') }}">Accueil</a></li>
-          <li><a href="{{ path('app_doctors') }}">Medecin</a></li>
-          <li><a href="{{ path('app_appointment') }}" >Evenement</a></li>
-
-          <li class="dropdown">
-            <a href="#">
-              <span>Plus</span>
-              <i class="bi bi-chevron-down toggle-dropdown"></i>
-            </a>
-            <ul>
-              <li><a href="#">Cabinet</a></li>
-              <li><a href="{{ path('app_appointment') }}">Rendez-vous</a></li>
-              <li><a href="#">Santé & bien-être</a></li>
-              <li><a href="#">Forum</a></li>
-              <li><a href="#">Ressources et bibliotheque</a></li>
-            </ul>
-          </li>
-
-          <li><a href="{{ path('app_contact') }}">Contact</a></li>
-           <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-        </nav>
-
-      </div>
-
-    </div>
-
-  </header>
+  {% include 'front/_front_header.html.twig' %}
 
   <main class="main">
 
@@ -93,7 +53,7 @@
               </div>
 
               <div class="hero-actions" data-aos="fade-right" data-aos-delay="600">
-                <a href="appointment.html" class="btn btn-primary">Prendre rendez-vous</a>
+                <a href="{{ path('front_rendezvous_new') }}" class="btn btn-primary">Prendre rendez-vous</a>
               </div>
 
               <div class="emergency-contact" data-aos="fade-right" data-aos-delay="700">

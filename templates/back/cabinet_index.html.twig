@@ -1,0 +1,153 @@
+{% extends 'back/admin_layout.html.twig' %}
+
+{% block admin_menu_active %}cabinet{% endblock %}
+
+{% block admin_html_title %}Gestion des cabinets{% endblock %}
+{% block admin_topbar_title %}Gestion des cabinets{% endblock %}
+
+{% block admin_content %}
+<div class="page-header-admin">
+    <h1><i class="bi bi-building me-2"></i>Cabinets medicaux</h1>
+    <p>Consultez, ajoutez et gerez les cabinets depuis ce module.</p>
+</div>
+
+{# Statistiques #}
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="gm-card p-3 text-center mb-0">
+            <div class="text-muted small">Total cabinets</div>
+            <div class="fs-3 fw-bold" style="color: var(--blue-dark, #1565c0);">{{ stats.total }}</div>
+        </div>
+    </div>
+    {% for label, n in stats.by_status %}
+    <div class="col-6 col-md-3">
+        <div class="gm-card p-3 text-center mb-0">
+            <div class="text-muted small text-capitalize">Statut « {{ label }} »</div>
+            <div class="fs-3 fw-bold" style="color: var(--green-dark, #0fa36a);">{{ n }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{# Recherche, filtres, tri #}
+<div class="gm-card admin-crud-card mb-4">
+    <div class="gm-card-header">
+        <span class="gm-card-title"><i class="bi bi-funnel me-1"></i> Recherche &amp; filtres</span>
+    </div>
+    <div class="gm-card-body">
+        <form method="get" action="{{ path('admin_cabinet_index') }}" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label small mb-1">Mot-clé (nom, ville, adresse, email)</label>
+                <input type="text" name="q" value="{{ filters.q }}" class="form-control form-control-sm" placeholder="Rechercher…">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small mb-1">Statut</label>
+                <select name="status" class="form-select form-select-sm">
+                    <option value="">Tous</option>
+                    <option value="actif" {{ filters.status == 'actif' ? 'selected' }}>Actif</option>
+                    <option value="inactif" {{ filters.status == 'inactif' ? 'selected' }}>Inactif</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small mb-1">Ville</label>
+                <select name="ville" class="form-select form-select-sm">
+                    <option value="">Toutes</option>
+                    {% for v in villes %}
+                        <option value="{{ v }}" {{ filters.ville == v ? 'selected' }}>{{ v }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small mb-1">Trier par</label>
+                <select name="sort" class="form-select form-select-sm">
+                    <option value="nom" {{ filters.sort == 'nom' ? 'selected' }}>Nom</option>
+                    <option value="ville" {{ filters.sort == 'ville' ? 'selected' }}>Ville</option>
+                    <option value="status" {{ filters.sort == 'status' ? 'selected' }}>Statut</option>
+                    <option value="id" {{ filters.sort == 'id' ? 'selected' }}>ID</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small mb-1">Ordre</label>
+                <select name="dir" class="form-select form-select-sm">
+                    <option value="asc" {{ filters.dir == 'asc' ? 'selected' }}>Croissant</option>
+                    <option value="desc" {{ filters.dir == 'desc' ? 'selected' }}>Décroissant</option>
+                </select>
+            </div>
+            <div class="col-12 d-flex flex-wrap gap-2">
+                <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search"></i> Appliquer</button>
+                <a href="{{ path('admin_cabinet_index') }}" class="btn btn-outline-secondary btn-sm">Réinitialiser</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="gm-card admin-crud-card mb-4">
+    <div class="gm-card-header align-items-center">
+        <span class="gm-card-title">Liste des cabinets</span>
+        <a href="{{ path('admin_cabinet_new') }}" class="btn-gm-primary">
+            <i class="bi bi-plus-circle"></i> Nouveau cabinet
+        </a>
+    </div>
+    <div class="gm-card-body">
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('danger') %}
+        <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
+
+    {% if cabinets is empty %}
+        <div class="alert alert-info mb-0">
+            {% if app.request.query.all|length > 0 %}
+                Aucun cabinet ne correspond à ces critères.
+            {% else %}
+                Aucun cabinet enregistré.
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="row g-3">
+            {% for cabinet in cabinets %}
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-header text-white" style="background: linear-gradient(135deg, #1e88e5, #1565c0);">
+                        <h5 class="mb-0">{{ cabinet.nomcabinet }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-2"><i class="bi bi-geo-alt text-primary"></i> {{ cabinet.adresse }}, {{ cabinet.ville }}</p>
+                        <p class="mb-2"><i class="bi bi-telephone text-primary"></i> {{ cabinet.telephone }}</p>
+                        <p class="mb-2"><i class="bi bi-envelope text-primary"></i> {{ cabinet.email }}</p>
+                        <span class="badge {{ cabinet.status == 'actif' ? 'bg-success' : 'bg-danger' }}">{{ cabinet.status }}</span>
+                    </div>
+                    <div class="card-footer bg-white border-0">
+                        <a href="{{ path('admin_cabinet_show', {id: cabinet.idCabinet}) }}" class="btn btn-sm btn-outline-info">Voir</a>
+                        <a href="{{ path('admin_cabinet_edit', {id: cabinet.idCabinet}) }}" class="btn btn-sm btn-outline-warning">Modifier</a>
+                        <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal{{ cabinet.idCabinet }}">Supprimer</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modal{{ cabinet.idCabinet }}" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content" style="border-radius: 12px;">
+                        <div class="modal-header text-white" style="background: linear-gradient(135deg, #dc2626, #b91c1c);">
+                            <h5 class="modal-title">Confirmer la suppression</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">Supprimer "{{ cabinet.nomcabinet }}" ?</div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                            <form method="post" action="{{ path('admin_cabinet_delete', {id: cabinet.idCabinet}) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ cabinet.idCabinet) }}">
+                                <button type="submit" class="btn btn-danger">Supprimer</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    </div>
+</div>
+{% endblock %}

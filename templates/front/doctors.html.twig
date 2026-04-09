@@ -2,44 +2,7 @@
 
 {% block body %}
 
-<!-- ================= HEADER ================= -->
-<header id="header" class="header fixed-top">
-
-  
-
-  <div class="container d-flex align-items-center justify-content-between">
-
-    <a href="{{ path('app_home') }}" class="logo">
-      <img src="{{asset('assets/img/logoGrowmind.png')}}" alt="">
-    </a>
-
-    <nav class="navmenu">
-      
-        <ul>
-          <li><a href="{{ path('app_home') }}">Accueil</a></li>
-          <li><a href="{{ path('app_doctors') }}">Medecin</a></li>
-          <li><a href="{{ path('app_appointment') }}">Evenement</a></li>
-
-          <li class="dropdown">
-            <a href="#">
-              <span>Plus</span>
-              <i class="bi bi-chevron-down toggle-dropdown"></i>
-            </a>
-            <ul>
-              <li><a href="#">Cabinet</a></li>
-              <li><a href="{{ path('app_appointment') }}">Rendez-vous</a></li>
-              <li><a href="#">Santé & bien-être</a></li>
-              <li><a href="#">Forum</a></li>
-              <li><a href="#">Ressources</a></li>
-            </ul>
-          </li>
-
-          <li><a href="{{ path('app_contact') }}">Contact</a></li>
-    </nav>
-
-  </div>
-
-</header>
+{% include 'front/_front_header.html.twig' %}
 
 <!-- ================= MAIN ================= -->
 <main class="main">

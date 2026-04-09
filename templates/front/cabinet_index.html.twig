@@ -1,0 +1,131 @@
+{% extends 'front/front_layout.html.twig' %}
+
+{% block front_html_title %}Cabinets{% endblock %}
+{% block front_heading %}Cabinets médicaux{% endblock %}
+{% block front_subheading %}Consultez les cabinets partenaires GrowMind.{% endblock %}
+
+{% block front_content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
+    <p class="mb-0 text-muted">Liste des cabinets disponibles.</p>
+    {# BOUTON AJOUTER DESACTIVE POUR LE FRONT #}
+    {#
+    <a href="{{ path('front_cabinet_new') }}" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i> Ajouter un cabinet
+    </a>
+    #}
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="front-panel-card p-3 text-center mb-0">
+            <div class="small text-muted">Total</div>
+            <div class="fs-4 fw-bold" style="color: var(--accent-color, #52B788);">{{ stats.total }}</div>
+        </div>
+    </div>
+    {% for label, n in stats.by_status %}
+    <div class="col-6 col-md-3">
+        <div class="front-panel-card p-3 text-center mb-0">
+            <div class="small text-muted text-capitalize">{{ label }}</div>
+            <div class="fs-4 fw-bold" style="color: var(--heading-color, #2d5a46);">{{ n }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="front-panel-card mb-4">
+    <div class="card-header-theme py-2 px-3">
+        <span class="small fw-semibold"><i class="bi bi-funnel me-1"></i> Recherche, filtres et tri</span>
+    </div>
+    <div class="card-body">
+        <form method="get" action="{{ path('front_cabinet_index') }}" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label small mb-0">Mot-clé</label>
+                <input type="text" name="q" value="{{ filters.q }}" class="form-control form-control-sm" placeholder="Nom, ville, adresse…">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small mb-0">Statut</label>
+                <select name="status" class="form-select form-select-sm">
+                    <option value="">Tous</option>
+                    <option value="actif" {{ filters.status == 'actif' ? 'selected' }}>Actif</option>
+                    <option value="inactif" {{ filters.status == 'inactif' ? 'selected' }}>Inactif</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small mb-0">Ville</label>
+                <select name="ville" class="form-select form-select-sm">
+                    <option value="">Toutes</option>
+                    {% for v in villes %}
+                        <option value="{{ v }}" {{ filters.ville == v ? 'selected' }}>{{ v }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small mb-0">Trier par</label>
+                <select name="sort" class="form-select form-select-sm">
+                    <option value="nom" {{ filters.sort == 'nom' ? 'selected' }}>Nom</option>
+                    <option value="ville" {{ filters.sort == 'ville' ? 'selected' }}>Ville</option>
+                    <option value="status" {{ filters.sort == 'status' ? 'selected' }}>Statut</option>
+                    <option value="id" {{ filters.sort == 'id' ? 'selected' }}>ID</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small mb-0">Ordre</label>
+                <select name="dir" class="form-select form-select-sm">
+                    <option value="asc" {{ filters.dir == 'asc' ? 'selected' }}>Croissant</option>
+                    <option value="desc" {{ filters.dir == 'desc' ? 'selected' }}>Décroissant</option>
+                </select>
+            </div>
+            <div class="col-12 d-flex flex-wrap gap-2">
+                <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search"></i> Appliquer</button>
+                <a href="{{ path('front_cabinet_index') }}" class="btn btn-outline-secondary btn-sm">Réinitialiser</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success">{{ message }}</div>
+{% endfor %}
+{% for message in app.flashes('danger') %}
+    <div class="alert alert-danger">{{ message }}</div>
+{% endfor %}
+
+{% if cabinets is empty %}
+    <div class="front-panel-card p-4 text-center text-muted">
+        {% if app.request.query.all|length > 0 %}
+            Aucun cabinet ne correspond à ces critères.
+        {% else %}
+            Aucun cabinet disponible.
+        {% endif %}
+    </div>
+{% else %}
+    <div class="row g-4">
+        {% for cabinet in cabinets %}
+            <div class="col-lg-6">
+                <div class="front-panel-card h-100 d-flex flex-column">
+                    <div class="card-header-theme">
+                        <h3 class="h5 mb-0">{{ cabinet.nomcabinet }}</h3>
+                    </div>
+                    <div class="card-body flex-grow-1">
+                        <p class="mb-2"><i class="bi bi-geo-alt text-primary me-1"></i> {{ cabinet.adresse }}, {{ cabinet.ville }}</p>
+                        <p class="mb-2"><i class="bi bi-envelope me-1"></i> {{ cabinet.email }}</p>
+                        <p class="mb-3"><i class="bi bi-telephone me-1"></i> {{ cabinet.telephone }}</p>
+                        <span class="badge rounded-pill {{ cabinet.status == 'actif' ? 'bg-success' : 'bg-secondary' }}">{{ cabinet.status }}</span>
+                    </div>
+                    <div class="card-body border-top pt-3 d-flex flex-wrap gap-2">
+                        <a href="{{ path('front_cabinet_show', {id: cabinet.idCabinet}) }}" class="btn btn-outline-primary btn-sm">Voir</a>
+                        {# BOUTONS MODIFIER ET SUPPRIMER DESACTIVES POUR LE FRONT #}
+                        {#
+                        <a href="{{ path('front_cabinet_edit', {id: cabinet.idCabinet}) }}" class="btn btn-outline-secondary btn-sm">Modifier</a>
+                        <form method="post" action="{{ path('front_cabinet_delete', {id: cabinet.idCabinet}) }}" class="d-inline">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete_front_cabinet' ~ cabinet.idCabinet) }}">
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Supprimer</button>
+                        </form>
+                        #}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+{% endblock %}

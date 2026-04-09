@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% block front_html_title %}GrowMind{% endblock %} — GrowMind{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+  /* Aligné sur les variables du thème Clinic (accueil) */
+  .front-module-section {
+    background: var(--gradient-hero, linear-gradient(135deg, #E8F5E9 0%, #F0F7F4 100%));
+    padding-top: 2rem;
+    padding-bottom: 4rem;
+  }
+  .front-panel-card {
+    background: var(--surface-color, #fff);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(45, 90, 70, 0.08);
+    border: 1px solid color-mix(in srgb, var(--accent-color, #52B788), transparent 88%);
+    overflow: hidden;
+  }
+  .front-panel-card .card-header-theme {
+    background: var(--gradient-primary, linear-gradient(135deg, #52B788 0%, #74C69D 100%));
+    color: var(--contrast-color, #fff);
+    border: none;
+    padding: 1rem 1.25rem;
+    font-family: var(--heading-font, inherit);
+  }
+  .front-panel-card .card-body { padding: 1.5rem; }
+</style>
+{% endblock %}
+
+{% block body %}
+{% include 'front/_front_header.html.twig' %}
+
+<main class="main">
+  <div class="page-title text-center">
+    <h1>{% block front_heading %}GrowMind{% endblock %}</h1>
+    <p>{% block front_subheading %}{% endblock %}</p>
+  </div>
+
+  <section class="section front-module-section">
+    <div class="container">
+      {% block front_content %}{% endblock %}
+    </div>
+  </section>
+</main>
+
+<footer class="footer py-4 mt-0">
+  <div class="container text-center">
+    <p class="mb-1 small" style="color: var(--heading-color, #2d5a46);">&copy; {{ 'now'|date('Y') }} GrowMind</p>
+    <a href="{{ path('app_home') }}" class="small text-decoration-none" style="color: var(--accent-color, #52B788);">Retour à l'accueil</a>
+  </div>
+</footer>
+
+<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+{% endblock %}

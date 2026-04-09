@@ -1,0 +1,111 @@
+<?php
+
+namespace App\Controller;
+
+use App\Entity\Rendezvou;
+use App\Form\RendezvouType;
+use App\Service\RendezVousMetierService;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+
+#[Route('/admin/rendezvous')]
+class AdminRendezvouController extends AbstractController
+{
+    #[Route('/', name: 'admin_rendezvous_index')]
+    public function index(Request $request, RendezVousMetierService $rendezVousMetier): Response
+    {
+        return $this->render('back/rendezvous_index.html.twig', $rendezVousMetier->buildListeData($request));
+    }
+
+    #[Route('/new', name: 'admin_rendezvous_new')]
+    public function new(Request $request, EntityManagerInterface $em): Response
+    {
+        $rdv = new Rendezvou();
+        $rdv->setStatut('en_attente');
+
+        $defaultPsychologueId = $em->getConnection()->fetchOne(
+            'SELECT idPsychologue FROM psychologue ORDER BY idPsychologue ASC LIMIT 1'
+        );
+
+        if ($defaultPsychologueId === false) {
+            $this->addFlash('danger', 'Impossible de créer un rendez-vous : aucun psychologue n’est enregistré en base.');
+
+            return $this->redirectToRoute('admin_rendezvous_index');
+        }
+
+        $rdv->setIdPsychologue((int) $defaultPsychologueId);
+
+        $form = $this->createForm(RendezvouType::class, $rdv);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($rdv);
+            $em->flush();
+            $this->addFlash('success', 'Rendez-vous cree');
+
+            return $this->redirectToRoute('admin_rendezvous_index');
+        }
+
+        return $this->render('back/rendezvous_new.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/{id}', name: 'admin_rendezvous_show')]
+    public function show(Rendezvou $rdv): Response
+    {
+        return $this->render('back/rendezvous_show.html.twig', [
+            'rdv' => $rdv,
+        ]);
+    }
+
+    #[Route('/{id}/edit', name: 'admin_rendezvous_edit')]
+    public function edit(Rendezvou $rdv, Request $request, EntityManagerInterface $em): Response
+    {
+        $form = $this->createForm(RendezvouType::class, $rdv, ['include_statut' => true]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->flush();
+            $this->addFlash('success', 'Rendez-vous modifié');
+            return $this->redirectToRoute('admin_rendezvous_index');
+        }
+
+        return $this->render('back/rendezvous_edit.html.twig', [
+            'form' => $form->createView(),
+            'rdv' => $rdv
+        ]);
+    }
+
+    #[Route('/{id}/delete', name: 'admin_rendezvous_delete', methods: ['POST'])]
+    public function delete(Rendezvou $rdv, Request $request, EntityManagerInterface $em): Response
+    {
+        if ($this->isCsrfTokenValid('delete' . $rdv->getIdRdv(), $request->request->get('_token'))) {
+            $em->remove($rdv);
+            $em->flush();
+            $this->addFlash('success', 'Rendez-vous supprimé');
+        }
+        return $this->redirectToRoute('admin_rendezvous_index');
+    }
+
+    #[Route('/{id}/confirm', name: 'admin_rendezvous_confirm')]
+    public function confirm(Rendezvou $rdv, EntityManagerInterface $em): Response
+    {
+        $rdv->setStatut('confirme');
+        $em->flush();
+        $this->addFlash('success', 'Rendez-vous confirmé');
+        return $this->redirectToRoute('admin_rendezvous_index');
+    }
+
+    #[Route('/{id}/cancel', name: 'admin_rendezvous_cancel')]
+    public function cancel(Rendezvou $rdv, EntityManagerInterface $em): Response
+    {
+        $rdv->setStatut('annule');
+        $em->flush();
+        $this->addFlash('success', 'Rendez-vous annulé');
+        return $this->redirectToRoute('admin_rendezvous_index');
+    }
+}

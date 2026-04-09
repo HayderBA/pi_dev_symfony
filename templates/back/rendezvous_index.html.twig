@@ -1,0 +1,188 @@
+{% extends 'back/admin_layout.html.twig' %}
+
+{% block admin_menu_active %}rendezvous{% endblock %}
+
+{% block admin_html_title %}Gestion des rendez-vous{% endblock %}
+{% block admin_topbar_title %}Gestion des rendez-vous{% endblock %}
+
+{% block admin_content %}
+<div class="page-header-admin">
+    <h1><i class="bi bi-calendar2-check me-2"></i>Rendez-vous</h1>
+    <p>Liste et actions sur les rendez-vous patients.</p>
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-md-4">
+        <div class="gm-card p-3 text-center mb-0">
+            <div class="text-muted small">Total RDV</div>
+            <div class="fs-3 fw-bold" style="color: var(--blue-dark, #1565c0);">{{ stats.total }}</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="gm-card p-3 text-center mb-0">
+            <div class="text-muted small">Aujourd'hui</div>
+            <div class="fs-3 fw-bold text-primary">{{ stats.aujourdhui }}</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="gm-card p-3 text-center mb-0">
+            <div class="text-muted small">À venir (date ≥ aujourd'hui)</div>
+            <div class="fs-3 fw-bold" style="color: var(--green-dark, #0fa36a);">{{ stats.a_venir }}</div>
+        </div>
+    </div>
+</div>
+<div class="row g-3 mb-4">
+    {% for label, n in stats.by_statut %}
+    <div class="col-6 col-md-4">
+        <div class="gm-card p-2 text-center mb-0">
+            <span class="text-muted small">{{ label|replace({'_': ' '})|capitalize }}</span>
+            <span class="fs-5 fw-bold d-block">{{ n }}</span>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="gm-card admin-crud-card mb-4">
+    <div class="gm-card-header">
+        <span class="gm-card-title"><i class="bi bi-funnel me-1"></i> Recherche &amp; filtres</span>
+    </div>
+    <div class="gm-card-body">
+        <form method="get" action="{{ path('admin_rendezvous_index') }}" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label small mb-1">Patient (nom, prénom, email)</label>
+                <input type="text" name="q" value="{{ filters.q }}" class="form-control form-control-sm" placeholder="Rechercher…">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small mb-1">Statut</label>
+                <select name="statut" class="form-select form-select-sm">
+                    <option value="">Tous</option>
+                    <option value="en_attente" {{ filters.statut == 'en_attente' ? 'selected' }}>En attente</option>
+                    <option value="confirme" {{ filters.statut == 'confirme' ? 'selected' }}>Confirmé</option>
+                    <option value="annule" {{ filters.statut == 'annule' ? 'selected' }}>Annulé</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small mb-1">Du</label>
+                <input type="date" name="date_from" value="{{ filters.date_from }}" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small mb-1">Au</label>
+                <input type="date" name="date_to" value="{{ filters.date_to }}" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small mb-1">Trier par</label>
+                <select name="sort" class="form-select form-select-sm">
+                    <option value="date" {{ filters.sort == 'date' ? 'selected' }}>Date</option>
+                    <option value="heure" {{ filters.sort == 'heure' ? 'selected' }}>Heure</option>
+                    <option value="statut" {{ filters.sort == 'statut' ? 'selected' }}>Statut</option>
+                    <option value="id" {{ filters.sort == 'id' ? 'selected' }}>ID</option>
+                </select>
+            </div>
+            <div class="col-md-1">
+                <label class="form-label small mb-1">Ordre</label>
+                <select name="dir" class="form-select form-select-sm">
+                    <option value="desc" {{ filters.dir == 'desc' ? 'selected' }}>Desc</option>
+                    <option value="asc" {{ filters.dir == 'asc' ? 'selected' }}>Asc</option>
+                </select>
+            </div>
+            <div class="col-12 d-flex flex-wrap gap-2">
+                <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search"></i> Appliquer</button>
+                <a href="{{ path('admin_rendezvous_index') }}" class="btn btn-outline-secondary btn-sm">Réinitialiser</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="gm-card admin-crud-card mb-4">
+    <div class="gm-card-header align-items-center">
+        <span class="gm-card-title">Liste des rendez-vous</span>
+        <a href="{{ path('admin_rendezvous_new') }}" class="btn-gm-primary">
+            <i class="bi bi-plus-circle"></i> Ajouter un rendez-vous
+        </a>
+    </div>
+    <div class="gm-card-body">
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+
+    {% if rendezvous is empty %}
+        <div class="alert alert-info mb-0">
+            {% if app.request.query.all|length > 0 %}
+                Aucun rendez-vous ne correspond à ces critères.
+            {% else %}
+                Aucun rendez-vous.
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle mb-0">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Patient</th>
+                        <th>Psychologue</th>
+                        <th>Date</th>
+                        <th>Heure</th>
+                        <th>Type</th>
+                        <th>Statut</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rdv in rendezvous %}
+                    <tr>
+                        <td>{{ rdv.prenomPatient }} {{ rdv.nomPatient }}</td>
+                        <td>Psychologue #{{ rdv.idPsychologue }}</td>
+                        <td>{{ rdv.dateRdv|date('d/m/Y') }}</td>
+                        <td>{{ rdv.heure|date('H:i') }}</td>
+                        <td>{{ rdv.typeCons }}</td>
+                        <td>
+                            {% if rdv.statut == 'confirme' %}
+                                <span class="badge bg-success">Confirmé</span>
+                            {% elseif rdv.statut == 'annule' %}
+                                <span class="badge bg-danger">Annulé</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">En attente</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end text-nowrap">
+                            <a href="{{ path('admin_rendezvous_show', {id: rdv.idRdv}) }}" class="btn btn-info btn-sm">Voir</a>
+                            <a href="{{ path('admin_rendezvous_edit', {id: rdv.idRdv}) }}" class="btn btn-warning btn-sm">Modifier</a>
+                            {% if rdv.statut == 'en_attente' %}
+                                <a href="{{ path('admin_rendezvous_confirm', {id: rdv.idRdv}) }}" class="btn btn-success btn-sm">Confirmer</a>
+                            {% endif %}
+                            {% if rdv.statut != 'annule' %}
+                                <a href="{{ path('admin_rendezvous_cancel', {id: rdv.idRdv}) }}" class="btn btn-danger btn-sm">Annuler</a>
+                            {% endif %}
+                            <button type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal" data-bs-target="#modal{{ rdv.idRdv }}">Supprimer</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% for rdv in rendezvous %}
+        <div class="modal fade" id="modal{{ rdv.idRdv }}" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content" style="border-radius: 12px;">
+                    <div class="modal-header text-white" style="background: linear-gradient(135deg, #dc2626, #b91c1c);">
+                        <h5 class="modal-title">Confirmer</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">Supprimer ce rendez-vous ?</div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <form method="post" action="{{ path('admin_rendezvous_delete', {id: rdv.idRdv}) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ rdv.idRdv) }}">
+                            <button type="submit" class="btn btn-danger">Supprimer</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% endif %}
+    </div>
+</div>
+{% endblock %}
