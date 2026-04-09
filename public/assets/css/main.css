@@ -22,44 +22,46 @@
 /* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
 :root { 
   --background-color: #ffffff;
-  --default-color: #4a6b5c;
-  --heading-color: #2d5a46;
-  --accent-color: #52B788;
-  --accent-light: #74C69D;
-  --accent-soft: #A8E6CF;
+  --default-color: #2d4a5e;
+  --heading-color: #1E5BA8;
+  --accent-color: #6BBF59;
+  --accent-light: #81D668;
+  --accent-soft: #B8E5A8;
   --surface-color: #ffffff;
   --contrast-color: #ffffff;
+  --secondary-color: #1E5BA8;
 }
 
-/* Dégradés plus clairs */
+/* Dégradés modernes GrowMind */
 :root {
-  --gradient-soft: linear-gradient(135deg, #A8E6CF 0%, #D8F3DC 100%);
-  --gradient-primary: linear-gradient(135deg, #52B788 0%, #74C69D 100%);
-  --gradient-light: linear-gradient(135deg, #D8F3DC 0%, #E8F5E9 100%);
-  --gradient-hero: linear-gradient(135deg, #E8F5E9 0%, #F0F7F4 100%);
+  --gradient-soft: linear-gradient(135deg, #B8E5A8 0%, #D8F0CC 100%);
+  --gradient-primary: linear-gradient(135deg, #6BBF59 0%, #81D668 100%);
+  --gradient-light: linear-gradient(135deg, #D8F0CC 0%, #EFF7E6 100%);
+  --gradient-hero: linear-gradient(135deg, #1E5BA8 0%, #6BBF59 100%);
+  --gradient-secondary: linear-gradient(135deg, #1E5BA8 0%, #2A73B5 100%);
 }
 
 /* Nav Menu Colors */
 :root {
-  --nav-color: #4a6b5c;
-  --nav-hover-color: #52B788;
+  --nav-color: #2d4a5e;
+  --nav-hover-color: #6BBF59;
   --nav-mobile-background-color: #ffffff;
   --nav-dropdown-background-color: #ffffff;
-  --nav-dropdown-color: #4a6b5c;
-  --nav-dropdown-hover-color: #52B788;
+  --nav-dropdown-color: #2d4a5e;
+  --nav-dropdown-hover-color: #6BBF59;
 }
 
 /* Color Presets */
 .light-background {
-  --background-color: #F0F7F4;
+  --background-color: #EFF7E6;
   --surface-color: #ffffff;
 }
 
 .dark-background {
-  --background-color: #2d5a46;
+  --background-color: #1E5BA8;
   --default-color: #ffffff;
   --heading-color: #ffffff;
-  --surface-color: #40916C;
+  --surface-color: #2A73B5;
   --contrast-color: #ffffff;
 }
 
