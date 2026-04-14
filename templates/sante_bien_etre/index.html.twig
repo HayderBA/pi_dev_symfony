@@ -1,0 +1,199 @@
+{% extends 'wellness/base.html.twig' %}
+
+{% block title %}Enregistrements de santé{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('sante-filters-form');
+            const resultsContainer = document.getElementById('sante-results-container');
+            const statusElement = document.getElementById('sante-live-status');
+            const resetButton = document.getElementById('sante-filters-reset');
+
+            if (!form || !resultsContainer || typeof window.fetch !== 'function') {
+                return;
+            }
+
+            let debounceTimer = null;
+            let currentRequestController = null;
+
+            const setStatus = function (message) {
+                if (statusElement) {
+                    statusElement.textContent = message;
+                }
+            };
+
+            const buildSearchUrl = function () {
+                const url = new URL(form.action, window.location.origin);
+                const formData = new FormData(form);
+
+                for (const [key, value] of formData.entries()) {
+                    if (value !== '') {
+                        url.searchParams.set(key, value);
+                    }
+                }
+
+                return url;
+            };
+
+            const fetchResults = function () {
+                const url = buildSearchUrl();
+
+                if (currentRequestController) {
+                    currentRequestController.abort();
+                }
+
+                currentRequestController = new AbortController();
+                resultsContainer.classList.add('opacity-50');
+                setStatus('Mise à jour des résultats...');
+
+                fetch(url, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    signal: currentRequestController.signal
+                })
+                    .then(r => {
+                        if (!r.ok) throw new Error();
+                        return r.text();
+                    })
+                    .then(html => {
+                        resultsContainer.innerHTML = html;
+                        window.history.replaceState({}, '', url.pathname + url.search);
+                        setStatus('Résultats mis à jour.');
+                    })
+                    .catch(() => {
+                        setStatus('Recherche en direct indisponible...');
+                        window.location.assign(url.toString());
+                    })
+                    .finally(() => {
+                        resultsContainer.classList.remove('opacity-50');
+                    });
+            };
+
+            const scheduleFetch = () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(fetchResults, 250);
+            };
+
+            form.addEventListener('submit', e => {
+                e.preventDefault();
+                fetchResults();
+            });
+
+            form.querySelectorAll('input, select').forEach(el => {
+                el.addEventListener(el.type === 'text' || el.type === 'number' ? 'input' : 'change', scheduleFetch);
+            });
+
+            if (resetButton) {
+                resetButton.addEventListener('click', () => {
+                    form.reset();
+                    fetchResults();
+                });
+            }
+        });
+    </script>
+{% endblock %}
+
+{% block body %}
+    <div class="container py-4">
+
+        <!-- HEADER -->
+        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+            <div>
+                <div class="page-kicker mb-2">Santé</div>
+                <h1 class="h2 mb-1">Suivi des enregistrements de santé</h1>
+                <p class="text-muted mb-0">Filtrer, trier et gérer les données de stress et de bien-être.</p>
+            </div>
+
+            <!-- ADD BUTTON -->
+            <a class="btn"
+               style="background:#4CAF8E;color:white;border-radius:10px;"
+               onmouseover="this.style.background='#2F7D6D';"
+               onmouseout="this.style.background='#4CAF8E';"
+               href="{{ path('app_sante_bien_etre_new') }}">
+                <i class="bi bi-plus-lg me-1"></i>Ajouter un enregistrement
+            </a>
+        </div>
+
+        <!-- FILTER CARD -->
+        <div class="card content-card mb-4">
+            <div class="card-body p-4">
+
+                <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-3">
+                    <div>
+                        <h2 class="h5 mb-1">Filtres de recherche</h2>
+                        <p class="text-muted mb-0">Filtrage en temps réel activé.</p>
+                    </div>
+
+                    <span class="badge rounded-pill"
+                          style="background: rgba(76,175,142,0.15); color:#2F7D6D;">
+                    Recherche en direct
+                </span>
+                </div>
+
+                <!-- FORM -->
+                <form id="sante-filters-form" class="wellness-form" method="get" action="{{ path('app_sante_bien_etre_index') }}">
+                    <div class="row g-3 align-items-end">
+
+                        <div class="col-md-6 col-xl-3">
+                            <label class="form-label">Humeur</label>
+                            <input class="form-control" name="humeur" value="{{ filters.humeur }}">
+                        </div>
+
+                        <div class="col-md-6 col-xl-2">
+                            <label class="form-label">Stress</label>
+                            <input class="form-control" type="number" name="niveau_stress" value="{{ filters.niveau_stress }}">
+                        </div>
+
+                        <div class="col-md-6 col-xl-2">
+                            <label class="form-label">Date</label>
+                            <input class="form-control" type="date" name="date_suivi" value="{{ filters.date_suivi }}">
+                        </div>
+
+                        <div class="col-md-6 col-xl-2">
+                            <label class="form-label">Tri</label>
+                            <select class="form-select" name="sort_by">
+                                <option value="date_suivi">Date</option>
+                                <option value="niveau_stress">Stress</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 col-xl-2">
+                            <label class="form-label">Ordre</label>
+                            <select class="form-select" name="sort_direction">
+                                <option value="desc">Desc</option>
+                                <option value="asc">Asc</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-12 col-xl-1 d-grid">
+                            <button class="btn"
+                                    style="background:#4CAF8E;color:white;border-radius:10px;">
+                                Appliquer
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="d-flex justify-content-between mt-3">
+                    <small id="sante-live-status">Mise à jour automatique activée</small>
+
+                    <button class="btn btn-sm"
+                            style="border:1px solid #6B7280;color:#6B7280;border-radius:8px;"
+                            id="sante-filters-reset">
+                        Réinitialiser
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- RESULTS -->
+        <div id="sante-results-container">
+            {% include 'sante_bien_etre/_results.html.twig' with {
+                sante_bien_etres: sante_bien_etres
+            } only %}
+        </div>
+
+    </div>
+{% endblock %}

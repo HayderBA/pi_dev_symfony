@@ -1,0 +1,135 @@
+<div class="card content-card">
+
+    <!-- HEADER -->
+    <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 py-3 px-4">
+        <div>
+            <h2 class="h5 mb-1">Enregistrements de santé filtrés</h2>
+            <p class="text-muted mb-0">Les résultats se mettent à jour automatiquement selon les filtres et le tri.</p>
+        </div>
+
+        <span class="badge rounded-pill"
+              style="background: rgba(76,175,142,0.15); color:#2F7D6D;">
+            {{ sante_bien_etres|length }} enregistrements
+        </span>
+    </div>
+
+    <!-- TABLE -->
+    <div class="card-body p-0">
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <!-- HEADER -->
+                <thead style="background:#F5F7F6;">
+                <tr>
+                    <th>Id</th>
+                    <th>Humeur</th>
+                    <th>Niveau de stress</th>
+                    <th>Qualité du sommeil</th>
+                    <th>Nutrition</th>
+                    <th>Activité physique</th>
+                    <th>Développement personnel</th>
+                    <th>Recommandations</th>
+                    <th>Date de suivi</th>
+                    <th>Date de création</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                {% for sante_bien_etre in sante_bien_etres %}
+                    <tr style="transition: all 0.2s ease;">
+
+                        <td>{{ sante_bien_etre.id }}</td>
+
+                        <!-- HUMEUR -->
+                        <td>
+                            <span style="
+                                background: rgba(76,175,142,0.15);
+                                color:#2F7D6D;
+                                padding:4px 10px;
+                                border-radius:8px;
+                            ">
+                                {{ sante_bien_etre.humeur }}
+                            </span>
+                        </td>
+
+                        <td>{{ sante_bien_etre.niveauStress }}</td>
+                        <td>{{ sante_bien_etre.qualiteSommeil }}</td>
+                        <td>{{ sante_bien_etre.nutrition ?: '--' }}</td>
+                        <td>{{ sante_bien_etre.activitePhysique ?: '--' }}</td>
+                        <td>{{ sante_bien_etre.developpementPersonnel ?: '--' }}</td>
+
+                        <td>
+                            {{ sante_bien_etre.recommandations and sante_bien_etre.recommandations|length > 110
+                            ? sante_bien_etre.recommandations|slice(0, 110) ~ '...'
+                            : (sante_bien_etre.recommandations ?: '--')
+                            }}
+                        </td>
+
+                        <td>
+                            {{ sante_bien_etre.dateSuivi ? sante_bien_etre.dateSuivi|date('Y-m-d') : '--' }}
+                        </td>
+
+                        <td>
+                            {{ sante_bien_etre.dateCreation ? sante_bien_etre.dateCreation|date('Y-m-d H:i') : '--' }}
+                        </td>
+
+                        <!-- ACTIONS -->
+                        <td class="text-nowrap">
+                            <div class="d-flex flex-wrap gap-2">
+
+                                <!-- VIEW -->
+                                <a class="btn btn-sm"
+                                   style="
+                                       border:1px solid #4CAF8E;
+                                       color:#4CAF8E;
+                                       border-radius:8px;
+                                   "
+                                   onmouseover="this.style.background='#4CAF8E'; this.style.color='white';"
+                                   onmouseout="this.style.background='transparent'; this.style.color='#4CAF8E';"
+                                   href="{{ path('app_sante_bien_etre_show', {'id': sante_bien_etre.id}) }}">
+                                    <i class="bi bi-eye me-1"></i>Voir
+                                </a>
+
+                                <!-- EDIT -->
+                                <a class="btn btn-sm"
+                                   style="
+                                       border:1px solid #6B7280;
+                                       color:#6B7280;
+                                       border-radius:8px;
+                                   "
+                                   onmouseover="this.style.background='#6B7280'; this.style.color='white';"
+                                   onmouseout="this.style.background='transparent'; this.style.color='#6B7280';"
+                                   href="{{ path('app_sante_bien_etre_edit', {'id': sante_bien_etre.id}) }}">
+                                    <i class="bi bi-pencil-square me-1"></i>Modifier
+                                </a>
+
+                                <!-- DELETE -->
+                                {{ include('sante_bien_etre/_delete_form.html.twig', {
+                                    sante_bien_etre: sante_bien_etre,
+                                    button_class: 'btn btn-sm',
+                                    button_label: 'Supprimer',
+                                    form_class: 'd-inline-block',
+                                    confirm_message: 'Supprimer cet enregistrement de santé ?'
+                                }) }}
+
+                            </div>
+                        </td>
+
+                    </tr>
+
+                {% else %}
+                    <tr>
+                        <td class="text-center py-4 empty-state" colspan="11">
+                            Aucun enregistrement trouvé pour les filtres sélectionnés.
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+</div>

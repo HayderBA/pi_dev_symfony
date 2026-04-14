@@ -1,0 +1,145 @@
+{% extends 'wellness/base.html.twig' %}
+
+{% block title %}Détails de l’enregistrement de santé{% endblock %}
+
+{% block body %}
+    <div class="container py-4">
+
+        <!-- HEADER -->
+        <div class="d-flex flex-column flex-xl-row justify-content-between align-items-xl-center gap-3 mb-4">
+            <div>
+                <div class="page-kicker mb-2">Santé</div>
+                <h1 class="h2 mb-1">Enregistrement de santé #{{ sante_bien_etre.id }}</h1>
+                <p class="text-muted mb-0">Vue détaillée de cet enregistrement de bien-être.</p>
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="d-flex flex-wrap gap-2">
+
+                <!-- BACK -->
+                <a class="btn"
+                   style="
+                       border:1px solid #6B7280;
+                       color:#6B7280;
+                       border-radius:10px;
+                   "
+                   onmouseover="this.style.background='#6B7280'; this.style.color='white';"
+                   onmouseout="this.style.background='transparent'; this.style.color='#6B7280';"
+                   href="{{ path('app_sante_bien_etre_index') }}">
+                    <i class="bi bi-arrow-left me-1"></i>Retour à la liste
+                </a>
+
+                <!-- EDIT -->
+                <a class="btn"
+                   style="
+                       background:#4CAF8E;
+                       color:white;
+                       border-radius:10px;
+                   "
+                   onmouseover="this.style.background='#2F7D6D';"
+                   onmouseout="this.style.background='#4CAF8E';"
+                   href="{{ path('app_sante_bien_etre_edit', {'id': sante_bien_etre.id}) }}">
+                    <i class="bi bi-pencil-square me-1"></i>Modifier
+                </a>
+
+                <!-- DELETE -->
+                {{ include('sante_bien_etre/_delete_form.html.twig', {
+                    sante_bien_etre: sante_bien_etre,
+                    button_class: 'btn',
+                    button_label: 'Supprimer',
+                    form_class: 'd-inline-block',
+                    confirm_message: 'Supprimer cet enregistrement de santé ?'
+                }) }}
+
+            </div>
+        </div>
+
+        <!-- DETAIL CARD -->
+        <div class="card content-card">
+            <div class="card-body p-0">
+
+                <div class="table-responsive">
+                    <table class="table detail-table align-middle mb-0">
+
+                        <tbody>
+
+                        <tr>
+                            <th>Id</th>
+                            <td>{{ sante_bien_etre.id }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Humeur</th>
+                            <td>
+                                    <span style="
+                                        background: rgba(76,175,142,0.15);
+                                        color:#2F7D6D;
+                                        padding:4px 10px;
+                                        border-radius:8px;
+                                    ">
+                                        {{ sante_bien_etre.humeur }}
+                                    </span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Niveau de stress</th>
+                            <td>{{ sante_bien_etre.niveauStress }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Qualité du sommeil</th>
+                            <td>{{ sante_bien_etre.qualiteSommeil }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Nutrition</th>
+                            <td>{{ sante_bien_etre.nutrition ?: '--' }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Activité physique</th>
+                            <td>{{ sante_bien_etre.activitePhysique ?: '--' }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Développement personnel</th>
+                            <td>{{ sante_bien_etre.developpementPersonnel ?: '--' }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Recommandations</th>
+                            <td class="text-break">
+                                <div style="
+                                        background:#F5F7F6;
+                                        padding:12px;
+                                        border-radius:10px;
+                                    ">
+                                    {{ sante_bien_etre.recommandations ?: '--' }}
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Date de suivi</th>
+                            <td>
+                                {{ sante_bien_etre.dateSuivi ? sante_bien_etre.dateSuivi|date('Y-m-d') : '--' }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Date de création</th>
+                            <td>
+                                {{ sante_bien_etre.dateCreation ? sante_bien_etre.dateCreation|date('Y-m-d H:i:s') : '--' }}
+                            </td>
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

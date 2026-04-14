@@ -1,0 +1,13 @@
+<form
+        class="{{ form_class|default('d-inline-block') }}"
+        method="post"
+        action="{{ path('app_humeurs_delete', {'id': humeur.id}) }}"
+        onsubmit="return confirm('{{ confirm_message|default('Supprimer cette entrée d\'humeur ?')|e('js') }}');"
+>
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ humeur.id) }}">
+
+    <button class="{{ button_class|default('btn-shell btn-shell-danger') }}">
+        <i class="bi bi-{{ button_icon|default('trash') }}"></i>
+        {{ button_label|default('Supprimer') }}
+    </button>
+</form>

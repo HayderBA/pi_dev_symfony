@@ -1,0 +1,31 @@
+{% extends 'wellness/base.html.twig' %}
+
+{% block title %}Nouveau conseil{% endblock %}
+
+{% block body %}
+    <div class="container wellness-page py-4 py-xl-5">
+        <div class="wellness-page-header">
+            <div class="wellness-page-copy">
+                <div class="page-kicker mb-2">Conseils</div>
+                <h1 class="wellness-title">Créer un conseil</h1>
+                <p class="wellness-lead">Ajouter une nouvelle recommandation pour le suivi du bien-être.</p>
+            </div>
+
+            <div class="wellness-actions">
+                <a class="btn-shell btn-shell-outline" href="{{ path('app_conseils_index') }}">
+                    <i class="bi bi-arrow-left"></i>Retour à la liste
+                </a>
+            </div>
+        </div>
+
+        <div class="card content-card wellness-form-card">
+            <div class="card-body">
+                {{ include('conseils/_form.html.twig', {
+                    button_label: 'Créer le conseil',
+                    button_icon: 'plus-lg',
+                    button_class: 'btn-shell btn-shell-primary'
+                }) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

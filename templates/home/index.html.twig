@@ -1,0 +1,163 @@
+{% extends 'wellness/base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block body %}
+    <div class="container py-4 py-lg-5">
+        <div class="row g-4 align-items-stretch">
+
+            <!-- LEFT HERO -->
+            <div class="col-lg-7">
+                <div class="card content-card h-100">
+                    <div class="card-body p-4 p-lg-5">
+
+                        <div class="page-kicker mb-2">Plateforme de santé</div>
+
+                        <h1 class="display-6 fw-bold mb-3">
+                            Suivez vos données de bien-être avec une interface Symfony plus claire.
+                        </h1>
+
+                        <p class="lead text-muted mb-4">
+                            Cet espace est connecté à la base de données <code>grownmind1</code> et inclut des tableaux de bord,
+                            statistiques, interfaces CRUD et navigation basée sur Bootstrap.
+                        </p>
+
+                        <div class="d-flex flex-wrap gap-3">
+                            <a class="btn btn-lg"
+                               style="background:#4CAF8E; color:white; border-radius:10px;"
+                               href="{{ path('app_dashboard') }}">
+                                <i class="bi bi-speedometer2 me-2"></i>Ouvrir le tableau de bord
+                            </a>
+
+                            <a class="btn btn-lg"
+                               style="border:1px solid #4CAF8E; color:#4CAF8E; border-radius:10px;"
+                               href="{{ path('app_sante_bien_etre_index') }}">
+                                <i class="bi bi-heart-pulse me-2"></i>Voir la santé
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT CARDS -->
+            <div class="col-lg-5">
+                <div class="row g-3">
+
+                    <!-- Dashboard -->
+                    <div class="col-12">
+                        <a class="card content-card text-decoration-none h-100" href="{{ path('app_dashboard') }}">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <span class="badge" style="background: rgba(76,175,142,0.15); color:#2F7D6D;">Tableau de bord</span>
+                                    <i class="bi bi-arrow-right fs-5" style="color:#4CAF8E;"></i>
+                                </div>
+                                <h2 class="h4 mb-2 text-dark">Vue générale</h2>
+                                <p class="text-muted mb-0">
+                                    Surveillez le stress, le sommeil et l’activité utilisateur depuis un seul endroit.
+                                </p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Sante -->
+                    <div class="col-md-6 col-lg-12">
+                        <a class="card content-card text-decoration-none h-100" href="{{ path('app_sante_bien_etre_index') }}">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <span class="badge" style="background: rgba(76,175,142,0.15); color:#2F7D6D;">Santé</span>
+                                    <i class="bi bi-arrow-right fs-5" style="color:#4CAF8E;"></i>
+                                </div>
+                                <h2 class="h4 mb-2 text-dark">Gérer les enregistrements</h2>
+                                <p class="text-muted mb-0">
+                                    Filtrer, trier, créer et mettre à jour les données de suivi du bien-être.
+                                </p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Sleep -->
+                    <div class="col-md-6 col-lg-12">
+                        <a class="card content-card text-decoration-none h-100" href="{{ path('app_sleep_tracking_index') }}">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <span class="badge" style="background: rgba(76,175,142,0.15); color:#2F7D6D;">Sommeil</span>
+                                    <i class="bi bi-arrow-right fs-5" style="color:#4CAF8E;"></i>
+                                </div>
+                                <h2 class="h4 mb-2 text-dark">Suivi du sommeil</h2>
+                                <p class="text-muted mb-0">
+                                    Suivez la durée du sommeil, l’heure de coucher, de réveil et la qualité.
+                                </p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Conseils -->
+                    <div class="col-md-6 col-lg-12">
+                        <a class="card content-card text-decoration-none h-100" href="{{ path('app_conseils_index') }}">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <span class="badge" style="background: rgba(76,175,142,0.15); color:#2F7D6D;">Conseils</span>
+                                    <i class="bi bi-arrow-right fs-5" style="color:#4CAF8E;"></i>
+                                </div>
+                                <h2 class="h4 mb-2 text-dark">Recommandations</h2>
+                                <p class="text-muted mb-0">
+                                    Consulter les conseils personnalisés selon votre état.
+                                </p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Humeurs -->
+                    <div class="col-md-6 col-lg-12">
+                        <a class="card content-card text-decoration-none h-100" href="{{ path('app_humeurs_index') }}">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <span class="badge" style="background: rgba(76,175,142,0.15); color:#2F7D6D;">Humeurs</span>
+                                    <i class="bi bi-arrow-right fs-5" style="color:#4CAF8E;"></i>
+                                </div>
+                                <h2 class="h4 mb-2 text-dark">Suivi des humeurs</h2>
+                                <p class="text-muted mb-0">
+                                    Enregistrer et suivre l’évolution de votre humeur.
+                                </p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Tests -->
+                    <div class="col-md-6 col-lg-12">
+                        <a class="card content-card text-decoration-none h-100" href="{{ path('app_tests_index') }}">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <span class="badge" style="background: rgba(76,175,142,0.15); color:#2F7D6D;">Tests</span>
+                                    <i class="bi bi-arrow-right fs-5" style="color:#4CAF8E;"></i>
+                                </div>
+                                <h2 class="h4 mb-2 text-dark">Tests psychologiques</h2>
+                                <p class="text-muted mb-0">
+                                    Évaluer le stress, l’anxiété et d’autres indicateurs de bien-être.
+                                </p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="col-md-6 col-lg-12">
+                        <a class="card content-card text-decoration-none h-100" href="{{ path('app_stats') }}">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <span class="badge" style="background: rgba(76,175,142,0.15); color:#2F7D6D;">Statistiques</span>
+                                    <i class="bi bi-arrow-right fs-5" style="color:#4CAF8E;"></i>
+                                </div>
+                                <h2 class="h4 mb-2 text-dark">Analyse des tendances</h2>
+                                <p class="text-muted mb-0">
+                                    Explorer l’évolution du stress et de la qualité du sommeil au fil du temps.
+                                </p>
+                            </div>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends 'wellness/base.html.twig' %}
+
+{% block title %}Détail du test{% endblock %}
+
+{% block body %}
+    <div class="container py-4">
+
+        <!-- HEADER -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3">Détail du test</h1>
+
+            <!-- BACK -->
+            <a href="{{ path('app_tests_index') }}"
+               class="btn"
+               style="
+                   border:1px solid #6B7280;
+                   color:#6B7280;
+                   border-radius:10px;
+                   padding:6px 12px;
+               "
+               onmouseover="this.style.background='#6B7280'; this.style.color='white';"
+               onmouseout="this.style.background='transparent'; this.style.color='#6B7280';">
+                <i class="bi bi-arrow-left me-1"></i>Retour à la liste
+            </a>
+        </div>
+
+        <!-- CARD -->
+        <div class="card content-card">
+            <div class="card-body p-0">
+
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+
+                        <tbody>
+
+                        <tr>
+                            <th>ID</th>
+                            <td>{{ test.id }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Type</th>
+                            <td>{{ test.typeTest }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Score</th>
+                            <td>
+                                <span style="
+                                    background: rgba(76,175,142,0.15);
+                                    color:#2F7D6D;
+                                    padding:4px 10px;
+                                    border-radius:8px;
+                                ">
+                                    {{ test.score }}
+                                </span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Date</th>
+                            <td>
+                                {{ test.dateTest ? test.dateTest|date('Y-m-d H:i') : '' }}
+                            </td>
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+                </div>
+
+                <!-- ACTIONS -->
+                <div class="p-4 d-flex gap-2 flex-wrap">
+
+                    <!-- EDIT -->
+                    <a href="{{ path('app_tests_edit', {'id': test.id}) }}"
+                       class="btn"
+                       style="
+                           background:#4CAF8E;
+                           color:white;
+                           border-radius:10px;
+                           padding:8px 16px;
+                       "
+                       onmouseover="this.style.background='#2F7D6D';"
+                       onmouseout="this.style.background='#4CAF8E';">
+                        <i class="bi bi-pencil-square me-1"></i>Modifier
+                    </a>
+
+                    <!-- DELETE -->
+                    {{ include('tests/_delete_form.html.twig') }}
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

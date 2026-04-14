@@ -1,0 +1,41 @@
+{% extends 'wellness/base.html.twig' %}
+
+{% block title %}Modifier humeur{% endblock %}
+
+{% block body %}
+    <div class="container wellness-page py-4 py-xl-5">
+        <div class="wellness-page-header">
+            <div class="wellness-page-copy">
+                <div class="page-kicker mb-2">Humeurs</div>
+                <h1 class="wellness-title">Modifier l'entrée #{{ humeur.id }}</h1>
+                <p class="wellness-lead">Ajuster le niveau d'humeur ou les notes pour cette entrée.</p>
+            </div>
+
+            <div class="wellness-actions">
+                <a class="btn-shell btn-shell-outline" href="{{ path('app_humeurs_index') }}">
+                    <i class="bi bi-arrow-left"></i>Retour à la liste
+                </a>
+                <a class="btn-shell btn-shell-outline" href="{{ path('app_humeurs_show', {'id': humeur.id}) }}">
+                    <i class="bi bi-eye"></i>Voir détails
+                </a>
+                {{ include('humeurs/_delete_form.html.twig', {
+                    humeur: humeur,
+                    button_class: 'btn-shell btn-shell-danger',
+                    button_label: 'Supprimer',
+                    form_class: 'd-inline-block',
+                    confirm_message: 'Supprimer cette entrée d\'humeur ?'
+                }) }}
+            </div>
+        </div>
+
+        <div class="card content-card wellness-form-card">
+            <div class="card-body">
+                {{ include('humeurs/_form.html.twig', {
+                    button_label: 'Enregistrer les modifications',
+                    button_icon: 'save',
+                    button_class: 'btn-shell btn-shell-primary'
+                }) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

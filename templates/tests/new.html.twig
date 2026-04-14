@@ -1,0 +1,31 @@
+{% extends 'wellness/base.html.twig' %}
+
+{% block title %}Créer un test{% endblock %}
+
+{% block body %}
+    <div class="container wellness-page py-4 py-xl-5">
+        <div class="wellness-page-header">
+            <div class="wellness-page-copy">
+                <div class="page-kicker mb-2">Tests</div>
+                <h1 class="wellness-title">Créer un test</h1>
+                <p class="wellness-lead">Ajouter un test psychologique et l'associer à un utilisateur du module.</p>
+            </div>
+
+            <div class="wellness-actions">
+                <a class="btn-shell btn-shell-outline" href="{{ path('app_tests_index') }}">
+                    <i class="bi bi-arrow-left"></i>Retour à la liste
+                </a>
+            </div>
+        </div>
+
+        <div class="card content-card wellness-form-card">
+            <div class="card-body">
+                {{ include('tests/_form.html.twig', {
+                    button_label: 'Créer le test',
+                    button_icon: 'plus-lg',
+                    button_class: 'btn-shell btn-shell-primary'
+                }) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

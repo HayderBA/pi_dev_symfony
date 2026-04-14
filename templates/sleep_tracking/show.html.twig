@@ -1,0 +1,139 @@
+{% extends 'wellness/base.html.twig' %}
+
+{% block title %}Détails de l’enregistrement de sommeil{% endblock %}
+
+{% block body %}
+    <div class="container py-4">
+
+        <!-- HEADER -->
+        <div class="d-flex flex-column flex-xl-row justify-content-between align-items-xl-center gap-3 mb-4">
+            <div>
+                <div class="page-kicker mb-2">Suivi du sommeil</div>
+                <h1 class="h2 mb-1">Enregistrement de sommeil #{{ sleep_tracking.id }}</h1>
+                <p class="text-muted mb-0">Vue détaillée de cet enregistrement de sommeil.</p>
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="d-flex flex-wrap gap-2">
+
+                <!-- BACK -->
+                <a class="btn"
+                   style="
+                       border:1px solid #6B7280;
+                       color:#6B7280;
+                       border-radius:10px;
+                   "
+                   onmouseover="this.style.background='#6B7280'; this.style.color='white';"
+                   onmouseout="this.style.background='transparent'; this.style.color='#6B7280';"
+                   href="{{ path('app_sleep_tracking_index') }}">
+                    <i class="bi bi-arrow-left me-1"></i>Retour à la liste
+                </a>
+
+                <!-- EDIT -->
+                <a class="btn"
+                   style="
+                       background:#4CAF8E;
+                       color:white;
+                       border-radius:10px;
+                   "
+                   onmouseover="this.style.background='#2F7D6D';"
+                   onmouseout="this.style.background='#4CAF8E';"
+                   href="{{ path('app_sleep_tracking_edit', {'id': sleep_tracking.id}) }}">
+                    <i class="bi bi-pencil-square me-1"></i>Modifier
+                </a>
+
+                <!-- DELETE -->
+                {{ include('sleep_tracking/_delete_form.html.twig', {
+                    sleep_tracking: sleep_tracking,
+                    button_class: 'btn',
+                    button_label: 'Supprimer',
+                    form_class: 'd-inline-block',
+                    confirm_message: 'Supprimer cet enregistrement de sommeil ?'
+                }) }}
+
+            </div>
+        </div>
+
+        <!-- DETAIL CARD -->
+        <div class="card content-card">
+            <div class="card-body p-0">
+
+                <div class="table-responsive">
+                    <table class="table detail-table align-middle mb-0">
+
+                        <tbody>
+
+                        <tr>
+                            <th>Id</th>
+                            <td>{{ sleep_tracking.id }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Date de sommeil</th>
+                            <td>
+                                {{ sleep_tracking.dateSommeil ? sleep_tracking.dateSommeil|date('Y-m-d') : '--' }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Heure de coucher</th>
+                            <td>
+                                {{ sleep_tracking.heureCoucher ? sleep_tracking.heureCoucher|date('H:i:s') : '--' }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Heure de réveil</th>
+                            <td>
+                                {{ sleep_tracking.heureReveil ? sleep_tracking.heureReveil|date('H:i:s') : '--' }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Durée</th>
+                            <td>
+                                    <span style="
+                                        background: rgba(76,175,142,0.15);
+                                        color:#2F7D6D;
+                                        padding:4px 10px;
+                                        border-radius:8px;
+                                    ">
+                                        {{ sleep_tracking.dureeMinutes }} min
+                                    </span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Qualité du sommeil</th>
+                            <td>{{ sleep_tracking.qualiteSommeil }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Commentaire</th>
+                            <td class="text-break">
+                                <div style="
+                                        background:#F5F7F6;
+                                        padding:12px;
+                                        border-radius:10px;
+                                    ">
+                                    {{ sleep_tracking.commentaire ?: '--' }}
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Date de création</th>
+                            <td>
+                                {{ sleep_tracking.dateCreation ? sleep_tracking.dateCreation|date('Y-m-d H:i:s') : '--' }}
+                            </td>
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
