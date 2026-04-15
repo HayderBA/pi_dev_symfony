@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\ForumPost;
+use App\Entity\Reponse;
 use App\Form\ForumPostType;
+use App\Form\ReponseType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -63,17 +65,38 @@ class ForumController extends AbstractController
     }
 
     #[Route('/forum/{id}', name: 'forum_show')]
-    public function show($id, EntityManagerInterface $em): Response
+    public function show($id, Request $request, EntityManagerInterface $em): Response
     {
         $post = $em->getRepository(ForumPost::class)->find($id);
         if (!$post) {
             $this->addFlash('error', 'Discussion introuvable');
             return $this->redirectToRoute('forum_index');
         }
+
+        // Incrémenter les vues
         $post->setVues($post->getVues() + 1);
         $em->flush();
 
-        return $this->render('forum/show.html.twig', ['post' => $post]);
+        // Formulaire de réponse
+        $reponse = new Reponse();
+        $reponse->setDateCreation(new \DateTimeImmutable());
+        $reponse->setLikes(0);
+        $reponse->setDislikes(0);
+        $form = $this->createForm(ReponseType::class, $reponse);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $reponse->setForumPost($post);
+            $em->persist($reponse);
+            $em->flush();
+            $this->addFlash('success', 'Réponse ajoutée avec succès');
+            return $this->redirectToRoute('forum_show', ['id' => $post->getId()]);
+        }
+
+        return $this->render('forum/show.html.twig', [
+            'post' => $post,
+            'form' => $form->createView(),
+        ]);
     }
 
     #[Route('/forum/{id}/edit', name: 'forum_edit')]

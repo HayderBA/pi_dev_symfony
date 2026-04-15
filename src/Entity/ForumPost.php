@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ForumPostRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -53,6 +55,16 @@ class ForumPost
 
     #[ORM\Column]
     private ?int $dislikes = 0;
+
+    /**
+     * @var Collection<int, Reponse>
+     */
+    #[ORM\OneToMany(targetEntity: Reponse::class, mappedBy: 'forumPost')]    private Collection $reponses;
+    
+    public function __construct()
+    {
+        $this->reponses = new ArrayCollection();
+    }
 
     // Méthode privée pour filtrer un texte
     private function filterBadWords(string $text): string
@@ -133,4 +145,34 @@ class ForumPost
     public function getLikes(): ?int { return $this->likes; }
     public function getVues(): ?int { return $this->vues; }
     public function getDislikes(): ?int { return $this->dislikes; }
+
+    /**
+     * @return Collection<int, Reponse>
+     */
+    public function getReponses(): Collection
+    {
+        return $this->reponses;
+    }
+
+    public function addReponse(Reponse $reponse): static
+    {
+        if (!$this->reponses->contains($reponse)) {
+            $this->reponses->add($reponse);
+            $reponse->setForumpost($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReponse(Reponse $reponse): static
+    {
+        if ($this->reponses->removeElement($reponse)) {
+            // set the owning side to null (unless already changed)
+            if ($reponse->getForumpost() === $this) {
+                $reponse->setForumpost(null);
+            }
+        }
+
+        return $this;
+    }
 }
