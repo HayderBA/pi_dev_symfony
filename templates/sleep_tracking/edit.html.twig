@@ -1,0 +1,41 @@
+{% extends 'wellness/base.html.twig' %}
+
+{% block title %}Modifier suivi du sommeil{% endblock %}
+
+{% block body %}
+    <div class="container wellness-page py-4 py-xl-5">
+        <div class="wellness-page-header">
+            <div class="wellness-page-copy">
+                <div class="page-kicker mb-2">Suivi du sommeil</div>
+                <h1 class="wellness-title">Modifier l'enregistrement #{{ sleep_tracking.id }}</h1>
+                <p class="wellness-lead">Ajuster l'horaire, la durée, la qualité ou les commentaires pour cet enregistrement.</p>
+            </div>
+
+            <div class="wellness-actions">
+                <a class="btn-shell btn-shell-outline" href="{{ path('app_sleep_tracking_index') }}">
+                    <i class="bi bi-arrow-left"></i>Retour à la liste
+                </a>
+                <a class="btn-shell btn-shell-outline" href="{{ path('app_sleep_tracking_show', {'id': sleep_tracking.id}) }}">
+                    <i class="bi bi-eye"></i>Voir détails
+                </a>
+                {{ include('sleep_tracking/_delete_form.html.twig', {
+                    sleep_tracking: sleep_tracking,
+                    button_class: 'btn-shell btn-shell-danger',
+                    button_label: 'Supprimer',
+                    form_class: 'd-inline-block',
+                    confirm_message: 'Supprimer cet enregistrement de sommeil ?'
+                }) }}
+            </div>
+        </div>
+
+        <div class="card content-card wellness-form-card">
+            <div class="card-body">
+                {{ include('sleep_tracking/_form.html.twig', {
+                    button_label: 'Enregistrer les modifications',
+                    button_icon: 'save',
+                    button_class: 'btn-shell btn-shell-primary'
+                }) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

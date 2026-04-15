@@ -1,0 +1,41 @@
+{% extends 'wellness/base.html.twig' %}
+
+{% block title %}Modifier enregistrement de santé{% endblock %}
+
+{% block body %}
+    <div class="container wellness-page py-4 py-xl-5">
+        <div class="wellness-page-header">
+            <div class="wellness-page-copy">
+                <div class="page-kicker mb-2">Santé</div>
+                <h1 class="wellness-title">Modifier l'enregistrement #{{ sante_bien_etre.id }}</h1>
+                <p class="wellness-lead">Mettre à jour les indicateurs de bien-être et actualiser les recommandations.</p>
+            </div>
+
+            <div class="wellness-actions">
+                <a class="btn-shell btn-shell-outline" href="{{ path('app_sante_bien_etre_index') }}">
+                    <i class="bi bi-arrow-left"></i>Retour à la liste
+                </a>
+                <a class="btn-shell btn-shell-outline" href="{{ path('app_sante_bien_etre_show', {'id': sante_bien_etre.id}) }}">
+                    <i class="bi bi-eye"></i>Voir détails
+                </a>
+                {{ include('sante_bien_etre/_delete_form.html.twig', {
+                    sante_bien_etre: sante_bien_etre,
+                    button_class: 'btn-shell btn-shell-danger',
+                    button_label: 'Supprimer',
+                    form_class: 'd-inline-block',
+                    confirm_message: 'Supprimer cet enregistrement de santé ?'
+                }) }}
+            </div>
+        </div>
+
+        <div class="card content-card wellness-form-card">
+            <div class="card-body">
+                {{ include('sante_bien_etre/_form.html.twig', {
+                    button_label: 'Enregistrer les modifications',
+                    button_icon: 'save',
+                    button_class: 'btn-shell btn-shell-primary'
+                }) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

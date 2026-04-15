@@ -1,0 +1,13 @@
+<form
+        class="{{ form_class|default('d-inline-block') }}"
+        method="post"
+        action="{{ path('app_sleep_tracking_delete', {'id': sleep_tracking.id}) }}"
+        onsubmit="return confirm('{{ confirm_message|default('Supprimer cet enregistrement de sommeil ?')|e('js') }}');"
+>
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ sleep_tracking.id) }}">
+
+    <button class="{{ button_class|default('btn-shell btn-shell-danger') }}">
+        <i class="bi bi-{{ button_icon|default('trash') }}"></i>
+        {{ button_label|default('Supprimer') }}
+    </button>
+</form>

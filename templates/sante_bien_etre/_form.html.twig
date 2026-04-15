@@ -1,0 +1,56 @@
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
+
+{{ form_start(form, {'attr': {'class': 'wellness-form'}}) }}
+
+{% if not form.vars.valid %}
+    <div class="wellness-alert">
+        Merci de verifier les champs du formulaire avant de continuer.
+    </div>
+{% endif %}
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        {{ form_row(form.humeur) }}
+    </div>
+    <div class="col-lg-3">
+        {{ form_row(form.niveauStress) }}
+    </div>
+    <div class="col-lg-3">
+        {{ form_row(form.qualiteSommeil) }}
+    </div>
+
+    <div class="col-lg-6">
+        {{ form_row(form.nutrition) }}
+    </div>
+    <div class="col-lg-6">
+        {{ form_row(form.activitePhysique) }}
+    </div>
+
+    <div class="col-12">
+        {{ form_row(form.developpementPersonnel) }}
+    </div>
+
+    <div class="col-12">
+        {{ form_row(form.recommandations) }}
+    </div>
+
+    <div class="col-lg-6">
+        {{ form_row(form.dateSuivi) }}
+    </div>
+    <div class="col-lg-6">
+        {{ form_row(form.dateCreation) }}
+    </div>
+
+    <div class="col-lg-6">
+        {{ form_row(form.user) }}
+    </div>
+</div>
+
+<div class="wellness-form-actions">
+    <button class="{{ button_class|default('btn-shell btn-shell-primary') }}">
+        <i class="bi bi-{{ button_icon|default('check2-circle') }}"></i>
+        {{ button_label|default('Enregistrer') }}
+    </button>
+</div>
+
+{{ form_end(form) }}

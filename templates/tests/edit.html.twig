@@ -1,0 +1,41 @@
+{% extends 'wellness/base.html.twig' %}
+
+{% block title %}Modifier test{% endblock %}
+
+{% block body %}
+    <div class="container wellness-page py-4 py-xl-5">
+        <div class="wellness-page-header">
+            <div class="wellness-page-copy">
+                <div class="page-kicker mb-2">Tests</div>
+                <h1 class="wellness-title">Modifier le test #{{ test.id }}</h1>
+                <p class="wellness-lead">Mettre à jour le type de test, son score et l'utilisateur concerné.</p>
+            </div>
+
+            <div class="wellness-actions">
+                <a class="btn-shell btn-shell-outline" href="{{ path('app_tests_index') }}">
+                    <i class="bi bi-arrow-left"></i>Retour à la liste
+                </a>
+                <a class="btn-shell btn-shell-outline" href="{{ path('app_tests_show', {'id': test.id}) }}">
+                    <i class="bi bi-eye"></i>Voir détails
+                </a>
+                {{ include('tests/_delete_form.html.twig', {
+                    test: test,
+                    button_class: 'btn-shell btn-shell-danger',
+                    button_label: 'Supprimer',
+                    form_class: 'd-inline-block',
+                    confirm_message: 'Supprimer ce test ?'
+                }) }}
+            </div>
+        </div>
+
+        <div class="card content-card wellness-form-card">
+            <div class="card-body">
+                {{ include('tests/_form.html.twig', {
+                    button_label: 'Enregistrer les modifications',
+                    button_icon: 'save',
+                    button_class: 'btn-shell btn-shell-primary'
+                }) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

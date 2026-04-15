@@ -1,0 +1,41 @@
+{% extends 'wellness/base.html.twig' %}
+
+{% block title %}Modifier conseil{% endblock %}
+
+{% block body %}
+    <div class="container wellness-page py-4 py-xl-5">
+        <div class="wellness-page-header">
+            <div class="wellness-page-copy">
+                <div class="page-kicker mb-2">Conseils</div>
+                <h1 class="wellness-title">Modifier le conseil #{{ conseil.id }}</h1>
+                <p class="wellness-lead">Mettre à jour le contenu, le niveau ou la catégorie de cette recommandation.</p>
+            </div>
+
+            <div class="wellness-actions">
+                <a class="btn-shell btn-shell-outline" href="{{ path('app_conseils_index') }}">
+                    <i class="bi bi-arrow-left"></i>Retour à la liste
+                </a>
+                <a class="btn-shell btn-shell-outline" href="{{ path('app_conseils_show', {'id': conseil.id}) }}">
+                    <i class="bi bi-eye"></i>Voir détails
+                </a>
+                {{ include('conseils/_delete_form.html.twig', {
+                    conseil: conseil,
+                    button_class: 'btn-shell btn-shell-danger',
+                    button_label: 'Supprimer',
+                    form_class: 'd-inline-block',
+                    confirm_message: 'Supprimer ce conseil ?'
+                }) }}
+            </div>
+        </div>
+
+        <div class="card content-card wellness-form-card">
+            <div class="card-body">
+                {{ include('conseils/_form.html.twig', {
+                    button_label: 'Enregistrer les modifications',
+                    button_icon: 'save',
+                    button_class: 'btn-shell btn-shell-primary'
+                }) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -29,6 +29,20 @@
   --radius: 16px;
   --sidebar-width: 260px;
   --topbar-h: 68px;
+  --gm-control-height: 3.25rem;
+  --gm-control-radius: 1rem;
+  --gm-control-padding-y: 0.85rem;
+  --gm-control-padding-x: 1rem;
+  --gm-control-bg: rgba(255,255,255,.96);
+  --gm-control-bg-focus: #fff;
+  --gm-control-border: rgba(148,163,184,.28);
+  --gm-control-focus: var(--green);
+  --gm-control-ring: rgba(22,199,132,.18);
+  --gm-control-text: var(--text-primary);
+  --gm-control-placeholder: var(--text-muted);
+  --gm-control-label: var(--text-muted);
+  --gm-control-shadow: inset 0 1px 1px rgba(255,255,255,.72);
+  --gm-control-transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease, transform .18s ease;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -122,13 +136,51 @@ body {
 .topbar-title { font-size: 17px; font-weight: 600; flex: 1; }
 .topbar-search { position: relative; width: 280px; }
 .topbar-search input {
-  width: 100%; padding: 9px 16px 9px 40px;
-  background: var(--body-bg); border: 1px solid var(--border);
-  border-radius: 10px; font-size: 13.5px; font-family: 'DM Sans', sans-serif;
-  outline: none; transition: border-color .2s;
+  width: 100%;
+  min-height: 2.9rem;
+  padding: .72rem 1rem .72rem 2.6rem;
+  background: var(--gm-control-bg);
+  border: 1px solid var(--gm-control-border);
+  border-radius: .95rem;
+  font-size: .92rem;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--gm-control-text);
+  outline: none;
+  box-shadow: var(--gm-control-shadow);
+  transition: var(--gm-control-transition);
 }
-.topbar-search input:focus { border-color: var(--green); }
+.topbar-search input:focus {
+  border-color: var(--gm-control-focus);
+  box-shadow: 0 0 0 .25rem var(--gm-control-ring);
+  background: var(--gm-control-bg-focus);
+}
 .topbar-search i { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+
+.gm-input {
+  width: 100%;
+  min-height: var(--gm-control-height);
+  padding: var(--gm-control-padding-y) var(--gm-control-padding-x);
+  border: 1px solid var(--gm-control-border);
+  border-radius: var(--gm-control-radius);
+  background: var(--gm-control-bg);
+  color: var(--gm-control-text);
+  font-size: .98rem;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  box-shadow: var(--gm-control-shadow);
+  transition: var(--gm-control-transition);
+}
+.gm-input:focus {
+  border-color: var(--gm-control-focus);
+  box-shadow: 0 0 0 .25rem var(--gm-control-ring);
+  background: var(--gm-control-bg-focus);
+}
+.gm-input-compact {
+  min-height: 2.9rem;
+  padding: .72rem .95rem;
+  border-radius: .95rem;
+  font-size: .92rem;
+}
 
 .topbar-actions { display: flex; align-items: center; gap: 8px; }
 .icon-btn {
@@ -378,7 +430,7 @@ body {
     <span class="topbar-title">Admin Dashboard</span>
     <div class="topbar-search">
       <i class="bi bi-search"></i>
-      <input type="text" placeholder="Search users, appointments…"/>
+      <input type="text" class="gm-input gm-input-compact" placeholder="Search users, appointments..."/>
     </div>
     <div class="topbar-actions">
       <div class="icon-btn" title="Notifications"><i class="bi bi-bell"></i><span class="notif-dot"></span></div>
@@ -514,7 +566,7 @@ body {
           <div class="gm-card-header">
             <span class="gm-card-title">User Management</span>
             <div class="d-flex gap-2 align-items-center">
-              <input type="text" placeholder="Filter users…" style="padding:7px 14px;border-radius:9px;border:1px solid var(--border);font-size:12.5px;outline:none;font-family:'DM Sans',sans-serif;background:var(--body-bg);">
+              <input type="text" class="gm-input gm-input-compact" placeholder="Filter users...">
               <button class="btn-gm-primary"><i class="bi bi-plus-lg"></i> Add User</button>
             </div>
           </div>
@@ -523,7 +575,7 @@ body {
               <table class="gm-table">
                 <thead>
                   <tr>
-                    <th><input type="checkbox" style="width:14px;height:14px;accent-color:var(--green);cursor:pointer;"></th>
+                    <th><input type="checkbox" class="gm-check"></th>
                     <th>User</th>
                     <th>Role</th>
                     <th>Email</th>
@@ -535,7 +587,7 @@ body {
                 <tbody>
                   
                   <tr>
-                    <td><input type="checkbox" style="width:14px;height:14px;accent-color:var(--green);cursor:pointer;"></td>
+                    <td><input type="checkbox" class="gm-check"></td>
                     <td>
                       <div class="user-cell">
                         <div class="avatar-xs" </div>
@@ -559,7 +611,7 @@ body {
                   </tr>
                   {# Fallback static rows when no Twig data is passed #}
                   <tr>
-                    <td><input type="checkbox" style="width:14px;height:14px;accent-color:var(--green);cursor:pointer;"></td>
+                    <td><input type="checkbox" class="gm-check"></td>
                     <td><div class="user-cell"><div class="avatar-xs" style="background:linear-gradient(135deg,#16c784,#1e88e5)">LM</div><div><div style="font-weight:600;font-size:13.5px">Layla Mansour</div><div style="font-size:11.5px;color:var(--text-muted)">ID #00142</div></div></div></td>
                     <td><span class="tag tag-doctor">Doctor</span></td>
                     <td style="color:var(--text-muted);font-size:13px">layla@growmind.com</td>
@@ -568,7 +620,7 @@ body {
                     <td><div class="d-flex gap-1"><button class="btn-icon-sm" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-icon-sm" title="View"><i class="bi bi-eye"></i></button><button class="btn-icon-sm" title="Delete" style="color:#ef4444;"><i class="bi bi-trash"></i></button></div></td>
                   </tr>
                   <tr>
-                    <td><input type="checkbox" style="width:14px;height:14px;accent-color:var(--green);cursor:pointer;"></td>
+                    <td><input type="checkbox" class="gm-check"></td>
                     <td><div class="user-cell"><div class="avatar-xs" style="background:linear-gradient(135deg,#9333ea,#e879f9)">AK</div><div><div style="font-weight:600;font-size:13.5px">Adam Khalil</div><div style="font-size:11.5px;color:var(--text-muted)">ID #00891</div></div></div></td>
                     <td><span class="tag tag-patient">Patient</span></td>
                     <td style="color:var(--text-muted);font-size:13px">adam@email.com</td>
@@ -577,7 +629,7 @@ body {
                     <td><div class="d-flex gap-1"><button class="btn-icon-sm"><i class="bi bi-pencil"></i></button><button class="btn-icon-sm"><i class="bi bi-eye"></i></button><button class="btn-icon-sm" style="color:#ef4444;"><i class="bi bi-trash"></i></button></div></td>
                   </tr>
                   <tr>
-                    <td><input type="checkbox" style="width:14px;height:14px;accent-color:var(--green);cursor:pointer;"></td>
+                    <td><input type="checkbox" class="gm-check"></td>
                     <td><div class="user-cell"><div class="avatar-xs" style="background:linear-gradient(135deg,#ea580c,#f97316)">SR</div><div><div style="font-weight:600;font-size:13.5px">Sara Rahman</div><div style="font-size:11.5px;color:var(--text-muted)">ID #00220</div></div></div></td>
                     <td><span class="tag tag-admin">Admin</span></td>
                     <td style="color:var(--text-muted);font-size:13px">sara@growmind.com</td>
@@ -586,7 +638,7 @@ body {
                     <td><div class="d-flex gap-1"><button class="btn-icon-sm"><i class="bi bi-pencil"></i></button><button class="btn-icon-sm"><i class="bi bi-eye"></i></button><button class="btn-icon-sm" style="color:#ef4444;"><i class="bi bi-trash"></i></button></div></td>
                   </tr>
                   <tr>
-                    <td><input type="checkbox" style="width:14px;height:14px;accent-color:var(--green);cursor:pointer;"></td>
+                    <td><input type="checkbox" class="gm-check"></td>
                     <td><div class="user-cell"><div class="avatar-xs" style="background:linear-gradient(135deg,#0891b2,#06b6d4)">JT</div><div><div style="font-weight:600;font-size:13.5px">James Tran</div><div style="font-size:11.5px;color:var(--text-muted)">ID #01034</div></div></div></td>
                     <td><span class="tag tag-patient">Patient</span></td>
                     <td style="color:var(--text-muted);font-size:13px">james@email.com</td>
@@ -595,7 +647,7 @@ body {
                     <td><div class="d-flex gap-1"><button class="btn-icon-sm"><i class="bi bi-pencil"></i></button><button class="btn-icon-sm"><i class="bi bi-eye"></i></button><button class="btn-icon-sm" style="color:#ef4444;"><i class="bi bi-trash"></i></button></div></td>
                   </tr>
                   <tr>
-                    <td><input type="checkbox" style="width:14px;height:14px;accent-color:var(--green);cursor:pointer;"></td>
+                    <td><input type="checkbox" class="gm-check"></td>
                     <td><div class="user-cell"><div class="avatar-xs" style="background:linear-gradient(135deg,#dc2626,#f87171)">NB</div><div><div style="font-weight:600;font-size:13.5px">Nadia Benali</div><div style="font-size:11.5px;color:var(--text-muted)">ID #00556</div></div></div></td>
                     <td><span class="tag tag-doctor">Doctor</span></td>
                     <td style="color:var(--text-muted);font-size:13px">nadia@growmind.com</td>

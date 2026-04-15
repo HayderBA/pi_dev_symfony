@@ -1,0 +1,170 @@
+@charset "UTF-8";
+
+:root {
+  --gm-control-height: 3.35rem;
+  --gm-control-radius: 1rem;
+  --gm-control-padding-y: 0.9rem;
+  --gm-control-padding-x: 1rem;
+  --gm-control-bg: rgba(255, 255, 255, 0.96);
+  --gm-control-bg-focus: #ffffff;
+  --gm-control-border: rgba(95, 123, 115, 0.22);
+  --gm-control-focus: #4caf8e;
+  --gm-control-ring: rgba(76, 175, 142, 0.16);
+  --gm-control-text: #16352f;
+  --gm-control-placeholder: #7c978f;
+  --gm-control-label: #1e4038;
+  --gm-control-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.7);
+  --gm-control-transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease, transform 0.18s ease;
+}
+
+.gm-form-shell .form-label,
+.wellness-form .form-label,
+.gm-label {
+  margin-bottom: 0.7rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gm-control-label);
+}
+
+.gm-form-shell .form-control,
+.gm-form-shell .form-select,
+.wellness-form .form-control,
+.wellness-form .form-select,
+.gm-input {
+  width: 100%;
+  min-height: var(--gm-control-height);
+  padding: var(--gm-control-padding-y) var(--gm-control-padding-x);
+  border: 1px solid var(--gm-control-border);
+  border-radius: var(--gm-control-radius);
+  background: var(--gm-control-bg);
+  color: var(--gm-control-text);
+  font: inherit;
+  line-height: 1.45;
+  box-shadow: var(--gm-control-shadow);
+  transition: var(--gm-control-transition);
+}
+
+.gm-form-shell textarea.form-control,
+.wellness-form textarea.form-control,
+textarea.gm-input {
+  resize: vertical;
+}
+
+.gm-form-shell .form-control::placeholder,
+.gm-form-shell .form-select::placeholder,
+.wellness-form .form-control::placeholder,
+.wellness-form .form-select::placeholder,
+.gm-input::placeholder {
+  color: var(--gm-control-placeholder);
+}
+
+.gm-form-shell .form-control:focus,
+.gm-form-shell .form-select:focus,
+.wellness-form .form-control:focus,
+.wellness-form .form-select:focus,
+.gm-input:focus {
+  border-color: var(--gm-control-focus);
+  background: var(--gm-control-bg-focus);
+  box-shadow: 0 0 0 0.25rem var(--gm-control-ring);
+  outline: none;
+}
+
+.gm-form-shell .form-control:disabled,
+.gm-form-shell .form-select:disabled,
+.wellness-form .form-control:disabled,
+.wellness-form .form-select:disabled,
+.gm-input:disabled {
+  opacity: 0.72;
+  cursor: not-allowed;
+}
+
+.gm-input-compact {
+  min-height: 2.9rem;
+  padding: 0.72rem 0.95rem;
+  border-radius: 0.95rem;
+  font-size: 0.92rem;
+}
+
+.gm-choice-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.gm-choice-card {
+  flex: 1 1 0;
+  min-width: 10rem;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-height: var(--gm-control-height);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--gm-control-border);
+  border-radius: var(--gm-control-radius);
+  background: var(--gm-control-bg);
+  color: var(--gm-control-text);
+  box-shadow: var(--gm-control-shadow);
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: var(--gm-control-transition);
+}
+
+.gm-choice-card:hover,
+.gm-choice-card.is-active {
+  border-color: var(--gm-control-focus);
+  background: color-mix(in srgb, var(--gm-control-focus), white 88%);
+  box-shadow: 0 0 0 0.2rem var(--gm-control-ring);
+  transform: translateY(-1px);
+}
+
+.gm-choice-card input[type="radio"],
+.gm-choice-card input[type="checkbox"] {
+  margin: 0;
+}
+
+.gm-range,
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--gm-control-focus);
+  cursor: pointer;
+}
+
+.gm-check,
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--gm-control-focus);
+}
+
+.gm-check {
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+}
+
+.invalid-feedback,
+.form-error-message {
+  font-size: 0.9rem;
+}
+
+.find-a-doctor .search-section .search-form .search-input-group {
+  border: 1px solid var(--gm-control-border);
+  box-shadow: 0 20px 60px color-mix(in srgb, var(--gm-control-focus), transparent 88%);
+}
+
+.find-a-doctor .search-section .search-form .search-input-group:focus-within {
+  border-color: var(--gm-control-focus);
+  box-shadow: 0 0 0 0.25rem var(--gm-control-ring), 0 24px 60px color-mix(in srgb, var(--gm-control-focus), transparent 86%);
+}
+
+.find-a-doctor .search-section .search-form .form-control,
+.find-a-doctor .search-section .search-form .form-select {
+  min-height: var(--gm-control-height);
+  box-shadow: none;
+}
+
+@media (max-width: 767px) {
+  .gm-choice-card {
+    min-width: 100%;
+  }
+}

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}GrowMind Wellness{% endblock %}</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="{{ asset('assets/css/forms.css') }}" rel="stylesheet">
+
+    <style>
+        :root {
+            --wellness-primary: #4caf8e;
+            --wellness-primary-dark: #2f7d6d;
+            --wellness-bg: #f4fbf8;
+            --wellness-surface: rgba(255, 255, 255, 0.84);
+            --wellness-border: rgba(47, 125, 109, 0.14);
+            --wellness-text: #16352f;
+            --wellness-muted: #5f7b73;
+        }
+
+        body {
+            min-height: 100vh;
+            color: var(--wellness-text);
+            background:
+                radial-gradient(circle at top left, rgba(76, 175, 142, 0.18), transparent 30%),
+                radial-gradient(circle at bottom right, rgba(47, 125, 109, 0.16), transparent 26%),
+                linear-gradient(180deg, #fcfffd 0%, var(--wellness-bg) 100%);
+        }
+
+        .app-shell {
+            min-height: 100vh;
+        }
+
+        .glass-navbar {
+            backdrop-filter: blur(14px);
+            background: rgba(255, 255, 255, 0.8);
+            border-bottom: 1px solid var(--wellness-border);
+        }
+
+        .navbar-brand-mark {
+            width: 2.5rem;
+            height: 2.5rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.9rem;
+            color: #fff;
+            background: linear-gradient(135deg, var(--wellness-primary), var(--wellness-primary-dark));
+            box-shadow: 0 10px 24px rgba(76, 175, 142, 0.28);
+        }
+
+        .navbar-brand,
+        .navbar-brand:hover,
+        .nav-link,
+        .nav-link:hover {
+            color: var(--wellness-text);
+        }
+
+        .nav-link {
+            padding: 0.65rem 0.9rem;
+            border-radius: 999px;
+            transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+        }
+
+        .nav-link.active,
+        .nav-link:hover {
+            color: var(--wellness-primary-dark);
+            background: rgba(76, 175, 142, 0.12);
+            transform: translateY(-1px);
+        }
+
+        .app-main {
+            padding: 2rem 0 3rem;
+        }
+
+        .page-frame {
+            padding-top: 1rem;
+        }
+
+        .wellness-page {
+            max-width: 1500px;
+        }
+
+        .wellness-page-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .wellness-page-copy {
+            max-width: 52rem;
+        }
+
+        .wellness-title {
+            margin: 0;
+            font-size: clamp(2rem, 4vw, 3rem);
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+            color: #12352d;
+        }
+
+        .wellness-lead {
+            margin: 0.85rem 0 0;
+            font-size: 1.12rem;
+            line-height: 1.6;
+            color: var(--wellness-muted);
+        }
+
+        .wellness-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: flex-end;
+        }
+
+        .content-card,
+        .card.content-card {
+            border: 1px solid var(--wellness-border);
+            border-radius: 1.35rem;
+            background: var(--wellness-surface);
+            box-shadow: 0 20px 45px rgba(23, 66, 57, 0.08);
+        }
+
+        .wellness-form-card {
+            overflow: hidden;
+        }
+
+        .wellness-form-card .card-body {
+            padding: 2rem;
+        }
+
+        .page-kicker,
+        .footer-note {
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            color: var(--wellness-muted);
+        }
+
+        .btn-shell {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            min-height: 3rem;
+            padding: 0.8rem 1.2rem;
+            border-radius: 1rem;
+            border: 1px solid transparent;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+        }
+
+        .btn-shell:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-shell-primary {
+            color: #fff;
+            background: linear-gradient(135deg, var(--wellness-primary), var(--wellness-primary-dark));
+            box-shadow: 0 18px 28px rgba(76, 175, 142, 0.26);
+        }
+
+        .btn-shell-primary:hover {
+            color: #fff;
+            box-shadow: 0 22px 32px rgba(47, 125, 109, 0.28);
+        }
+
+        .btn-shell-outline {
+            color: #5a6f69;
+            border-color: rgba(95, 123, 115, 0.45);
+            background: rgba(255, 255, 255, 0.72);
+        }
+
+        .btn-shell-outline:hover {
+            color: var(--wellness-text);
+            border-color: rgba(47, 125, 109, 0.28);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .btn-shell-danger {
+            color: #c0392b;
+            border-color: rgba(192, 57, 43, 0.28);
+            background: rgba(255, 255, 255, 0.72);
+        }
+
+        .btn-shell-danger:hover {
+            color: #fff;
+            border-color: #c0392b;
+            background: #c0392b;
+        }
+
+        .wellness-form {
+            display: block;
+        }
+
+        .wellness-form .form-label {
+            margin-bottom: 0.7rem;
+            font-weight: 600;
+            font-size: 1rem;
+            color: #1e4038;
+        }
+
+        .wellness-form .form-control,
+        .wellness-form .form-select {
+            min-height: 3.35rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(95, 123, 115, 0.22);
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.7);
+            padding: 0.9rem 1rem;
+            color: var(--wellness-text);
+        }
+
+        .wellness-form textarea.form-control {
+            min-height: 8rem;
+            resize: vertical;
+        }
+
+        .wellness-form .form-control:focus,
+        .wellness-form .form-select:focus {
+            border-color: rgba(76, 175, 142, 0.85);
+            box-shadow: 0 0 0 0.25rem rgba(76, 175, 142, 0.16);
+        }
+
+        .wellness-form .form-text {
+            color: var(--wellness-muted);
+        }
+
+        .wellness-form .invalid-feedback,
+        .wellness-form .form-error-message {
+            font-size: 0.9rem;
+            color: #c0392b;
+        }
+
+        .wellness-form-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            margin-top: 2rem;
+        }
+
+        .wellness-alert {
+            margin-bottom: 1.5rem;
+            padding: 1rem 1.1rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(192, 57, 43, 0.18);
+            background: rgba(255, 246, 246, 0.92);
+            color: #8f2d22;
+        }
+
+        .table thead th {
+            color: var(--wellness-muted);
+        }
+
+        .btn-primary,
+        .btn-success {
+            background: var(--wellness-primary);
+            border-color: var(--wellness-primary);
+        }
+
+        .btn-primary:hover,
+        .btn-success:hover {
+            background: var(--wellness-primary-dark);
+            border-color: var(--wellness-primary-dark);
+        }
+
+        @media (max-width: 991.98px) {
+            .wellness-page-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .wellness-actions {
+                justify-content: flex-start;
+            }
+
+            .wellness-form-card .card-body {
+                padding: 1.4rem;
+            }
+        }
+    </style>
+
+    {% block stylesheets %}{% endblock %}
+
+    {% block javascripts %}
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+    {% endblock %}
+</head>
+
+<body>
+{% set currentRoute = app.request ? app.request.attributes.get('_route') : '' %}
+
+<div class="app-shell">
+    <nav class="navbar navbar-expand-lg glass-navbar sticky-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-3 fw-semibold" href="{{ path('app_wellness_home') }}">
+                <span class="navbar-brand-mark">
+                    <i class="bi bi-heart-pulse-fill"></i>
+                </span>
+                <span>GrowMind Wellness</span>
+            </a>
+
+            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#appNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="appNavbar">
+                <ul class="navbar-nav ms-auto gap-lg-2">
+                    <li class="nav-item">
+                        <a class="nav-link {{ currentRoute == 'app_dashboard' ? 'active' : '' }}" href="{{ path('app_dashboard') }}">
+                            <i class="bi bi-speedometer2 me-1"></i>Tableau de bord
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ currentRoute starts with 'app_sante_bien_etre_' ? 'active' : '' }}" href="{{ path('app_sante_bien_etre_index') }}">
+                            <i class="bi bi-heart-pulse me-1"></i>Sant&eacute;
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ currentRoute starts with 'app_sleep_tracking_' ? 'active' : '' }}" href="{{ path('app_sleep_tracking_index') }}">
+                            <i class="bi bi-moon-stars me-1"></i>Sommeil
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ currentRoute starts with 'app_conseils_' ? 'active' : '' }}" href="{{ path('app_conseils_index') }}">
+                            <i class="bi bi-lightbulb me-1"></i>Conseils
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ currentRoute starts with 'app_humeurs_' ? 'active' : '' }}" href="{{ path('app_humeurs_index') }}">
+                            <i class="bi bi-emoji-smile me-1"></i>Humeurs
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ currentRoute starts with 'app_tests_' ? 'active' : '' }}" href="{{ path('app_tests_index') }}">
+                            <i class="bi bi-clipboard-pulse me-1"></i>Tests
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ currentRoute == 'app_stats' ? 'active' : '' }}" href="{{ path('app_stats') }}">
+                            <i class="bi bi-graph-up-arrow me-1"></i>Statistiques
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="app-main">
+        <div class="page-frame">
+            {% for label, messages in app.flashes %}
+                <div class="container mb-3">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ label == 'error' ? 'danger' : label }} border-0 shadow-sm">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            {% block body %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="border-top bg-white bg-opacity-75">
+        <div class="container py-3 d-flex flex-column flex-md-row justify-content-between">
+            <span class="footer-note">GrowMind &copy; 2026</span>
+            <span class="footer-note">Tableau de bord de sant&eacute; mentale</span>
+        </div>
+    </footer>
+</div>
+
+</body>
+</html>

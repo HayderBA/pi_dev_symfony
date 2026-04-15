@@ -28,6 +28,20 @@
   --radius: 16px;
   --sidebar-width: 260px;
   --topbar-h: 68px;
+  --gm-control-height: 3.25rem;
+  --gm-control-radius: 1rem;
+  --gm-control-padding-y: 0.85rem;
+  --gm-control-padding-x: 1rem;
+  --gm-control-bg: rgba(255,255,255,.96);
+  --gm-control-bg-focus: #fff;
+  --gm-control-border: rgba(148,163,184,.28);
+  --gm-control-focus: var(--green);
+  --gm-control-ring: rgba(22,199,132,.18);
+  --gm-control-text: var(--text-primary);
+  --gm-control-placeholder: var(--text-muted);
+  --gm-control-label: var(--text-muted);
+  --gm-control-shadow: inset 0 1px 1px rgba(255,255,255,.72);
+  --gm-control-transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease, transform .18s ease;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'DM Sans', sans-serif; background: var(--body-bg); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; }
@@ -133,9 +147,9 @@ body { font-family: 'DM Sans', sans-serif; background: var(--body-bg); color: va
 
 /* Form */
 .book-form { background: var(--body-bg); border-radius: 12px; padding: 20px; }
-.gm-input { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13.5px; font-family: 'DM Sans', sans-serif; outline: none; transition: border-color .2s; background: #fff; }
-.gm-input:focus { border-color: var(--green); }
-.gm-label { font-size: 12.5px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; display: block; }
+.gm-input { width: 100%; min-height: var(--gm-control-height); padding: var(--gm-control-padding-y) var(--gm-control-padding-x); border: 1px solid var(--gm-control-border); border-radius: var(--gm-control-radius); font-size: .98rem; font-family: 'DM Sans', sans-serif; outline: none; transition: var(--gm-control-transition); background: var(--gm-control-bg); color: var(--gm-control-text); box-shadow: var(--gm-control-shadow); }
+.gm-input:focus { border-color: var(--gm-control-focus); background: var(--gm-control-bg-focus); box-shadow: 0 0 0 .25rem var(--gm-control-ring); }
+.gm-label { font-size: .95rem; font-weight: 600; color: var(--gm-control-label); margin-bottom: .7rem; display: block; }
 
 /* Stats mini */
 .mini-stat { text-align: center; padding: 14px; border-radius: 12px; background: var(--body-bg); }
@@ -477,7 +491,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--body-bg); color: va
             <div id="moodMsg" style="background:var(--green-light);border-left:3px solid var(--green);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--green-dark);font-weight:500;margin-bottom:16px;">
               😊 Glad you're feeling good today! That's progress worth celebrating.
             </div>
-            <textarea style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;resize:vertical;background:var(--body-bg);" rows="2" placeholder="Any thoughts to capture? (optional)…"></textarea>
+            <textarea class="gm-input" rows="2" placeholder="Any thoughts to capture? (optional)..."></textarea>
             <button class="btn-gm-primary mt-3 w-100" style="justify-content:center;"><i class="bi bi-check-circle-fill"></i> Log My Mood</button>
 
             <!-- Mood history -->
@@ -542,12 +556,12 @@ body { font-family: 'DM Sans', sans-serif; background: var(--body-bg); color: va
               </div>
               <div class="mb-3">
                 <label class="gm-label">Session Type</label>
-                <div class="d-flex gap-2">
-                  <label style="flex:1;display:flex;align-items:center;gap:6px;padding:10px 12px;border:1.5px solid var(--green);border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;background:var(--green-light);">
-                    <input type="radio" name="stype" checked style="accent-color:var(--green)"> <i class="bi bi-camera-video" style="color:var(--green)"></i> Video
+                <div class="gm-choice-grid">
+                  <label class="gm-choice-card is-active">
+                    <input type="radio" name="stype" checked> <i class="bi bi-camera-video" style="color:var(--green)"></i> Video
                   </label>
-                  <label style="flex:1;display:flex;align-items:center;gap:6px;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;">
-                    <input type="radio" name="stype" style="accent-color:var(--green)"> <i class="bi bi-building"></i> In-Person
+                  <label class="gm-choice-card">
+                    <input type="radio" name="stype"> <i class="bi bi-building"></i> In-Person
                   </label>
                 </div>
               </div>

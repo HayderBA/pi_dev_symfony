@@ -1,0 +1,136 @@
+{% extends 'wellness/base.html.twig' %}
+
+{% block title %}Conseils{% endblock %}
+
+{% block body %}
+    <div class="container py-4">
+
+        <!-- HEADER -->
+        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+            <div>
+                <div class="page-kicker mb-2">Conseils</div>
+                <h1 class="h2 mb-1">Catalogue des recommandations</h1>
+                <p class="text-muted mb-0">Gérer les conseils utilisés dans le suivi de santé.</p>
+            </div>
+
+            <!-- ADD BUTTON -->
+            <a class="btn"
+               style="
+                   background:#4CAF8E;
+                   color:white;
+                   border-radius:10px;
+                   padding:8px 16px;
+               "
+               onmouseover="this.style.background='#2F7D6D';"
+               onmouseout="this.style.background='#4CAF8E';"
+               href="{{ path('app_conseils_new') }}">
+                <i class="bi bi-plus-lg me-1"></i>Ajouter un conseil
+            </a>
+        </div>
+
+        <!-- CARD -->
+        <div class="card content-card">
+
+            <!-- HEADER CARD -->
+            <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 py-3 px-4">
+                <div>
+                    <h2 class="h5 mb-1">Tous les conseils</h2>
+                    <p class="text-muted mb-0">Organisés par état, niveau et catégorie.</p>
+                </div>
+
+                <span class="badge rounded-pill"
+                      style="background: rgba(76,175,142,0.15); color:#2F7D6D;">
+                    {{ conseils|length }} éléments
+                </span>
+            </div>
+
+            <!-- TABLE -->
+            <div class="card-body p-0">
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <!-- HEADER TABLE -->
+                        <thead style="background:#F5F7F6;">
+                        <tr>
+                            <th>Id</th>
+                            <th>Type</th>
+                            <th>Niveau</th>
+                            <th>Conseil</th>
+                            <th>Catégorie</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        {% for conseil in conseils %}
+                            <tr style="transition: all 0.2s ease;">
+                                <td>{{ conseil.id }}</td>
+                                <td>{{ conseil.typeEtat }}</td>
+                                <td>{{ conseil.niveau ?? '--' }}</td>
+                                <td>
+                                    {{ conseil.conseil|length > 120
+                                    ? conseil.conseil|slice(0, 120) ~ '...'
+                                    : conseil.conseil
+                                    }}
+                                </td>
+                                <td>{{ conseil.categorie ?? '--' }}</td>
+
+                                <!-- ACTIONS -->
+                                <td class="text-nowrap">
+                                    <div class="d-flex flex-wrap gap-2">
+
+                                        <!-- VIEW -->
+                                        <a class="btn btn-sm"
+                                           style="
+                                               border:1px solid #4CAF8E;
+                                               color:#4CAF8E;
+                                               border-radius:8px;
+                                           "
+                                           onmouseover="this.style.background='#4CAF8E'; this.style.color='white';"
+                                           onmouseout="this.style.background='transparent'; this.style.color='#4CAF8E';"
+                                           href="{{ path('app_conseils_show', {'id': conseil.id}) }}">
+                                            <i class="bi bi-eye me-1"></i>Voir
+                                        </a>
+
+                                        <!-- EDIT -->
+                                        <a class="btn btn-sm"
+                                           style="
+                                               border:1px solid #6B7280;
+                                               color:#6B7280;
+                                               border-radius:8px;
+                                           "
+                                           onmouseover="this.style.background='#6B7280'; this.style.color='white';"
+                                           onmouseout="this.style.background='transparent'; this.style.color='#6B7280';"
+                                           href="{{ path('app_conseils_edit', {'id': conseil.id}) }}">
+                                            <i class="bi bi-pencil-square me-1"></i>Modifier
+                                        </a>
+
+                                        <!-- DELETE -->
+                                        {{ include('conseils/_delete_form.html.twig', {
+                                            conseil: conseil,
+                                            button_class: 'btn btn-sm',
+                                            button_label: 'Supprimer',
+                                            form_class: 'd-inline-block',
+                                            confirm_message: 'Supprimer ce conseil ?'
+                                        }) }}
+
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td class="text-center py-4 empty-state" colspan="6">
+                                    Aucun conseil trouvé.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
