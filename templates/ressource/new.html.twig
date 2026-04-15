@@ -1,0 +1,28 @@
+{% extends 'back/base_back.html.twig' %}
+
+{% block title %}Créer Ressource{% endblock %}
+
+{% block admin_content %}
+<div class="page-header mb-4">
+  <div class="page-header-content">
+    <h1>Créer une Ressource</h1>
+    <p>Ajouter une nouvelle ressource à la plateforme.</p>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-10 offset-lg-1">
+    <div class="gm-card">
+      <div class="gm-card-header mb-3 pb-3" style="border-bottom: 1px solid var(--border);">
+        <span class="gm-card-title"><i class="bi bi-journal-plus"></i>  Formulaire Ressource</span>
+      </div>
+      <div class="gm-card-body p-4">
+        {{ include('ressource/_form.html.twig') }}
+      </div>
+      <div class="gm-card-body p-3" style="background:var(--body-bg);border-top:1px solid var(--border);">
+        <a href="{{ path('app_ressource_index') }}" class="btn-gm-outline text-decoration-none"><i class="bi bi-arrow-left"></i> Retour à la liste</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

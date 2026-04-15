@@ -1,0 +1,5 @@
+<form method="post" action="{{ path('app_favori_delete', {'id': favori.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir retirer ce favori ?');" style="display:inline-block;">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ favori.id) }}">
+    <button class="btn btn-danger"><i class="bi bi-trash"></i> Supprimer</button>
+</form>
+

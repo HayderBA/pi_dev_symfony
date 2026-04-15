@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'back/patient/base_patient.html.twig' %}
 
 {% block title %}Patient Dashboard - GrowMind{% endblock %}
 
@@ -267,30 +267,25 @@ body { font-family: 'DM Sans', sans-serif; background: var(--body-bg); color: va
   </header>
 
   <main class="page-content">
+{% block title %}Mon Dashboard - GrowMind{% endblock %}
 
+{% block patient_content %}
     <!-- Welcome Hero -->
     <div class="welcome-card">
       <div class="welcome-inner">
-        <div class="streak-pill"><i class="bi bi-fire"></i> -day check-in streak! Keep it up.</div>
-        <h2>Good morning 🌿</h2>
-        <p>Your mental wellness journey matters. Today is a great day to take a moment for yourself.
-          You have  upcoming appointments this week.</p>
+        <div class="streak-pill"><i class="bi bi-fire"></i> 5-day check-in streak! Keep it up.</div>
+        <h2>Bonjour {{ app.user.firstName|default('Ami') }} 🌿</h2>
+        <p>Votre voyage vers le bien-être continue. Aujourd'hui est un jour parfait pour prendre soin de vous.
+          Vous avez 2 rendez-vous prévus cette semaine.</p>
         <div class="d-flex gap-3 flex-wrap align-items-center">
           <button class="btn-gm-primary" onclick="document.getElementById('bookSection').scrollIntoView({behavior:'smooth'})">
-            <i class="bi bi-plus-circle-fill"></i> Book Appointment
+            <i class="bi bi-plus-circle-fill"></i> Prendre rendez-vous
           </button>
           <div class="next-appt-chip">
             <div class="chip-icon"><i class="bi bi-camera-video-fill" style="color:#fff;font-size:15px"></i></div>
             <div class="chip-text">
-              <div class="label">Next Appointment</div>
-            </div>
-          </div>
-          
-          <div class="next-appt-chip">
-            <div class="chip-icon"><i class="bi bi-camera-video-fill" style="color:#fff;font-size:15px"></i></div>
-            <div class="chip-text">
-              <div class="label">Next Appointment</div>
-              <div class="value">Today · 9:00 AM with Dr. Mansour</div>
+              <div class="label">Prochain RDV</div>
+              <div class="value">Aujourd'hui · 09:00 avec Dr. Mansour</div>
             </div>
           </div>
         </div>
@@ -302,109 +297,72 @@ body { font-family: 'DM Sans', sans-serif; background: var(--body-bg); color: va
       <div class="col-6 col-md-3">
         <div class="gm-card p-0">
           <div class="mini-stat">
-            <div class="val" style="color:var(--green)"></div>
-            <div class="lbl">Sessions Completed</div>
+            <div class="val" style="color:var(--green)">12</div>
+            <div class="lbl">Sessions Complétées</div>
           </div>
         </div>
       </div>
       <div class="col-6 col-md-3">
         <div class="gm-card p-0">
           <div class="mini-stat">
-            <div class="val" style="color:var(--blue)"></div>
-            <div class="lbl">Upcoming Appointments</div>
+            <div class="val" style="color:var(--blue)">2</div>
+            <div class="lbl">Rendez-vous à venir</div>
           </div>
         </div>
       </div>
       <div class="col-6 col-md-3">
         <div class="gm-card p-0">
           <div class="mini-stat">
-            <div class="val" style="color:#f59e0b"></div>
-            <div class="lbl">Day Streak 🔥</div>
+            <div class="val" style="color:#f59e0b">5</div>
+            <div class="lbl">Série de jours 🔥</div>
           </div>
         </div>
       </div>
       <div class="col-6 col-md-3">
         <div class="gm-card p-0">
           <div class="mini-stat">
-            <div class="val" style="color:#9333ea"></div>
-            <div class="lbl">Wellness Score</div>
+            <div class="val" style="color:#9333ea">78</div>
+            <div class="lbl">Score Bien-être</div>
           </div>
         </div>
       </div>
     </div>
 
     <div class="row g-3 mb-3">
-
       <!-- Upcoming Appointments -->
       <div class="col-lg-7">
-        <div class="gm-card">
+        <div class="gm-card h-100">
           <div class="gm-card-header">
-            <span class="gm-card-title"><i class="bi bi-calendar2-check-fill me-2" style="color:var(--green)"></i>Upcoming Appointments</span>
-            <button class="btn-gm-primary" style="padding:7px 14px;font-size:12.5px;" onclick="document.getElementById('bookSection').scrollIntoView({behavior:'smooth'})">
-              <i class="bi bi-plus-lg"></i> Book New
-            </button>
+            <span class="gm-card-title"><i class="bi bi-calendar2-check-fill me-2" style="color:var(--green)"></i>Rendez-vous à venir</span>
           </div>
           <div class="gm-card-body">
             <div class="d-flex flex-column gap-3">
               <div class="appt-card">
-                <div class="appt-date-box">
-                  <div class="day"></div>
-                  <div class="mon"></div>
-                </div>
-                <div class="appt-details">
-                  <div class="doc-name">Dr. </div>
-                  <div class="specialty"></div>
-                  <div class="appt-meta">
-                    <span class="chip chip-blue"><i class="bi bi-camera-video-fill"></i> Video Call</span>
-                    
-                    <span class="chip chip-green"><i class="bi bi-building"></i> In-Person</span>
-                    
-                    <span class="chip chip-gray"><i class="bi bi-clock"></i> </span>
-                    <span class="chip chip-gray"><i class="bi bi-hourglass-split"></i>  min</span>
-                  </div>
-                </div>
-                <div class="appt-actions">
-                  
-                  <button class="btn-gm-blue" style="padding:7px 14px;font-size:12px;"><i class="bi bi-camera-video-fill"></i> Join</button>
-                  
-                  <button class="btn-gm-primary" style="padding:7px 14px;font-size:12px;"><i class="bi bi-geo-alt-fill"></i> Directions</button>
-                  
-                  <button class="btn-gm-outline" style="padding:6px 12px;font-size:11.5px;">
-                    RescheduleCancel
-                  </button>
-                </div>
-              </div>
-              
-              <div class="appt-card">
-                <div class="appt-date-box"><div class="day">07</div><div class="mon">Apr</div></div>
+                <div class="appt-date-box"><div class="day">07</div><div class="mon">Avr</div></div>
                 <div class="appt-details">
                   <div class="doc-name">Dr. Layla Mansour</div>
-                  <div class="specialty">Psychiatrist & CBT Therapist</div>
+                  <div class="specialty">Psychiatre & Thérapeute TCC</div>
                   <div class="appt-meta">
-                    <span class="chip chip-blue"><i class="bi bi-camera-video-fill"></i> Video Call</span>
+                    <span class="chip chip-blue"><i class="bi bi-camera-video-fill"></i> Appel Vidéo</span>
                     <span class="chip chip-gray"><i class="bi bi-clock"></i> 9:00 AM</span>
-                    <span class="chip chip-gray"><i class="bi bi-hourglass-split"></i> 45 min</span>
                   </div>
                 </div>
                 <div class="appt-actions">
-                  <button class="btn-gm-blue" style="padding:7px 14px;font-size:12px;"><i class="bi bi-camera-video-fill"></i> Join</button>
-                  <button class="btn-gm-outline" style="padding:6px 12px;font-size:11.5px;">Reschedule</button>
+                  <button class="btn-gm-blue" style="padding:7px 14px;font-size:12px;"><i class="bi bi-camera-video-fill"></i> Rejoindre</button>
                 </div>
               </div>
               <div class="appt-card">
-                <div class="appt-date-box"><div class="day">14</div><div class="mon">Apr</div></div>
+                <div class="appt-date-box"><div class="day">14</div><div class="mon">Avr</div></div>
                 <div class="appt-details">
-                  <div class="doc-name">Dr. Layla Mansour</div>
-                  <div class="specialty">Psychiatrist & CBT Therapist</div>
+                  <div class="doc-name">Dr. Nadia Benali</div>
+                  <div class="specialty">Psychologue clinicienne</div>
                   <div class="appt-meta">
-                    <span class="chip chip-green"><i class="bi bi-building"></i> In-Person</span>
+                    <span class="chip chip-green"><i class="bi bi-building"></i> En présentiel</span>
                     <span class="chip chip-gray"><i class="bi bi-clock"></i> 10:30 AM</span>
-                    <span class="chip chip-gray"><i class="bi bi-hourglass-split"></i> 60 min</span>
                   </div>
                 </div>
                 <div class="appt-actions">
-                  <button class="btn-gm-primary" style="padding:7px 14px;font-size:12px;"><i class="bi bi-geo-alt-fill"></i> Directions</button>
-                  <button class="btn-gm-outline" style="padding:6px 12px;font-size:11.5px;">Cancel</button>
+                  <button class="btn-gm-outline" style="padding:6px 12px;font-size:11.5px;">Gérer</button>
                 </div>
               </div>
             </div>
@@ -416,8 +374,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--body-bg); color: va
       <div class="col-lg-5">
         <div class="gm-card h-100">
           <div class="gm-card-header">
-            <span class="gm-card-title"><i class="bi bi-heart-pulse-fill me-2" style="color:#ef4444"></i>Wellbeing Score</span>
-            <span style="font-size:12px;color:var(--text-muted)">This week</span>
+            <span class="gm-card-title"><i class="bi bi-heart-pulse-fill me-2" style="color:#ef4444"></i>Score Bien-être</span>
           </div>
           <div class="gm-card-body">
             <div class="d-flex align-items-center gap-3 mb-3">
@@ -425,44 +382,16 @@ body { font-family: 'DM Sans', sans-serif; background: var(--body-bg); color: va
                 <svg width="110" height="110" viewBox="0 0 110 110">
                   <circle cx="55" cy="55" r="46" fill="none" stroke="#e2e8f0" stroke-width="9"/>
                   <circle cx="55" cy="55" r="46" fill="none" stroke="url(#ringGrad)" stroke-width="9"
-                    stroke-dasharray="289" stroke-dashoffset="{{ (100 - wellnessScore|default(78)) * 2.89 }}" stroke-linecap="round"/>
-                  <defs>
-                    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#16c784"/>
-                      <stop offset="100%" stop-color="#1e88e5"/>
-                    </linearGradient>
-                  </defs>
+                    stroke-dasharray="289" stroke-dashoffset="63" stroke-linecap="round"/>
                 </svg>
                 <div class="score-center">
-                  <div class="num">{{ wellnessScore|default('78') }}</div>
+                  <div class="num">78</div>
                   <div class="out">/100</div>
                 </div>
               </div>
-              <div style="flex:1">
-                <div style="font-size:16px;font-weight:700;margin-bottom:4px;">Good Progress!</div>
-                <div style="font-size:13px;color:var(--text-muted);line-height:1.5;margin-bottom:10px">Up 12 points from last week. Keep maintaining your routines.</div>
-                <div class="d-flex gap-2 flex-wrap">
-                  <span class="chip chip-green"><i class="bi bi-arrow-up-short"></i>+12 pts</span>
-                  <span class="chip chip-gray">Rank: Good</span>
-                </div>
-              </div>
-            </div>
-            <div class="d-flex flex-column gap-2">
               <div>
-                <div class="d-flex justify-content-between mb-1"><span style="font-size:12.5px;font-weight:500">Sleep Quality</span><span style="font-size:12px;color:var(--green);font-weight:700">{{ wellnessBreakdown.sleep|default('82') }}%</span></div>
-                <div style="height:5px;background:var(--body-bg);border-radius:10px;overflow:hidden"><div style="height:100%;width:{{ wellnessBreakdown.sleep|default(82) }}%;background:linear-gradient(90deg,var(--green),#22d3ee);border-radius:10px;"></div></div>
-              </div>
-              <div>
-                <div class="d-flex justify-content-between mb-1"><span style="font-size:12.5px;font-weight:500">Anxiety Level</span><span style="font-size:12px;color:var(--blue);font-weight:700">{{ wellnessBreakdown.anxiety|default('65') }}%</span></div>
-                <div style="height:5px;background:var(--body-bg);border-radius:10px;overflow:hidden"><div style="height:100%;width:{{ wellnessBreakdown.anxiety|default(65) }}%;background:linear-gradient(90deg,var(--blue),#6366f1);border-radius:10px;"></div></div>
-              </div>
-              <div>
-                <div class="d-flex justify-content-between mb-1"><span style="font-size:12.5px;font-weight:500">Social Connection</span><span style="font-size:12px;color:#9333ea;font-weight:700">{{ wellnessBreakdown.social|default('74') }}%</span></div>
-                <div style="height:5px;background:var(--body-bg);border-radius:10px;overflow:hidden"><div style="height:100%;width:{{ wellnessBreakdown.social|default(74) }}%;background:linear-gradient(90deg,#9333ea,#e879f9);border-radius:10px;"></div></div>
-              </div>
-              <div>
-                <div class="d-flex justify-content-between mb-1"><span style="font-size:12.5px;font-weight:500">Physical Activity</span><span style="font-size:12px;color:#f59e0b;font-weight:700">{{ wellnessBreakdown.activity|default('88') }}%</span></div>
-                <div style="height:5px;background:var(--body-bg);border-radius:10px;overflow:hidden"><div style="height:100%;width:{{ wellnessBreakdown.activity|default(88) }}%;background:linear-gradient(90deg,#f59e0b,#f97316);border-radius:10px;"></div></div>
+                <div style="font-size:14px;font-weight:700;">Progression positive!</div>
+                <div style="font-size:12px;color:var(--text-muted);line-height:1.4">+12 points depuis la semaine dernière.</div>
               </div>
             </div>
           </div>
@@ -476,17 +405,15 @@ body { font-family: 'DM Sans', sans-serif; background: var(--body-bg); color: va
       <div class="col-lg-6">
         <div class="gm-card">
           <div class="gm-card-header">
-            <span class="gm-card-title"><i class="bi bi-emoji-smile-fill me-2" style="color:#f59e0b"></i>Today's Mood Check-In</span>
-            <span style="font-size:11.5px;color:var(--text-muted);font-weight:600" id="moodDate"></span>
+            <span class="gm-card-title"><i class="bi bi-emoji-smile-fill me-2" style="color:#f59e0b"></i>Check-in de l'humeur</span>
           </div>
           <div class="gm-card-body">
-            <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">How are you feeling right now? Be honest with yourself 💙</p>
             <div class="mood-grid">
-              <div class="mood-btn" onclick="selectMood(this, 'Terrible')"><div class="emoji">😣</div><div class="label">Terrible</div></div>
-              <div class="mood-btn" onclick="selectMood(this, 'Bad')"><div class="emoji">😔</div><div class="label">Bad</div></div>
-              <div class="mood-btn" onclick="selectMood(this, 'Okay')"><div class="emoji">😐</div><div class="label">Okay</div></div>
-              <div class="mood-btn selected" onclick="selectMood(this, 'Good')"><div class="emoji">😊</div><div class="label">Good</div></div>
-              <div class="mood-btn" onclick="selectMood(this, 'Great')"><div class="emoji">🤩</div><div class="label">Great</div></div>
+              <div class="mood-btn"><div class="emoji">😣</div><div class="label">Triste</div></div>
+              <div class="mood-btn"><div class="emoji">😔</div><div class="label">Bof</div></div>
+              <div class="mood-btn"><div class="emoji">😐</div><div class="label">Neutre</div></div>
+              <div class="mood-btn selected"><div class="emoji">😊</div><div class="label">Bien</div></div>
+              <div class="mood-btn"><div class="emoji">🤩</div><div class="label">Génial!</div></div>
             </div>
             <div id="moodMsg" style="background:var(--green-light);border-left:3px solid var(--green);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--green-dark);font-weight:500;margin-bottom:16px;">
               😊 Glad you're feeling good today! That's progress worth celebrating.
@@ -512,6 +439,12 @@ body { font-family: 'DM Sans', sans-serif; background: var(--body-bg); color: va
                 <span class="mood-label">Sat</span>
                 <span class="mood-label">Sun</span>
               </div>
+            <div class="mood-history mt-4">
+              <div class="mood-bar" style="background:#16c784;height:65%"></div>
+              <div class="mood-bar" style="background:#1e88e5;height:45%"></div>
+              <div class="mood-bar" style="background:#9333ea;height:80%"></div>
+              <div class="mood-bar" style="background:#f59e0b;height:70%"></div>
+              <div class="mood-bar" style="background:#16c784;height:90%"></div>
             </div>
           </div>
         </div>
@@ -519,22 +452,16 @@ body { font-family: 'DM Sans', sans-serif; background: var(--body-bg); color: va
 
       <!-- Book Appointment -->
       <div class="col-lg-6" id="bookSection">
-        <div class="gm-card">
-          <div class="gm-card-header">
-            <span class="gm-card-title"><i class="bi bi-calendar2-plus-fill me-2" style="color:var(--blue)"></i>Book an Appointment</span>
-          </div>
-          <div class="gm-card-body">
-            <div class="book-form">
-              <div class="mb-3">
-                <label class="gm-label">Select Doctor</label>
+        <div class="gm-card h-100">
+           <div class="gm-card-header mb-3">
+             <span class="gm-card-title"><i class="bi bi-calendar2-plus-fill me-2" style="color:var(--blue)"></i>Prendre rendez-vous</span>
+           </div>
+           <div class="gm-card-body">
+             <div class="mb-3">
+                <label class="gm-label">Médecin</label>
                 <select class="gm-input">
-                  <option value="""</option>
-                  
-                  <option>Dr. Layla Mansour – Psychiatrist</option>
-                  <option>Dr. Nadia Benali – Psychologist</option>
-                  <option>Dr. Karim Youssef – Therapist</option>
-                  <option>Dr. Amira Soltani – CBT Specialist</option>
-                  
+                  <option>Dr. Layla Mansour</option>
+                  <option>Dr. Nadia Benali</option>
                 </select>
               </div>
               <div class="row g-2 mb-3">
@@ -684,4 +611,13 @@ body { font-family: 'DM Sans', sans-serif; background: var(--body-bg); color: va
     box.style.color = m.color;
   }
 </script>
+{% endblock %}
+             </div>
+             <button class="btn-gm-primary w-100" style="justify-content:center; padding: 12px;">
+                <i class="bi bi-calendar-check-fill"></i> Rechercher une disponibilité
+             </button>
+           </div>
+        </div>
+      </div>
+    </div>
 {% endblock %}

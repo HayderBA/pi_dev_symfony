@@ -1,4 +1,6 @@
-{% extends 'base.html.twig' %}
+{% extends 'back/base_back.html.twig' %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block admin_content %}
 
 {% block title %}Admin Dashboard - GrowMind{% endblock %}
 
@@ -743,59 +745,5 @@ body {
       </div>
     </div>
 
-  </main>
-</div>
-
-{% endblock %}
-
-{% block javascripts %}
-{{ parent() }}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-  // Clock
-  function updateTime() {
-    const el = document.getElementById('headerTime');
-    if (el) el.textContent = new Date().toLocaleString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit' });
-  }
-  updateTime(); setInterval(updateTime, 1000);
-
-  // Sidebar toggle
-  function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('open');
-    document.getElementById('overlay').classList.toggle('open');
-  }
-
-  // Animated bar chart
-  const data = [
-    { label:'Jan', pct:55 },
-    { label:'Feb', pct:70 },
-    { label:'Mar', pct:45 },
-    { label:'Apr', pct:85 },
-    { label:'May', pct:60 },
-    { label:'Jun', pct:75 },
-    { label:'Jul', pct:50 },
-    { label:'Aug', pct:90 },
-    { label:'Sep', pct:65 },
-    { label:'Oct', pct:80 },
-    { label:'Nov', pct:55 },
-    { label:'Dec', pct:70 }
-  ];
-  const wrap = document.getElementById('chartWrap');
-  if (wrap) {
-    data.forEach(d => {
-      wrap.innerHTML += `
-        <div class="bar-col">
-          <div class="bar-track">
-            <div class="bar-fill" style="height:0%" data-pct="${d.pct}"></div>
-          </div>
-          <div class="bar-label">${d.label}</div>
-        </div>`;
-    });
-    setTimeout(() => {
-      document.querySelectorAll('.bar-fill').forEach(b => {
-        b.style.height = b.dataset.pct + '%';
-      });
-    }, 100);
-  }
-</script>
+  
 {% endblock %}

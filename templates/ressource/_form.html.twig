@@ -1,0 +1,33 @@
+{# templates/ressource/_form.html.twig #}
+{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    <div class="row g-3">
+        <div class="col-md-6">
+            {{ form_row(form.title) }}
+        </div>
+        <div class="col-md-6">
+            {{ form_row(form.author) }}
+        </div>
+        <div class="col-md-4">
+            {{ form_row(form.type) }}
+        </div>
+        <div class="col-md-4">
+            {{ form_row(form.category) }}
+        </div>
+        <div class="col-md-4">
+            {{ form_row(form.status) }}
+        </div>
+        <div class="col-md-12">
+            {{ form_row(form.description) }}
+        </div>
+        <div class="col-md-12">
+            {{ form_row(form.content) }}
+        </div>
+        <div class="col-md-12">
+            {{ form_row(form.dateCreation) }}
+        </div>
+    </div>
+    
+    <div class="mt-4">
+        <button class="btn-gm-primary"><i class="bi bi-save"></i> {{ button_label|default('Enregistrer') }}</button>
+    </div>
+{{ form_end(form) }}
