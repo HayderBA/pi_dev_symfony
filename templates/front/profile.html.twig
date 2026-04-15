@@ -1,0 +1,162 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil — {{ app.user.name ~ ' ' ~ app.user.secondName }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+<style>
+.popup-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(4px);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 9999;
+}
+
+.popup-card {
+  width: 440px;
+  background: white;
+  border-radius: 18px;
+  padding: 32px 30px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+
+.avatar-lg {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #16c784, #1e88e5);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 22px; font-weight: 700;
+  margin: 0 auto 12px;
+}
+
+.user-name { text-align: center; font-weight: 700; font-size: 18px; }
+.user-email { text-align: center; font-size: 13px; color: #888; }
+
+.role-pill {
+  display: inline-block;
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-top: 6px;
+  background: #e8faf3;
+}
+
+.info-row {
+  display: flex; justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+</style>
+{% endblock %}
+
+{% block body %}
+
+<div class="popup-overlay">
+  <div class="popup-card position-relative">
+
+    {# ❌ FIX CLOSE BUTTON #}
+    <a href="
+    {% if 'ROLE_ADMIN' in app.user.roles %}
+        {{ path('app_admin_dashboard') }}
+    {% elseif 'ROLE_DOCTOR' in app.user.roles %}
+        {{ path('app_doctor_dashboard') }}
+    {% else %}
+        {{ path('app_home') }}
+    {% endif %}
+    " class="position-absolute top-0 end-0 m-3 text-muted">
+      <i class="bi bi-x-lg"></i>
+    </a>
+
+    {# 🔵 AVATAR #}
+    <div class="avatar-lg">
+      {{ app.user.name|first|upper }}{{ app.user.secondName|first|upper }}
+    </div>
+
+    {# 👤 NAME #}
+    <div class="user-name">
+      {{ app.user.name }} {{ app.user.secondName }}
+    </div>
+
+    {# 📧 EMAIL #}
+    <div class="user-email">
+      {{ app.user.email }}
+    </div>
+
+    {# 🟢 ROLE #}
+    <div style="text-align:center">
+      <span class="role-pill">
+        {{ app.user.roles[0]|replace({'ROLE_':''})|capitalize }}
+      </span>
+    </div>
+
+    <hr>
+
+    {# 📊 INFOS #}
+    <div class="info-row">
+      <span>Âge</span>
+      <span>{{ app.user.age ?? 'N/A' }}</span>
+    </div>
+
+    <div class="info-row">
+      <span>Genre</span>
+      <span>{{ app.user.gender ?? 'N/A' }}</span>
+    </div>
+
+    <div class="info-row">
+      <span>Téléphone</span>
+      <span>{{ app.user.phoneNumber ?? 'N/A' }}</span>
+    </div>
+
+    <div class="info-row">
+      <span>Date naissance</span>
+      <span>{{ app.user.birthDate ?? 'N/A' }}</span>
+    </div>
+
+    {# 👨‍⚕️ DOCTOR ONLY #}
+    {% if 'ROLE_DOCTOR' in app.user.roles %}
+      <div class="info-row">
+        <span>Spécialité</span>
+        <span>{{ app.user.specialty ?? 'N/A' }}</span>
+      </div>
+
+      <div class="info-row">
+        <span>Expérience</span>
+        <span>{{ app.user.experience ?? '0' }} ans</span>
+      </div>
+
+      <div class="info-row">
+        <span>Tarif</span>
+        <span>{{ app.user.tarifConsultation ?? '0' }} TND</span>
+      </div>
+    {% endif %}
+
+    <div class="mt-4 d-flex gap-2">
+
+      {# 🔙 RETOUR #}
+      <a href="
+      {% if 'ROLE_ADMIN' in app.user.roles %}
+          {{ path('app_admin_dashboard') }}
+      {% elseif 'ROLE_DOCTOR' in app.user.roles %}
+          {{ path('app_doctor_dashboard') }}
+      {% else %}
+          {{ path('app_home') }}
+      {% endif %}
+      " class="btn btn-secondary w-100">
+        Retour
+      </a>
+
+      {# 🚪 LOGOUT #}
+      <a href="{{ path('app_logout') }}" class="btn btn-danger w-100">
+        Déconnexion
+      </a>
+
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

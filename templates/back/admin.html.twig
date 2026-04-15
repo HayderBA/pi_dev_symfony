@@ -338,63 +338,7 @@ body {
 
 <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-<!-- ── SIDEBAR ── -->
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-brand">
-    <div class="brand-icon"><i class="bi bi-heart-pulse-fill"></i></div>
-    <div>
-      <div class="brand-name">GrowMind</div>
-      <div class="brand-tag">Mental Health Platform</div>
-    </div>
-  </div>
-
-  <nav class="sidebar-nav">
-    <span class="nav-label">Main Menu</span>
-    <a href="{{ path('app_admin_dashboard') }}" class="nav-link active"><i class="bi bi-grid-1x2-fill"></i> Dashboard <span class="nav-badge">4</span></a>
-    <a href="#" class="nav-link"><i class="bi bi-people-fill"></i> Users</a>
-    <a href="#" class="nav-link"><i class="bi bi-person-badge-fill"></i> Doctors</a>
-    <a href="#" class="nav-link"><i class="bi bi-calendar2-check-fill"></i> Appointments</a>
-    <a href="#" class="nav-link"><i class="bi bi-bar-chart-fill"></i> Analytics</a>
-    <span class="nav-label">System</span>
-    <a href="#" class="nav-link"><i class="bi bi-bell-fill"></i> Notifications</a>
-    <a href="#" class="nav-link"><i class="bi bi-shield-lock-fill"></i> Security</a>
-    <a href="#" class="nav-link"><i class="bi bi-gear-fill"></i> Settings</a>
-    <span class="nav-label">Role Dashboards</span>
-    <a href="{{ path('app_doctor_dashboard') }}" class="nav-link"><i class="bi bi-clipboard2-pulse-fill"></i> Doctor View</a>
-    <a href="{{ path('app_patient_dashboard') }}" class="nav-link"><i class="bi bi-person-heart"></i> Patient View</a>
-  </nav>
-
-  <div class="sidebar-footer">
-    <a href="#" class="nav-link"><i class="bi bi-box-arrow-left"></i> Sign Out</a>
-  </div>
-</aside>
-
-<!-- ── MAIN ── -->
-<div class="main-wrap">
-
-  <!-- Topbar -->
-  <header class="topbar">
-    <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="bi bi-list"></i></button>
-    <span class="topbar-title">Admin Dashboard</span>
-    <div class="topbar-search">
-      <i class="bi bi-search"></i>
-      <input type="text" placeholder="Search users, appointments…"/>
-    </div>
-    <div class="topbar-actions">
-      <div class="icon-btn" title="Notifications"><i class="bi bi-bell"></i><span class="notif-dot"></span></div>
-      <div class="icon-btn" title="Messages"><i class="bi bi-chat-dots"></i></div>
-      <span class="role-badge">Admin</span>
-      <div class="dropdown">
-        <div class="avatar-sm" data-bs-toggle="dropdown">{{ app.user.initials|default('SA') }}</div>
-        <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="border-radius:12px; margin-top:8px;">
-          <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>My Profile</a></li>
-          <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Settings</a></li>
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-left me-2"></i>Sign Out</a></li>
-        </ul>
-      </div>
-    </div>
-  </header>
+    {% include 'back/side_header_admin.html.twig' %}
 
   <!-- Content -->
   <main class="page-content">
@@ -409,97 +353,86 @@ body {
     </div>
 
     <!-- Stat Cards -->
+    {# ── STAT CARDS ── #}
     <div class="row g-3 mb-4">
       <div class="col-6 col-xl-3">
         <div class="stat-card">
           <div class="stat-icon blue"><i class="bi bi-people-fill"></i></div>
-          <div class="stat-value">{{ stats.totalUsers|default('4,821') }}</div>
-          <div class="stat-label">Total Users</div>
-          <div class="stat-change up"><i class="bi bi-arrow-up-short"></i>12.4% this month</div>
+          <div class="stat-value">{{ stats.totaluser }}</div>
+          <div class="stat-label">Total Utilisateurs</div>
         </div>
       </div>
       <div class="col-6 col-xl-3">
         <div class="stat-card">
           <div class="stat-icon green"><i class="bi bi-person-badge-fill"></i></div>
-          <div class="stat-value">{{ stats.activeDoctors|default('138') }}</div>
-          <div class="stat-label">Active Doctors</div>
-          <div class="stat-change up"><i class="bi bi-arrow-up-short"></i>5 new this week</div>
+          <div class="stat-value">{{ stats.activeDoctors }}</div>
+          <div class="stat-label">Médecins actifs</div>
         </div>
       </div>
       <div class="col-6 col-xl-3">
         <div class="stat-card">
           <div class="stat-icon purple"><i class="bi bi-person-heart"></i></div>
-          <div class="stat-value">{{ stats.registeredPatients|default('3,490') }}</div>
-          <div class="stat-label">Registered Patients</div>
-          <div class="stat-change up"><i class="bi bi-arrow-up-short"></i>8.1% this month</div>
+          <div class="stat-value">{{ stats.totalPatients }}</div>
+          <div class="stat-label">Patients inscrits</div>
         </div>
       </div>
       <div class="col-6 col-xl-3">
         <div class="stat-card">
-          <div class="stat-icon orange"><i class="bi bi-calendar2-check-fill"></i></div>
-          <div class="stat-value">{{ stats.appointmentsToday|default('247') }}</div>
-          <div class="stat-label">Appointments Today</div>
-          <div class="stat-change down"><i class="bi bi-arrow-down-short"></i>3.2% vs yesterday</div>
+          <div class="stat-icon orange"><i class="bi bi-shield-fill"></i></div>
+          <div class="stat-value">{{ stats.totalAdmins }}</div>
+          <div class="stat-label">Administrateurs</div>
         </div>
       </div>
     </div>
 
-    <!-- Charts + Quick Stats -->
+    {# ── CHART + QUICK STATS ── #}
     <div class="row g-3 mb-4">
       <div class="col-lg-8">
         <div class="gm-card h-100">
-          <div class="gm-card-header">
-            <span class="gm-card-title">Appointments Overview – Apr 2026</span>
-            <div class="d-flex gap-2">
-              <button class="btn-gm-outline">Weekly</button>
-              <button class="btn-gm-primary">Monthly</button>
-            </div>
-          </div>
           <div class="gm-card-body">
-            <div class="chart-wrap" id="chartWrap"></div>
+            <div class="chart-wrap"><canvas id="usersChart"></canvas></div>
           </div>
         </div>
       </div>
       <div class="col-lg-4">
         <div class="gm-card h-100">
-          <div class="gm-card-header">
-            <span class="gm-card-title">Quick Stats</span>
-          </div>
+          <div class="gm-card-header"><span class="gm-card-title">Répartition</span></div>
           <div class="gm-card-body">
+            {%- set total = stats.totaluser > 0 ? stats.totaluser : 1 -%}
             <div class="mb-3 pb-3 border-bottom">
               <div class="d-flex justify-content-between mb-1">
-                <span style="font-size:13px;font-weight:500;">Session Completion Rate</span>
-                <span style="font-size:13px;font-weight:700;color:var(--green)">84%</span>
+                <span style="font-size:13px;font-weight:500">Médecins</span>
+                <span style="font-size:13px;font-weight:700;color:var(--blue)">{{ stats.totalDoctors }}</span>
               </div>
-              <div style="height:6px;background:var(--body-bg);border-radius:10px;overflow:hidden;">
-                <div style="height:100%;width:84%;background:linear-gradient(90deg,var(--green),var(--blue));border-radius:10px;"></div>
+              <div style="height:6px;background:var(--body-bg);border-radius:10px;overflow:hidden">
+                <div style="height:100%;width:{{ ((stats.totalDoctors/total)*100)|round }}%;background:linear-gradient(90deg,var(--blue),#6366f1);border-radius:10px"></div>
               </div>
             </div>
             <div class="mb-3 pb-3 border-bottom">
               <div class="d-flex justify-content-between mb-1">
-                <span style="font-size:13px;font-weight:500;">Patient Satisfaction</span>
-                <span style="font-size:13px;font-weight:700;color:var(--blue)">91%</span>
+                <span style="font-size:13px;font-weight:500">Patients</span>
+                <span style="font-size:13px;font-weight:700;color:#9333ea">{{ stats.totalPatients }}</span>
               </div>
-              <div style="height:6px;background:var(--body-bg);border-radius:10px;overflow:hidden;">
-                <div style="height:100%;width:91%;background:linear-gradient(90deg,var(--blue),#6366f1);border-radius:10px;"></div>
+              <div style="height:6px;background:var(--body-bg);border-radius:10px;overflow:hidden">
+                <div style="height:100%;width:{{ ((stats.totalPatients/total)*100)|round }}%;background:linear-gradient(90deg,#9333ea,#e879f9);border-radius:10px"></div>
               </div>
             </div>
             <div class="mb-3 pb-3 border-bottom">
               <div class="d-flex justify-content-between mb-1">
-                <span style="font-size:13px;font-weight:500;">Doctor Availability</span>
-                <span style="font-size:13px;font-weight:700;color:#9333ea">67%</span>
+                <span style="font-size:13px;font-weight:500">Actifs</span>
+                <span style="font-size:13px;font-weight:700;color:var(--green)">{{ stats.activeuser }}</span>
               </div>
-              <div style="height:6px;background:var(--body-bg);border-radius:10px;overflow:hidden;">
-                <div style="height:100%;width:67%;background:linear-gradient(90deg,#9333ea,#e879f9);border-radius:10px;"></div>
+              <div style="height:6px;background:var(--body-bg);border-radius:10px;overflow:hidden">
+                <div style="height:100%;width:{{ ((stats.activeuser/total)*100)|round }}%;background:linear-gradient(90deg,var(--green),var(--blue));border-radius:10px"></div>
               </div>
             </div>
-            <div class="mb-0">
+            <div>
               <div class="d-flex justify-content-between mb-1">
-                <span style="font-size:13px;font-weight:500;">Platform Uptime</span>
-                <span style="font-size:13px;font-weight:700;color:#ea580c">99.9%</span>
+                <span style="font-size:13px;font-weight:500">Bloqués</span>
+                <span style="font-size:13px;font-weight:700;color:#dc2626">{{ stats.blockeduser }}</span>
               </div>
-              <div style="height:6px;background:var(--body-bg);border-radius:10px;overflow:hidden;">
-                <div style="height:100%;width:99.9%;background:linear-gradient(90deg,#ea580c,#f97316);border-radius:10px;"></div>
+              <div style="height:6px;background:var(--body-bg);border-radius:10px;overflow:hidden">
+                <div style="height:100%;width:{{ ((stats.blockeduser/total)*100)|round }}%;background:linear-gradient(90deg,#dc2626,#f87171);border-radius:10px"></div>
               </div>
             </div>
           </div>
@@ -515,177 +448,110 @@ body {
             <span class="gm-card-title">User Management</span>
             <div class="d-flex gap-2 align-items-center">
               <input type="text" placeholder="Filter users…" style="padding:7px 14px;border-radius:9px;border:1px solid var(--border);font-size:12.5px;outline:none;font-family:'DM Sans',sans-serif;background:var(--body-bg);">
-              <button class="btn-gm-primary"><i class="bi bi-plus-lg"></i> Add User</button>
-            </div>
+              <a href="{{ path('admin_add_users') }}" class="btn-gm-primary">
+                <i class="bi bi-plus-lg"></i> Ajouter
+              </a>
+              </div>
           </div>
-          <div class="gm-card-body p-0" style="padding:0!important;">
-            <div style="overflow-x:auto;">
+          <div class="gm-card-body p-0" style="padding:0!important">
+            <div style="overflow-x:auto">
               <table class="gm-table">
                 <thead>
-                  <tr>
-                    <th><input type="checkbox" style="width:14px;height:14px;accent-color:var(--green);cursor:pointer;"></th>
-                    <th>User</th>
-                    <th>Role</th>
+                  <tr >
+                    <th><input type="checkbox" style="accent-color:var(--green)"></th>
+                    <th>Utilisateur</th>
+                    <th>Rôle</th>
                     <th>Email</th>
-                    <th>Joined</th>
-                    <th>Status</th>
+                    <th>Date de naissance</th>
+                    <th>Statut</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  
-                  <tr>
-                    <td><input type="checkbox" style="width:14px;height:14px;accent-color:var(--green);cursor:pointer;"></td>
+                  {% for user in users %}
+                  {%- set initials = (user.name|slice(0,1) ~ user.second_name|slice(0,1))|upper -%}
+                  {%- set role = user.role|lower -%}
+                  {%- set bgColors = {'doctor':'linear-gradient(135deg,#16c784,#1e88e5)','patient':'linear-gradient(135deg,#9333ea,#e879f9)','admin':'linear-gradient(135deg,#ea580c,#f97316)'} -%}
+                  {%- set bg = bgColors[role]|default('linear-gradient(135deg,#64748b,#94a3b8)') -%}
+
+                  <tr class="user-row"
+                      data-name="{{ user.name|lower }}"
+                      data-fullname="{{ (user.name ~ ' ' ~ user.second_name)|lower }}"
+                      data-role="{{ role }}">
+
+                    <td><input type="checkbox" style="accent-color:var(--green)"></td>
+
+                    {# ✅ FIX: user.second_name (camelCase) pas user.second_name #}
                     <td>
                       <div class="user-cell">
-                        <div class="avatar-xs" </div>
+                        <div class="avatar-xs" style="background:{{ bg }}">{{ initials }}</div>
                         <div>
-                          <div style="font-weight:600;font-size:13.5px"></div>
-                          <div style="font-size:11.5px;color:var(--text-muted)">ID </div>
+                          <div style="font-weight:600;font-size:13.5px">{{ user.name }} {{ user.second_name }}</div>
+                          <div style="font-size:11px;color:var(--text-muted)">ID #{{ user.id }}</div>
                         </div>
                       </div>
                     </td>
-                    <td><span class="tag"></span></td>
-                    <td style="color:var(--text-muted);font-size:13px"></td>
-                    <td style="color:var(--text-muted);font-size:13px"></td>
-                    <td><span class="tag"></span></td>
+
+                    <td><span class="tag tag-{{ role }}">{{ user.role|capitalize }}</span></td>
+
+                    <td style="color:var(--text-muted);font-size:13px">{{ user.email }}</td>
+
+                    <td style="color:var(--text-muted);font-size:13px">
+                      {{ user.birthDate ? user.birthDate : 'N/A' }}
+                    </td>
+
+                    <td>
+                      <span class="tag {{ user.isBlocked ? 'tag-inactive' : 'tag-active' }}">
+                        {{ user.isBlocked ? 'Bloqué' : 'Actif' }}
+                      </span>
+                    </td>
+
                     <td>
                       <div class="d-flex gap-1">
-                        <button class="btn-icon-sm" title="Edit"><i class="bi bi-pencil"></i></button>
-                        <button class="btn-icon-sm" title="View"><i class="bi bi-eye"></i></button>
-                        <button class="btn-icon-sm" title="Delete" style="color:#ef4444;"><i class="bi bi-trash"></i></button>
+                        <a href="{{ path('admin_edit_user', {id: user.id}) }}" class="btn-icon-sm" title="Modifier">
+                          <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="{{ path('admin_toggle_block', {id: user.id}) }}" class="btn-icon-sm"
+                           title="{{ user.isBlocked ? 'Débloquer' : 'Bloquer' }}"
+                           onclick="return confirm('{{ user.isBlocked ? 'Débloquer' : 'Bloquer' }} cet utilisateur ?')">
+                          <i class="bi bi-{{ user.isBlocked ? 'unlock' : 'lock' }}-fill"
+                             style="color:{{ user.isBlocked ? '#15803d' : '#f97316' }}"></i>
+                        </a>
+                        <a href="{{ path('admin_rm_users', {id: user.id}) }}" class="btn-icon-sm"
+                           title="Supprimer"
+                           onclick="return confirm('Supprimer {{ user.name }} {{ user.second_name }} ?')"
+                           style="color:#ef4444">
+                          <i class="bi bi-trash-fill"></i>
+                        </a>
                       </div>
                     </td>
                   </tr>
-                  {# Fallback static rows when no Twig data is passed #}
+                  {% else %}
                   <tr>
-                    <td><input type="checkbox" style="width:14px;height:14px;accent-color:var(--green);cursor:pointer;"></td>
-                    <td><div class="user-cell"><div class="avatar-xs" style="background:linear-gradient(135deg,#16c784,#1e88e5)">LM</div><div><div style="font-weight:600;font-size:13.5px">Layla Mansour</div><div style="font-size:11.5px;color:var(--text-muted)">ID #00142</div></div></div></td>
-                    <td><span class="tag tag-doctor">Doctor</span></td>
-                    <td style="color:var(--text-muted);font-size:13px">layla@growmind.com</td>
-                    <td style="color:var(--text-muted);font-size:13px">Jan 12, 2025</td>
-                    <td><span class="tag tag-active">Active</span></td>
-                    <td><div class="d-flex gap-1"><button class="btn-icon-sm" title="Edit"><i class="bi bi-pencil"></i></button><button class="btn-icon-sm" title="View"><i class="bi bi-eye"></i></button><button class="btn-icon-sm" title="Delete" style="color:#ef4444;"><i class="bi bi-trash"></i></button></div></td>
+                    <td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted)">
+                      <i class="bi bi-people" style="font-size:32px;display:block;margin-bottom:8px;opacity:.4"></i>
+                      Aucun utilisateur. <a href="{{ path('admin_add_users') }}" style="color:var(--green)">Ajouter le premier</a>.
+                    </td>
                   </tr>
-                  <tr>
-                    <td><input type="checkbox" style="width:14px;height:14px;accent-color:var(--green);cursor:pointer;"></td>
-                    <td><div class="user-cell"><div class="avatar-xs" style="background:linear-gradient(135deg,#9333ea,#e879f9)">AK</div><div><div style="font-weight:600;font-size:13.5px">Adam Khalil</div><div style="font-size:11.5px;color:var(--text-muted)">ID #00891</div></div></div></td>
-                    <td><span class="tag tag-patient">Patient</span></td>
-                    <td style="color:var(--text-muted);font-size:13px">adam@email.com</td>
-                    <td style="color:var(--text-muted);font-size:13px">Mar 5, 2025</td>
-                    <td><span class="tag tag-active">Active</span></td>
-                    <td><div class="d-flex gap-1"><button class="btn-icon-sm"><i class="bi bi-pencil"></i></button><button class="btn-icon-sm"><i class="bi bi-eye"></i></button><button class="btn-icon-sm" style="color:#ef4444;"><i class="bi bi-trash"></i></button></div></td>
-                  </tr>
-                  <tr>
-                    <td><input type="checkbox" style="width:14px;height:14px;accent-color:var(--green);cursor:pointer;"></td>
-                    <td><div class="user-cell"><div class="avatar-xs" style="background:linear-gradient(135deg,#ea580c,#f97316)">SR</div><div><div style="font-weight:600;font-size:13.5px">Sara Rahman</div><div style="font-size:11.5px;color:var(--text-muted)">ID #00220</div></div></div></td>
-                    <td><span class="tag tag-admin">Admin</span></td>
-                    <td style="color:var(--text-muted);font-size:13px">sara@growmind.com</td>
-                    <td style="color:var(--text-muted);font-size:13px">Nov 20, 2024</td>
-                    <td><span class="tag tag-active">Active</span></td>
-                    <td><div class="d-flex gap-1"><button class="btn-icon-sm"><i class="bi bi-pencil"></i></button><button class="btn-icon-sm"><i class="bi bi-eye"></i></button><button class="btn-icon-sm" style="color:#ef4444;"><i class="bi bi-trash"></i></button></div></td>
-                  </tr>
-                  <tr>
-                    <td><input type="checkbox" style="width:14px;height:14px;accent-color:var(--green);cursor:pointer;"></td>
-                    <td><div class="user-cell"><div class="avatar-xs" style="background:linear-gradient(135deg,#0891b2,#06b6d4)">JT</div><div><div style="font-weight:600;font-size:13.5px">James Tran</div><div style="font-size:11.5px;color:var(--text-muted)">ID #01034</div></div></div></td>
-                    <td><span class="tag tag-patient">Patient</span></td>
-                    <td style="color:var(--text-muted);font-size:13px">james@email.com</td>
-                    <td style="color:var(--text-muted);font-size:13px">Apr 1, 2026</td>
-                    <td><span class="tag tag-pending">Pending</span></td>
-                    <td><div class="d-flex gap-1"><button class="btn-icon-sm"><i class="bi bi-pencil"></i></button><button class="btn-icon-sm"><i class="bi bi-eye"></i></button><button class="btn-icon-sm" style="color:#ef4444;"><i class="bi bi-trash"></i></button></div></td>
-                  </tr>
-                  <tr>
-                    <td><input type="checkbox" style="width:14px;height:14px;accent-color:var(--green);cursor:pointer;"></td>
-                    <td><div class="user-cell"><div class="avatar-xs" style="background:linear-gradient(135deg,#dc2626,#f87171)">NB</div><div><div style="font-weight:600;font-size:13.5px">Nadia Benali</div><div style="font-size:11.5px;color:var(--text-muted)">ID #00556</div></div></div></td>
-                    <td><span class="tag tag-doctor">Doctor</span></td>
-                    <td style="color:var(--text-muted);font-size:13px">nadia@growmind.com</td>
-                    <td style="color:var(--text-muted);font-size:13px">Feb 14, 2025</td>
-                    <td><span class="tag tag-inactive">Inactive</span></td>
-                    <td><div class="d-flex gap-1"><button class="btn-icon-sm"><i class="bi bi-pencil"></i></button><button class="btn-icon-sm"><i class="bi bi-eye"></i></button><button class="btn-icon-sm" style="color:#ef4444;"><i class="bi bi-trash"></i></button></div></td>
-                  </tr>
+                  {% endfor %}
                 </tbody>
               </table>
             </div>
-            <!-- Pagination -->
-            <div class="d-flex align-items-center justify-content-between px-4 py-3 border-top">
-              <span style="font-size:12.5px;color:var(--text-muted)">Showing 1–5 of {{ stats.totalUsers|default('4,821') }} users</span>
-              <div class="d-flex gap-1">
-                <button class="btn-icon-sm"><i class="bi bi-chevron-left"></i></button>
-                <button class="btn-icon-sm" style="background:var(--green);color:#fff;border-color:var(--green);">1</button>
-                <button class="btn-icon-sm">2</button>
-                <button class="btn-icon-sm">3</button>
-                <span style="font-size:13px;color:var(--text-muted);padding:4px 6px;">…</span>
-                <button class="btn-icon-sm">482</button>
-                <button class="btn-icon-sm"><i class="bi bi-chevron-right"></i></button>
+
+            {% if users|length > 0 %}
+            <div class="d-flex align-items-center justify-content-between px-4 py-3 border-top flex-wrap gap-2">
+              <span style="font-size:12.5px;color:var(--text-muted)">
+                {{ users|length }} utilisateurs ·
+                <strong style="color:var(--green)">{{ stats.activeuser }}</strong> actifs ·
+                <strong style="color:#dc2626">{{ stats.blockeduser }}</strong> bloqués
+              </span>
+              <div class="d-flex gap-2">
+                <span class="tag tag-doctor">{{ stats.totalDoctors }} Médecins</span>
+                <span class="tag tag-patient">{{ stats.totalPatients }} Patients</span>
+                <span class="tag tag-admin">{{ stats.totalAdmins }} Admins</span>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Appointment Management -->
-    <div class="row g-3">
-      <div class="col-12">
-        <div class="gm-card">
-          <div class="gm-card-header">
-            <span class="gm-card-title">Recent Appointments</span>
-            <button class="btn-gm-primary"><i class="bi bi-plus-lg"></i> New Appointment</button>
-          </div>
-          <div class="gm-card-body p-0" style="padding:0!important;">
-            <div style="overflow-x:auto;">
-              <table class="gm-table">
-                <thead>
-                  <tr>
-                    <th>Appointment ID</th>
-                    <th>Patient</th>
-                    <th>Doctor</th>
-                    <th>Date & Time</th>
-                    <th>Type</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td style="font-size:12px;color:var(--text-muted);font-weight:600;">#APT-</td>
-                    <td><div class="user-cell"><div class="avatar-xs" style="background:linear-gradient(135deg,#9333ea,#e879f9);width:28px;height:28px;font-size:11px"></div></div></td>
-                    <td><div class="user-cell"><div class="avatar-xs" style="background:linear-gradient(135deg,#16c784,#1e88e5);width:28px;height:28px;font-size:11px"></div>Dr. </div></td>
-                    <td style="font-size:13px"></td>
-                    <td><span class="tag" style="background:#e0f2fe;color:#0369a1;font-size:11px"></span></td>
-                    <td><span class="appt-status"></span></td>
-                    <td><div class="d-flex gap-1"><button class="btn-icon-sm"><i class="bi bi-pencil"></i></button><button class="btn-icon-sm" style="color:#ef4444;"><i class="bi bi-x-lg"></i></button></div></td>
-                  </tr>
-                  <tr>
-                    <td style="font-size:12px;color:var(--text-muted);font-weight:600;">#APT-2642</td>
-                    <td><div class="user-cell"><div class="avatar-xs" style="background:linear-gradient(135deg,#9333ea,#e879f9);width:28px;height:28px;font-size:11px">AK</div>Adam Khalil</div></td>
-                    <td><div class="user-cell"><div class="avatar-xs" style="background:linear-gradient(135deg,#16c784,#1e88e5);width:28px;height:28px;font-size:11px">LM</div>Dr. Layla Mansour</div></td>
-                    <td style="font-size:13px">Apr 7, 2026 · 10:00 AM</td>
-                    <td><span class="tag" style="background:#e0f2fe;color:#0369a1;font-size:11px">Video Call</span></td>
-                    <td><span class="appt-status confirmed">Confirmed</span></td>
-                    <td><div class="d-flex gap-1"><button class="btn-icon-sm"><i class="bi bi-pencil"></i></button><button class="btn-icon-sm" style="color:#ef4444;"><i class="bi bi-x-lg"></i></button></div></td>
-                  </tr>
-                  <tr>
-                    <td style="font-size:12px;color:var(--text-muted);font-weight:600;">#APT-2641</td>
-                    <td><div class="user-cell"><div class="avatar-xs" style="background:linear-gradient(135deg,#0891b2,#06b6d4);width:28px;height:28px;font-size:11px">JT</div>James Tran</div></td>
-                    <td><div class="user-cell"><div class="avatar-xs" style="background:linear-gradient(135deg,#ea580c,#f97316);width:28px;height:28px;font-size:11px">NB</div>Dr. Nadia Benali</div></td>
-                    <td style="font-size:13px">Apr 7, 2026 · 11:30 AM</td>
-                    <td><span class="tag" style="background:#f0fdf4;color:#15803d;font-size:11px">In-Person</span></td>
-                    <td><span class="appt-status pending">Pending</span></td>
-                    <td><div class="d-flex gap-1"><button class="btn-icon-sm"><i class="bi bi-pencil"></i></button><button class="btn-icon-sm" style="color:#ef4444;"><i class="bi bi-x-lg"></i></button></div></td>
-                  </tr>
-                  <tr>
-                    <td style="font-size:12px;color:var(--text-muted);font-weight:600;">#APT-2639</td>
-                    <td><div class="user-cell"><div class="avatar-xs" style="background:linear-gradient(135deg,#16c784,#0fa36a);width:28px;height:28px;font-size:11px">SE</div>Sara El-Amin</div></td>
-                    <td><div class="user-cell"><div class="avatar-xs" style="background:linear-gradient(135deg,#16c784,#1e88e5);width:28px;height:28px;font-size:11px">LM</div>Dr. Layla Mansour</div></td>
-                    <td style="font-size:13px">Apr 6, 2026 · 2:00 PM</td>
-                    <td><span class="tag" style="background:#e0f2fe;color:#0369a1;font-size:11px">Video Call</span></td>
-                    <td><span class="appt-status cancelled">Cancelled</span></td>
-                    <td><div class="d-flex gap-1"><button class="btn-icon-sm"><i class="bi bi-pencil"></i></button><button class="btn-icon-sm" style="color:#ef4444;"><i class="bi bi-x-lg"></i></button></div></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -699,51 +565,75 @@ body {
 {% block javascripts %}
 {{ parent() }}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  // Clock
-  function updateTime() {
-    const el = document.getElementById('headerTime');
-    if (el) el.textContent = new Date().toLocaleString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit' });
-  }
-  updateTime(); setInterval(updateTime, 1000);
+// ── Clock ────────────────────────────────────────────────────────────────────
+function updateTime() {
+  const el = document.getElementById('headerTime');
+  if (el) el.textContent = new Date().toLocaleString('fr-FR', {
+    weekday:'long', year:'numeric', month:'long', day:'numeric',
+    hour:'2-digit', minute:'2-digit'
+  });
+}
+updateTime(); setInterval(updateTime, 1000);
 
-  // Sidebar toggle
-  function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('open');
-    document.getElementById('overlay').classList.toggle('open');
-  }
+// ── Sidebar ──────────────────────────────────────────────────────────────────
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
 
-  // Animated bar chart
-  const data = [
-    { label:'Jan', pct:55 },
-    { label:'Feb', pct:70 },
-    { label:'Mar', pct:45 },
-    { label:'Apr', pct:85 },
-    { label:'May', pct:60 },
-    { label:'Jun', pct:75 },
-    { label:'Jul', pct:50 },
-    { label:'Aug', pct:90 },
-    { label:'Sep', pct:65 },
-    { label:'Oct', pct:80 },
-    { label:'Nov', pct:55 },
-    { label:'Dec', pct:70 }
-  ];
-  const wrap = document.getElementById('chartWrap');
-  if (wrap) {
-    data.forEach(d => {
-      wrap.innerHTML += `
-        <div class="bar-col">
-          <div class="bar-track">
-            <div class="bar-fill" style="height:0%" data-pct="${d.pct}"></div>
-          </div>
-          <div class="bar-label">${d.label}</div>
-        </div>`;
-    });
-    setTimeout(() => {
-      document.querySelectorAll('.bar-fill').forEach(b => {
-        b.style.height = b.dataset.pct + '%';
-      });
-    }, 100);
-  }
+// ── Chart.js — données réelles depuis PHP ────────────────────────────────────
+const chartData = {{ chartData|json_encode|raw }};
+const ctx = document.getElementById('usersChart');
+if (ctx && chartData) {
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Médecins', 'Patients', 'Admins', 'Actifs', 'Bloqués'],
+      datasets: [{
+        label: 'Utilisateurs',
+        data: [
+          chartData.doctors  || 0,
+          chartData.patients || 0,
+          chartData.admins   || 0,
+          chartData.active   || 0,
+          chartData.blocked  || 0
+        ],
+        backgroundColor: ['#1e88e5','#9333ea','#ea580c','#16c784','#ef4444'],
+        borderRadius: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+    }
+  });
+}
+
+// ── Filtre tableau ───────────────────────────────────────────────────────────
+const searchInput = document.getElementById('searchInput');
+const roleFilter  = document.getElementById('roleFilter');
+const rows        = document.querySelectorAll('.user-row');
+
+function filterUsers() {
+  const search = (searchInput ? searchInput.value : '').toLowerCase();
+  const role   = (roleFilter  ? roleFilter.value  : '').toLowerCase();
+
+  rows.forEach(row => {
+    const text = row.innerText.toLowerCase(); // 🔥 lire tout le contenu
+    const userRole = (row.dataset.role || '').toLowerCase();
+
+    const matchName = text.includes(search); // 🔥 simple et efficace
+    const matchRole = !role || userRole === role;
+
+    row.style.display = (matchName && matchRole) ? '' : 'none';
+  });
+}
+
+if (searchInput) searchInput.addEventListener('input', filterUsers);
+if (roleFilter)  roleFilter.addEventListener('change', filterUsers);
 </script>
 {% endblock %}

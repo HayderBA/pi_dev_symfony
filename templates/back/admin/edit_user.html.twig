@@ -1,0 +1,219 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+<style>
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 700px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.modal-header h2 { font-size: 18px; font-weight: 600; }
+.modal-close { text-decoration: none; color: #888; font-size: 20px; }
+.modal-close:hover { color: red; }
+.form-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.form-body > div { display: flex; flex-direction: column; gap: 4px; }
+input, select {
+  width: 100%;
+  padding: 8px;
+  font-size: 13px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+#patient-fields, #doctor-fields {
+  padding: 10px;
+  border-radius: 8px;
+  background: #f7f7f7;
+  margin-top: 10px;
+  display: none;
+}
+.modal-footer {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  justify-content: flex-end;
+}
+.btn-cancel {
+  padding: 9px 20px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background: transparent;
+  color: #555;
+  text-decoration: none;
+  font-size: 13px;
+}
+.btn-cancel:hover { background: #f0f0f0; }
+.btn-save {
+  padding: 9px 24px;
+  border-radius: 8px;
+  background: #0ea5e9;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+.btn-save:hover { background: #0284c7; }
+.user-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #e0f2fe;
+  color: #0369a1;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="modal-overlay">
+  <div class="modal-card">
+
+    <div class="modal-header">
+      <h2>
+        Modifier l'utilisateur
+        <span class="user-badge">{{ user.name }} {{ user.second_name }}</span>
+      </h2>
+      <a href="{{ path('app_admin_dashboard') }}" class="modal-close">✕</a>
+    </div>
+
+    {{ form_start(form, {
+      'action': path('admin_edit_user', {'id': user.id}),
+      'attr': {'id': 'user-form', 'novalidate': 'novalidate'}
+    }) }}
+
+      <div class="form-body">
+        <div>{{ form_row(form.name) }}</div>
+        <div>{{ form_row(form.second_name) }}</div>
+        <div>{{ form_row(form.age) }}</div>
+        <div>{{ form_row(form.gender) }}</div>
+        <div>{{ form_row(form.phone_number) }}</div>
+        <div>{{ form_row(form.birth_date) }}</div>
+        <div>{{ form_row(form.email) }}</div>
+        <div>{{ form_row(form.password) }}</div>
+        <div>{{ form_row(form.role) }}</div>
+      </div>
+
+      {# ── Champs Patient ── #}
+      <div id="patient-fields">
+        {{ form_row(form.blood_type) }}
+        {{ form_row(form.weight) }}
+        {{ form_row(form.height) }}
+      </div>
+
+      {# ── Champs Doctor ── #}
+      <div id="doctor-fields">
+        {{ form_row(form.specialty) }}
+        {{ form_row(form.experience) }}
+        {{ form_row(form.diplome) }}
+        {{ form_row(form.disponible) }}
+        {{ form_row(form.actif) }}
+        {{ form_row(form.tarif_consultation) }}
+      </div>
+
+      <div class="modal-footer">
+        <a href="{{ path('app_admin_dashboard') }}" class="btn-cancel">Annuler</a>
+        <button type="submit" class="btn-save">Enregistrer</button>
+      </div>
+
+    {{ form_end(form) }}
+
+  </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const roleField     = document.querySelector('[name$="[role]"]');
+    const patientFields = document.getElementById("patient-fields");
+    const doctorFields  = document.getElementById("doctor-fields");
+
+    // ── Données existantes injectées depuis Twig ──
+    const existingDoctor = {
+        specialty:          "{{ doctor ? doctor.specialty|e('js') : '' }}",
+        experience:         "{{ doctor ? doctor.experience : '' }}",
+        diplome:            "{{ doctor ? doctor.diplome|e('js') : '' }}",
+        disponible:         "{{ doctor ? doctor.disponible : '' }}",
+        actif:              "{{ doctor ? doctor.actif : '' }}",
+        tarif_consultation: "{{ doctor ? doctor.tarifConsultation : '' }}"
+    };
+
+    const existingPatient = {
+        blood_type: "{{ patient ? patient.blood_type|e('js') : '' }}",
+        weight:     "{{ patient ? patient.weight : '' }}",
+        height:     "{{ patient ? patient.height : '' }}"
+    };
+
+    function fillFields(data) {
+        Object.entries(data).forEach(([key, value]) => {
+            const el = document.querySelector(`[name*="[${key}]"]`);
+            if (el && value !== '') el.value = value;
+        });
+    }
+
+    function toggleFields() {
+        const role = roleField ? roleField.value : "";
+        patientFields.style.display = role === "patient" ? "block" : "none";
+        doctorFields.style.display  = role === "doctor"  ? "block" : "none";
+
+        if (role === "doctor")  fillFields(existingDoctor);
+        if (role === "patient") fillFields(existingPatient);
+    }
+
+    if (roleField) {
+        roleField.addEventListener("change", toggleFields);
+        toggleFields(); // ✅ affiche et remplit dès le chargement
+    }
+
+    // ── Validation au submit ──
+    const form    = document.getElementById("user-form");
+    const saveBtn = document.querySelector(".btn-save");
+
+    saveBtn.addEventListener("click", function (e) {
+        let valid = true;
+        form.querySelectorAll("input, select").forEach(function (el) {
+            if (el.hasAttribute("required") && !el.value.trim()) {
+                el.style.borderColor = "#f87171";
+                valid = false;
+            } else {
+                el.style.borderColor = "#ddd";
+            }
+        });
+        if (!valid) {
+            e.preventDefault();
+            const first = form.querySelector("input:required:placeholder-shown, select:required");
+            if (first) first.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    });
+
+});
+</script>
+{% endblock %}

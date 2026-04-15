@@ -20,6 +20,13 @@
 <body>
 
     {% block body %}
+    <nav>
+    {% if app.user %}
+        {{ app.user.email }}
+    {% else %}
+        n/a
+    {% endif %}
+</nav>
     {% endblock %}
 
     {% block javascripts %}
