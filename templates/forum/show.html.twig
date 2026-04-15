@@ -1,0 +1,113 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2c7a7d, #319795);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+            text-decoration: none;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<header id="header" class="header fixed-top">
+    <div class="branding d-flex align-items-center">
+        <div class="container position-relative d-flex align-items-center justify-content-between">
+            <a href="{{ path('app_home') }}" class="logo d-flex align-items-center">
+                <span class="logo-text">GROWMIND</span>
+            </a>
+            <nav id="navmenu" class="navmenu">
+                <ul>
+                    <li><a href="{{ path('app_home') }}">Accueil</a></li>
+                    <li><a href="{{ path('app_doctors') }}">Medecin</a></li>
+                    <li><a href="{{ path('app_appointment') }}">Evenement</a></li>
+                    <li class="dropdown">
+                        <a href="#"><span>Plus</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <ul>
+                            <li><a href="#">Cabinet</a></li>
+                            <li><a href="{{ path('app_appointment') }}">Rendez-vous</a></li>
+                            <li><a href="#">Santé & bien-être</a></li>
+                            <li><a href="{{ path('forum_index') }}">Forum</a></li>
+                            <li><a href="#">Ressources</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="{{ path('app_contact') }}">Contact</a></li>
+                </ul>
+                <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<main class="main">
+    <div class="page-title text-center">
+        <h1>Discussion</h1>
+        <p>{{ post.nom }} - {{ post.categorie|replace({'😢': '', '😟': '', '🧠': '', '💬': '', '🧘': '', '💤': '', '💪': ''})|trim }}</p>
+    </div>
+
+    <section class="section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="specialty-card bg-white rounded-3 shadow-sm overflow-hidden">
+                        <div class="specialty-content p-4">
+                            <div class="text-muted mb-3">
+                                <i class="bi bi-person-circle me-1"></i> {{ post.nom }} &nbsp;|&nbsp;
+                                <i class="bi bi-calendar3 me-1"></i> {{ post.dateCreation|date('d/m/Y H:i') }} &nbsp;|&nbsp;
+                                <i class="bi bi-eye me-1"></i> {{ post.vues }} vues
+                            </div>
+                            <hr>
+                            <div class="lead">{{ post.contenu|nl2br }}</div>
+                        </div>
+                        <div class="card-footer bg-white border-0 pb-4 pt-0 d-flex gap-3">
+                            <a href="{{ path('forum_index') }}" class="btn btn-secondary rounded-pill px-4">
+                                <i class="bi bi-arrow-left me-2"></i>Retour
+                            </a>
+                            <a href="{{ path('forum_edit', {'id': post.id}) }}" class="btn btn-warning rounded-pill px-4">
+                                <i class="bi bi-pencil me-2"></i>Modifier
+                            </a>
+                            <form action="{{ path('forum_delete', {'id': post.id}) }}" method="POST" onsubmit="return confirm('Supprimer cette discussion ?')">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
+                                <button type="submit" class="btn btn-danger rounded-pill px-4">
+                                    <i class="bi bi-trash me-2"></i>Supprimer
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    {# Affichage des réponses existantes #}
+                    <h3 class="mt-5">Réponses ({{ post.reponses|length }})</h3>
+                    {% for reponse in post.reponses %}
+                        <div class="card mt-2">
+                            <div class="card-body">
+                                <strong>{{ reponse.auteur }}</strong> – {{ reponse.dateCreation|date('d/m/Y H:i') }}
+                                <p>{{ reponse.contenu|nl2br }}</p>
+                            </div>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Aucune réponse pour le moment. Soyez le premier à répondre !</p>
+                    {% endfor %}
+
+                    {# Formulaire de réponse #}
+                    <h4 class="mt-4">Ajouter une réponse</h4>
+                    {{ form_start(form) }}
+                        {{ form_widget(form) }}
+                        <button type="submit" class="btn btn-primary mt-2">Publier la réponse</button>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="text-center p-4">
+    <p>© GrowMind - Tous droits réservés</p>
+</footer>
+{% endblock %}

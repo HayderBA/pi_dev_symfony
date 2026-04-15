@@ -1,0 +1,294 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --vi-a:#667eea;--vi-b:#764ba2;--vi-mid:#6f72c3;
+  --bg:#f5f4fb;--card:#fff;--text:#1e1b3a;--muted:#6b7280;
+  --border:#e8e6f4;--radius:16px;--radius-sm:10px;
+  --sh-sm:0 2px 12px rgba(102,126,234,.10);
+  --urgent:#ef4444;--urgent-bg:#fef2f2;
+}
+*,*::before,*::after{box-sizing:border-box;}
+.srh-wrap{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;padding-bottom:80px;}
+
+/* HERO */
+.srh-hero{
+  background:linear-gradient(135deg,var(--vi-a) 0%,var(--vi-b) 100%);
+  padding:56px 0 48px;position:relative;overflow:hidden;color:#fff;
+}
+.srh-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 15% 55%,rgba(255,255,255,.07) 0%,transparent 50%),radial-gradient(circle at 85% 20%,rgba(255,255,255,.05) 0%,transparent 45%);}
+.srh-hero::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:44px;background:var(--bg);clip-path:ellipse(55% 100% at 50% 100%);}
+.srh-hero-in{position:relative;z-index:1;}
+.srh-crumb{font-size:.79rem;opacity:.7;margin-bottom:12px;}
+.srh-crumb a{color:#fff;text-decoration:none;}
+.srh-crumb span{margin:0 7px;opacity:.45;}
+.srh-hero h1{font-size:clamp(1.6rem,4vw,2.5rem);font-weight:800;letter-spacing:-.4px;margin:0 0 7px;}
+.srh-hero p{font-size:.93rem;opacity:.8;margin:0;max-width:480px;line-height:1.55;}
+
+/* BODY */
+.srh-body{padding:34px 0;}
+
+/* Form card */
+.srh-fcard{background:var(--card);border-radius:var(--radius);box-shadow:var(--sh-sm);border:1px solid var(--border);overflow:hidden;}
+.srh-fcard-head{
+  background:linear-gradient(135deg,#f8f7ff,#f2f0f9);
+  border-bottom:1px solid var(--border);padding:15px 24px;
+  font-size:.83rem;color:var(--muted);display:flex;align-items:center;gap:7px;
+}
+.srh-fcard-head i{color:var(--vi-a);}
+.srh-fcard-body{padding:28px 24px;}
+
+/* Section divider */
+.srh-fsec{
+  font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--vi-mid);padding-bottom:9px;border-bottom:2px solid #ece9f8;
+  margin-bottom:20px;display:flex;align-items:center;gap:6px;
+}
+
+/* Labels */
+.srh-lbl{font-size:.85rem;font-weight:600;color:var(--text);margin-bottom:5px;display:block;}
+.srh-lbl .req{color:var(--urgent);margin-left:3px;}
+
+/* Controls — override Symfony defaults */
+.srh-fcard-body .form-control,
+.srh-fcard-body .form-select{
+  border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  font-family:'Inter',sans-serif;font-size:.9rem;
+  background:var(--bg);color:var(--text);
+  padding:10px 14px;transition:border-color .2s,box-shadow .2s;
+}
+.srh-fcard-body .form-control:focus,
+.srh-fcard-body .form-select:focus{
+  border-color:var(--vi-a);box-shadow:0 0 0 3px rgba(102,126,234,.11);background:#fff;outline:none;
+}
+.srh-fcard-body textarea.form-control{min-height:180px;resize:vertical;line-height:1.65;}
+.srh-fcard-body .form-control.is-invalid,
+.srh-fcard-body .form-select.is-invalid{border-color:var(--urgent);}
+
+/* Error */
+.srh-err{font-size:.78rem;font-weight:600;color:#dc2626;margin-top:4px;display:flex;align-items:center;gap:5px;}
+
+/* Counter */
+.srh-cnt{font-size:.73rem;color:var(--muted);text-align:right;margin-top:3px;}
+
+/* Urgent toggle */
+.srh-urg-box{
+  border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  padding:14px 18px;cursor:pointer;transition:border-color .2s,background .2s;
+  display:flex;align-items:flex-start;gap:12px;user-select:none;
+}
+.srh-urg-box:hover{border-color:var(--vi-a);}
+.srh-urg-box.on{border-color:var(--urgent);background:var(--urgent-bg);}
+.srh-urg-box input{display:none;}
+.srh-urg-ind{
+  width:20px;height:20px;border:2px solid #d1d5db;border-radius:6px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;margin-top:1px;
+}
+.srh-urg-box.on .srh-urg-ind{background:var(--urgent);border-color:var(--urgent);color:#fff;}
+.srh-urg-t{font-weight:700;font-size:.88rem;color:var(--text);}
+.srh-urg-d{font-size:.79rem;color:var(--muted);margin-top:2px;}
+
+/* Buttons */
+.srh-btn-sub{
+  background:linear-gradient(135deg,var(--vi-a),var(--vi-b));
+  color:#fff;border:none;border-radius:var(--radius-sm);
+  font-family:'Inter',sans-serif;font-size:.9rem;font-weight:700;padding:11px 28px;
+  cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:7px;
+  box-shadow:0 4px 14px rgba(102,126,234,.28);
+}
+.srh-btn-sub:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(102,126,234,.38);}
+.srh-btn-cancel{
+  background:var(--card);border:1.5px solid var(--border);color:var(--muted);
+  border-radius:var(--radius-sm);font-family:'Inter',sans-serif;font-size:.88rem;font-weight:600;padding:9px 20px;
+  text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .2s;
+}
+.srh-btn-cancel:hover{border-color:var(--vi-a);color:var(--vi-a);}
+
+/* Sidebar */
+.srh-sc{background:var(--card);border-radius:var(--radius);box-shadow:var(--sh-sm);border:1px solid var(--border);padding:20px;margin-bottom:16px;}
+.srh-st{font-size:.83rem;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.srh-st i{color:var(--vi-a);}
+.srh-tip{display:flex;gap:9px;font-size:.81rem;color:var(--muted);margin-bottom:9px;line-height:1.5;}
+.srh-tip i{color:var(--vi-a);flex-shrink:0;margin-top:2px;}
+.srh-hot{background:linear-gradient(135deg,var(--vi-a),var(--vi-b));border-radius:var(--radius);padding:20px;color:#fff;position:relative;overflow:hidden;margin-bottom:16px;}
+.srh-hot::before{content:'';position:absolute;top:-28px;right:-28px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.09);}
+.srh-hot .in{position:relative;z-index:1;}
+.srh-hot .lbl{font-size:.67rem;text-transform:uppercase;letter-spacing:.1em;opacity:.72;}
+.srh-hot .num{font-size:2.6rem;font-weight:800;letter-spacing:2px;line-height:1.05;margin:3px 0 5px;}
+.srh-hot .desc{font-size:.78rem;opacity:.76;}
+</style>
+
+<div class="srh-wrap">
+
+  <!-- HERO -->
+  <section class="srh-hero">
+    <div class="container srh-hero-in">
+      <div class="srh-crumb">
+        <a href="{{ path('app_home') }}">Accueil</a><span>/</span>
+        <a href="{{ path('post_index') }}">Forum</a><span>/</span>Nouvelle discussion
+      </div>
+      <h1>Nouvelle discussion</h1>
+      <p>Partagez votre vécu, posez vos questions, soutenez la communauté.</p>
+    </div>
+  </section>
+
+  <!-- BODY -->
+  <div class="srh-body">
+    <div class="container">
+
+      {% for type, messages in app.flashes %}
+        {% for msg in messages %}
+          <div class="alert alert-{{ type == 'error' ? 'danger' : type }} rounded-3 mb-3">
+            <i class="fa-solid fa-{{ type == 'success' ? 'circle-check' : 'circle-xmark' }} me-2"></i>{{ msg }}
+          </div>
+        {% endfor %}
+      {% endfor %}
+
+      <div class="row g-4">
+
+        <!-- FORM -->
+        <div class="col-lg-8">
+          <div class="srh-fcard">
+            <div class="srh-fcard-head">
+              <i class="fa-regular fa-pen-to-square"></i>
+              Remplissez le formulaire pour publier votre discussion.
+            </div>
+            <div class="srh-fcard-body">
+
+              {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'id': 'srhForm'}}) }}
+
+              <!-- Identification -->
+              <div class="srh-fsec"><i class="fa-regular fa-user"></i>Identification</div>
+
+              <div class="row g-3 mb-4">
+                <!-- Nom / auteur -->
+                <div class="col-md-6">
+                  <label class="srh-lbl">Nom / Pseudo<span class="req">*</span></label>
+                  {% if form.nom is defined %}
+                    {{ form_widget(form.nom, {attr: {class: 'form-control'~(form.nom.vars.errors|length > 0 ? ' is-invalid' : ''), placeholder: 'Votre nom ou pseudo…'}}) }}
+                    {% for e in form.nom.vars.errors %}<div class="srh-err"><i class="fa-solid fa-circle-exclamation"></i>{{ e.message }}</div>{% endfor %}
+                  {% else %}
+                    {{ form_widget(form.author, {attr: {class: 'form-control'~(form.author.vars.errors|length > 0 ? ' is-invalid' : ''), placeholder: 'Votre nom ou pseudo…'}}) }}
+                    {% for e in form.author.vars.errors %}<div class="srh-err"><i class="fa-solid fa-circle-exclamation"></i>{{ e.message }}</div>{% endfor %}
+                  {% endif %}
+                </div>
+
+                <!-- Rôle -->
+                {% if form.role is defined %}
+                  <div class="col-md-6">
+                    <label class="srh-lbl">Rôle<span class="req">*</span></label>
+                    {{ form_widget(form.role, {attr: {class: 'form-select'~(form.role.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                    {% for e in form.role.vars.errors %}<div class="srh-err"><i class="fa-solid fa-circle-exclamation"></i>{{ e.message }}</div>{% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- Contenu -->
+              <div class="srh-fsec"><i class="fa-regular fa-comment-dots"></i>Contenu</div>
+
+              {% if form.title is defined %}
+                <div class="mb-4">
+                  <label class="srh-lbl">Titre<span class="req">*</span></label>
+                  {{ form_widget(form.title, {attr: {class: 'form-control'~(form.title.vars.errors|length > 0 ? ' is-invalid' : ''), placeholder: 'Titre de votre discussion…', maxlength: 120, id: 'srhTitle'}}) }}
+                  {% for e in form.title.vars.errors %}<div class="srh-err"><i class="fa-solid fa-circle-exclamation"></i>{{ e.message }}</div>{% endfor %}
+                  <div class="srh-cnt" id="srhTCnt">0 / 120</div>
+                </div>
+              {% endif %}
+
+              <div class="mb-4">
+                <label class="srh-lbl">Catégorie<span class="req">*</span></label>
+                {% if form.categorie is defined %}
+                  {{ form_widget(form.categorie, {attr: {class: 'form-select'~(form.categorie.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                  {% for e in form.categorie.vars.errors %}<div class="srh-err"><i class="fa-solid fa-circle-exclamation"></i>{{ e.message }}</div>{% endfor %}
+                {% else %}
+                  {{ form_widget(form.category, {attr: {class: 'form-select'~(form.category.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                  {% for e in form.category.vars.errors %}<div class="srh-err"><i class="fa-solid fa-circle-exclamation"></i>{{ e.message }}</div>{% endfor %}
+                {% endif %}
+              </div>
+
+              <div class="mb-4">
+                <label class="srh-lbl">Contenu<span class="req">*</span></label>
+                {% if form.contenu is defined %}
+                  {{ form_widget(form.contenu, {attr: {class: 'form-control'~(form.contenu.vars.errors|length > 0 ? ' is-invalid' : ''), placeholder: 'Décrivez votre situation…', rows: 8, maxlength: 5000, id: 'srhCont'}}) }}
+                  {% for e in form.contenu.vars.errors %}<div class="srh-err"><i class="fa-solid fa-circle-exclamation"></i>{{ e.message }}</div>{% endfor %}
+                {% else %}
+                  {{ form_widget(form.content, {attr: {class: 'form-control'~(form.content.vars.errors|length > 0 ? ' is-invalid' : ''), placeholder: 'Décrivez votre situation…', rows: 8, maxlength: 5000, id: 'srhCont'}}) }}
+                  {% for e in form.content.vars.errors %}<div class="srh-err"><i class="fa-solid fa-circle-exclamation"></i>{{ e.message }}</div>{% endfor %}
+                {% endif %}
+                <div class="srh-cnt" id="srhCCnt">0 / 5000</div>
+              </div>
+
+              <!-- Options -->
+              {% if form.urgent is defined %}
+                <div class="srh-fsec"><i class="fa-solid fa-sliders"></i>Options</div>
+                <div class="mb-4">
+                  <div class="srh-urg-box" id="srhUrgBox" onclick="srhToggleUrg()">
+                    {{ form_widget(form.urgent, {attr: {id: 'srhUrgChk'}}) }}
+                    <div class="srh-urg-ind" id="srhUrgInd"><i class="fa-solid fa-check fa-xs"></i></div>
+                    <div>
+                      <div class="srh-urg-t"><i class="fa-solid fa-triangle-exclamation" style="color:var(--urgent);margin-right:5px;"></i>Marquer comme urgent</div>
+                      <div class="srh-urg-d">Utilisez cette option uniquement si vous avez besoin d'une aide immédiate.</div>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+
+              {{ form_rest(form) }}
+
+              <div class="d-flex gap-3 flex-wrap align-items-center mt-2">
+                <button type="submit" class="srh-btn-sub"><i class="fa-solid fa-paper-plane"></i>Publier la discussion</button>
+                <a href="{{ path('post_index') }}" class="srh-btn-cancel"><i class="fa-solid fa-xmark"></i>Annuler</a>
+              </div>
+
+              {{ form_end(form) }}
+            </div>
+          </div>
+        </div>
+
+        <!-- SIDEBAR -->
+        <div class="col-lg-4">
+          <div class="srh-sc">
+            <div class="srh-st"><i class="fa-solid fa-lightbulb"></i>Conseils</div>
+            <div class="srh-tip"><i class="fa-solid fa-check-circle"></i><span>Soyez précis et décrivez votre situation avec vos propres mots.</span></div>
+            <div class="srh-tip"><i class="fa-solid fa-check-circle"></i><span>Choisissez la catégorie la plus adaptée à votre situation.</span></div>
+            <div class="srh-tip"><i class="fa-solid fa-check-circle"></i><span>Respectez la bienveillance et la confidentialité des membres.</span></div>
+            <div class="srh-tip"><i class="fa-solid fa-check-circle"></i><span>En cas de crise, appelez le <strong>3114</strong> sans attendre.</span></div>
+          </div>
+          <div class="srh-hot">
+            <div class="in">
+              <div class="lbl">Prévention du suicide</div>
+              <div class="num">3114</div>
+              <div class="desc">Disponible 24h/24, 7j/7 — Des professionnels vous écoutent.</div>
+            </div>
+          </div>
+          <div class="srh-sc" style="background:linear-gradient(135deg,rgba(102,126,234,.06),rgba(118,75,162,.06));">
+            <div class="srh-st"><i class="fa-solid fa-shield-halved"></i>Espace sécurisé</div>
+            <p style="font-size:.8rem;color:var(--muted);margin:0;line-height:1.55;">Vos informations restent au sein de la communauté GrowMind. Utilisez un pseudo pour préserver votre anonymat.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function srhCnt(id, cid, max){
+  const el=document.getElementById(id), ct=document.getElementById(cid);
+  if(!el||!ct) return;
+  const u=()=>{const n=el.value.length;ct.textContent=n+' / '+max;ct.style.color=n>max*.9?'var(--urgent)':'';};
+  el.addEventListener('input',u);u();
+}
+srhCnt('srhTitle','srhTCnt',120);
+srhCnt('srhCont','srhCCnt',5000);
+
+function srhToggleUrg(){
+  const b=document.getElementById('srhUrgBox'),c=document.getElementById('srhUrgChk');
+  c.checked=!c.checked;b.classList.toggle('on',c.checked);
+}
+</script>
+{% endblock %}

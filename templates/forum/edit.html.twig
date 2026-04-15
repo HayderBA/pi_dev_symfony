@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>.logo-text { font-size: 1.5rem; font-weight: 700; background: linear-gradient(135deg, #2c7a7d, #319795); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: -0.5px; text-decoration: none; }</style>
+{% endblock %}
+
+{% block body %}
+<header id="header" class="header fixed-top">
+    <div class="branding d-flex align-items-center">
+        <div class="container position-relative d-flex align-items-center justify-content-between">
+            <a href="{{ path('app_home') }}" class="logo d-flex align-items-center"><span class="logo-text">GROWMIND</span></a>
+            <nav id="navmenu" class="navmenu"><ul><li><a href="{{ path('app_home') }}">Accueil</a></li><li><a href="{{ path('app_doctors') }}">Medecin</a></li><li><a href="{{ path('app_appointment') }}">Evenement</a></li><li class="dropdown"><a href="#"><span>Plus</span><i class="bi bi-chevron-down toggle-dropdown"></i></a><ul><li><a href="#">Cabinet</a></li><li><a href="{{ path('app_appointment') }}">Rendez-vous</a></li><li><a href="#">Santé & bien-être</a></li><li><a href="{{ path('forum_index') }}">Forum</a></li><li><a href="#">Ressources</a></li></ul></li><li><a href="{{ path('app_contact') }}">Contact</a></li></ul><i class="mobile-nav-toggle d-xl-none bi bi-list"></i></nav>
+        </div>
+    </div>
+</header>
+
+<main class="main">
+    <div class="page-title text-center"><h1>Modifier la discussion</h1></div>
+    <section class="section"><div class="container"><div class="row justify-content-center"><div class="col-lg-8"><div class="specialty-card bg-white rounded-3 shadow-sm overflow-hidden"><div class="specialty-content p-4">{{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}{{ form_widget(form) }}<div class="d-flex gap-3 mt-4"><button type="submit" class="btn btn-primary rounded-pill px-5 py-2"><i class="bi bi-save me-2"></i>Enregistrer</button><a href="{{ path('forum_show', {'id': post.id}) }}" class="btn btn-outline-secondary rounded-pill px-4">Annuler</a></div>{{ form_end(form) }}</div></div></div></div></div></section>
+</main>
+<footer class="text-center p-4"><p>© GrowMind - Tous droits réservés</p></footer>
+{% endblock %}
