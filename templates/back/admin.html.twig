@@ -346,7 +346,7 @@ body {
     <!-- Page Header -->
     <div class="page-header">
       <div class="page-header-content">
-        <h1>Welcome back, {{ app.user.firstName|default('Super Admin') }} 👋</h1>
+        <h1>Welcome back, {{ app.user.name|default('Super Admin') }} 👋</h1>
         <p>Here's what's happening across GrowMind today.</p>
         <div class="header-time" id="headerTime"></div>
       </div>
@@ -439,6 +439,81 @@ body {
         </div>
       </div>
     </div>
+   {# ── MODAL PROFIL ── #}
+{% if app.user %}
+<div id="profileModal" style="
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.5); backdrop-filter:blur(4px);
+  z-index:9999; justify-content:center; align-items:center;
+">
+  <div style="
+    width:440px; background:#fff; border-radius:18px;
+    padding:32px 30px; box-shadow:0 20px 60px rgba(0,0,0,0.2);
+    position:relative;
+  ">
+    {# Fermer #}
+    <button onclick="document.getElementById('profileModal').style.display='none'"
+      style="position:absolute; top:12px; right:16px; background:none; border:none; font-size:20px; cursor:pointer; color:#888;">
+      <i class="bi bi-x-lg"></i>
+    </button>
+
+    {# Avatar #}
+    <div style="
+      width:72px; height:72px; border-radius:50%;
+      background:linear-gradient(135deg,#16c784,#1e88e5);
+      display:flex; align-items:center; justify-content:center;
+      color:#fff; font-size:22px; font-weight:700; margin:0 auto 12px;
+    ">
+      {{ app.user.name|first|upper }}{{ app.user.secondName|first|upper }}
+    </div>
+
+    <div style="text-align:center; font-weight:700; font-size:18px;">
+      {{ app.user.name }} {{ app.user.secondName }}
+    </div>
+    <div style="text-align:center; font-size:13px; color:#888;">
+      {{ app.user.email }}
+    </div>
+    <div style="text-align:center; margin-top:6px;">
+      <span style="background:#e8faf3; padding:4px 12px; border-radius:20px; font-size:11px;">
+        {{ app.user.roles[0]|replace({'ROLE_':''})|capitalize }}
+      </span>
+    </div>
+
+    <hr>
+
+    <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee;">
+      <span>Âge</span><span>{{ app.user.age ?? 'N/A' }}</span>
+    </div>
+    <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee;">
+      <span>Genre</span><span>{{ app.user.gender ?? 'N/A' }}</span>
+    </div>
+    <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee;">
+      <span>Téléphone</span><span>{{ app.user.phoneNumber ?? 'N/A' }}</span>
+    </div>
+    <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee;">
+      <span>Date naissance</span><span>{{ app.user.birthDate ?? 'N/A' }}</span>
+    </div>
+
+    {% if 'ROLE_DOCTOR' in app.user.roles %}
+    <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee;">
+      <span>Spécialité</span><span>{{ app.user.specialty ?? 'N/A' }}</span>
+    </div>
+    <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee;">
+      <span>Expérience</span><span>{{ app.user.experience ?? '0' }} ans</span>
+    </div>
+    <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee;">
+      <span>Tarif</span><span>{{ app.user.tarifConsultation ?? '0' }} TND</span>
+    </div>
+    {% endif %}
+
+    <div style="display:flex; gap:10px; margin-top:20px;">
+      <button onclick="document.getElementById('profileModal').style.display='none'"
+        class="btn btn-secondary w-100">Fermer</button>
+      <a href="{{ path('app_logout') }}" class="btn btn-danger w-100">Déconnexion</a>
+    </div>
+  </div>
+</div>
+{% endif %}
 
     <!-- Users Table -->
     <div class="row g-3 mb-4">

@@ -195,13 +195,10 @@ body { font-family: 'DM Sans', sans-serif; background: var(--body-bg); color: va
   </div>
   <nav class="sidebar-nav">
     <span class="nav-label">My Workspace</span>
-    <a href="{{ path('app_doctor_dashboard') }}" class="nav-link active"><i class="bi bi-grid-1x2-fill"></i> Tableau de bord</a>
+    <a href="{{ path('app_doctor_dash') }}" class="nav-link active"><i class="bi bi-grid-1x2-fill"></i> Tableau de bord</a>
     <a href="#" class="nav-link"><i class="bi bi-calendar2-check-fill"></i> Rendez-vous <span class="nav-badge"></span></a>
-    <span class="nav-label">Profil</span>
-    <a href="#" class="nav-link"><i class="bi bi-person-circle"></i> Mon profil</a>
     <a href="#" class="nav-link"><i class="bi bi-clock-history"></i> Historique de la session</a>
-    <a href="{{path('app_admin_dashboard')}}" class="nav-link"><i class="bi bi-arrow-left-circle"></i> Retour dashboard admin</a>
-    <a href="#" class="nav-link"><i class="bi bi-house-door"></i> Acceuil</a>
+    <a href="{{path('app_home')}}" class="nav-link"><i class="bi bi-house-door"></i> Acceuil</a>
   </nav>
   <div class="sidebar-footer">
     <a href="#" class="nav-link"><i class="bi bi-box-arrow-left"></i> Deconnexion</a>
@@ -222,24 +219,31 @@ body { font-family: 'DM Sans', sans-serif; background: var(--body-bg); color: va
       <div class="icon-btn"><i class="bi bi-chat-dots"></i></div>
       <span class="role-badge">Docteur</span>
 
-      {% if current_user %}
+      {% if app.user %}
       <div class="dropdown">
-        {# Avatar avec initiales du docteur #}
-        <div class="avatar-sm" data-bs-toggle="dropdown" style="cursor:pointer;" title="{{ current_user.email }}">
-          {{ current_user.name|first|upper }}{{ current_user.second_name|first|upper }}
+        <div class="avatar-sm" data-bs-toggle="dropdown" style="cursor:pointer;"
+             title="{{ app.user.email }}">
+          {{ app.user.name|first|upper }}{{ app.user.secondName|first|upper }}
         </div>
-        <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="border-radius:12px; margin-top:8px; min-width:230px;">
-          {# Infos utilisateur en haut du dropdown #}
-          <li class="px-3 py-2">
-            <div style="font-weight:600; font-size:14px;">
-              Dr. {{ current_user.name }} {{ current_user.second_name }}
+        <ul class="dropdown-menu dropdown-menu-end shadow border-0"
+            style="border-radius:12px; margin-top:8px; min-width:230px;">
+
+          <li class="px-3 py-2" style="border-bottom:1px solid #f1f5f9;">
+            <div style="font-weight:600; font-size:14px; color:#1a2332;">
+              Dr. {{ app.user.name }} {{ app.user.secondName }}
             </div>
-            <div style="font-size:12px; color:#64748b;">{{ current_user.email }}</div>
+            <div style="font-size:12px; color:#64748b;">{{ app.user.email }}</div>
           </li>
-          <li><hr class="dropdown-divider"></li>
+
           <li>
-            <a class="dropdown-item" href="#">
-              <i class="bi bi-person-circle me-2"></i>Mon Profil
+            <a class="dropdown-item" href="#"
+               onclick="document.getElementById('profileModal').style.display='flex'; return false;">
+              <i class="bi bi-person me-2"></i>Mon Profil
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="{{ path('app_home') }}">
+              <i class="bi bi-house me-2"></i>Accueil
             </a>
           </li>
           <li><hr class="dropdown-divider"></li>
@@ -251,7 +255,12 @@ body { font-family: 'DM Sans', sans-serif; background: var(--body-bg); color: va
         </ul>
       </div>
       {% endif %}
+
     </div>
 
   </header>
+  <script>
+    document.getElementById('profileModal').addEventListener('click', function(e) {
+  if (e.target === this) this.style.display = 'none';});
+  </script>
 {% endblock %}

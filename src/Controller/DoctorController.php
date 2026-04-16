@@ -21,9 +21,26 @@ class DoctorController extends AbstractController
     // 👨‍⚕️ DASHBOARD DOCTOR
     // =========================
     #[Route('/doctor_dash', name: 'app_doctor_dash')]
-    public function doctor(): Response
+    public function doctor(ManagerRegistry $doctrine): Response
     {
-        return $this->render('back/doctor.html.twig');
+        // ✅ Vérifier connexion
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+        if (!$this->isGranted('ROLE_DOCTOR')) {
+            return $this->redirectToRoute('app_home');
+        }
+
+        $em = $doctrine->getManager();
+
+        // ✅ Récupérer l'entité Doctor liée à l'user connecté
+        $doctor = $em->getRepository(Doctor::class)->findOneBy([
+            'user' => $this->getUser()
+        ]);
+
+        return $this->render('back/doctor.html.twig', [
+            'doctor' => $doctor,  // ✅ entité Doctor avec specialty, experience, etc.
+        ]);
     }
 
 }

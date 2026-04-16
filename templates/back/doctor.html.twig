@@ -181,82 +181,55 @@ body { font-family: 'DM Sans', sans-serif; background: var(--body-bg); color: va
 {% endblock %}
 
 {% block body %}
-
+{% include 'back/side_header_doctor.html.twig' %}
 <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-<!-- SIDEBAR -->
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-brand">
-    <div class="brand-icon"><i class="bi bi-heart-pulse-fill"></i></div>
-    <div>
-      <div class="brand-name">GrowMind</div>
-      <div class="brand-tag">Mental Health Platform</div>
-    </div>
-  </div>
-  <nav class="sidebar-nav">
-    <span class="nav-label">My Workspace</span>
-    <a href="{{ path('app_doctor_dash') }}" class="nav-link active"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
-    <a href="#" class="nav-link"><i class="bi bi-calendar2-check-fill"></i> Appointments <span class="nav-badge"></span></a>
-    <a href="#" class="nav-link"><i class="bi bi-people-fill"></i> My Patients</a>
-    <a href="#" class="nav-link"><i class="bi bi-journal-medical"></i> Clinical Notes</a>
-    <a href="#" class="nav-link"><i class="bi bi-chat-dots-fill"></i> Messages</a>
-    <span class="nav-label">Profile</span>
-    <a href="#" class="nav-link"><i class="bi bi-person-badge-fill"></i> My Profile</a>
-    <a href="#" class="nav-link"><i class="bi bi-clock-history"></i> Session History</a>
-  </nav>
-  <div class="sidebar-footer">
-    <a href="#" class="nav-link"><i class="bi bi-box-arrow-left"></i> Sign Out</a>
-  </div>
-</aside>
-
-<!-- MAIN -->
-<div class="main-wrap">
-  <header class="topbar">
-    <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="bi bi-list"></i></button>
-    <span class="topbar-title">Doctor Dashboard</span>
-    <div class="topbar-search">
-      <i class="bi bi-search"></i>
-      <input type="text" placeholder="Search patients, notes…"/>
-    </div>
-    <div class="topbar-actions">
-      <div class="icon-btn"><i class="bi bi-bell"></i><span class="notif-dot"></span></div>
-      <div class="icon-btn"><i class="bi bi-chat-dots"></i></div>
-      <span class="role-badge">Doctor</span>
-      <div class="dropdown">
-        <div class="avatar-sm" data-bs-toggle="dropdown"></div>
-        <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="border-radius:12px;margin-top:8px;">
-          <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>My Profile</a></li>
-          <li><a class="dropdown-item" href="#"><i class="bi bi-calendar2 me-2"></i>My Schedule</a></li>
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-left me-2"></i>Sign Out</a></li>
-        </ul>
-      </div>
-    </div>
-  </header>
 
   <main class="page-content">
 
     <!-- Doctor Hero -->
-    <div class="doctor-hero">
-      <div class="hero-content">
-        <div class="doc-avatar"></div>
-        <div class="hero-info">
-          <h2>Dr. </h2>
-          <p> years experience</p>
-          <div class="hero-meta">
-            <span><i class="bi bi-geo-alt-fill"></i></span>
-            <span><i class="bi bi-star-fill" style="color:#f59e0b"></i> Rating</span>
-            <span><i class="bi bi-patch-check-fill"></i> Board Certified</span>
-          </div>
-        </div>
-        <div class="hero-stats">
-          <div class="hero-stat"><span class="val"></span><span class="lbl">Today</span></div>
-          <div class="hero-stat"><span class="val"></span><span class="lbl">Patients</span></div>
-          <div class="hero-stat"><span class="val"></span><span class="lbl">Sessions</span></div>
-        </div>
+    {# ── HERO — avec entité Doctor ── #}
+<div class="doctor-hero">
+  <div class="hero-content">
+
+    <div class="doc-avatar">
+      {{ app.user.name|first|upper }}{{ app.user.secondName|first|upper }}
+    </div>
+
+    <div class="hero-info">
+      <h2>Dr. {{ app.user.name }} {{ app.user.secondName }}</h2>
+      <p>
+        {{ doctor ? doctor.specialty : 'N/A' }}
+        {% if doctor and doctor.experience %}
+          · {{ doctor.experience }} ans d'expérience
+        {% endif %}
+      </p>
+      <div class="hero-meta">
+        <span><i class="bi bi-envelope-fill"></i> {{ app.user.email }}</span>
+        <span><i class="bi bi-telephone-fill"></i> {{ app.user.phoneNumber ?? 'N/A' }}</span>
+        <span><i class="bi bi-patch-check-fill"></i>
+          {{ doctor and doctor.actif ? 'Actif' : 'Inactif' }}
+        </span>
       </div>
     </div>
 
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="val">{{ doctor ? doctor.tarifConsultation ~ ' TND' : 'N/A' }}</span>
+        <span class="lbl">Tarif</span>
+      </div>
+      <div class="hero-stat">
+        <span class="val">{{ doctor and doctor.disponible ? '✓' : '✗' }}</span>
+        <span class="lbl">Disponible</span>
+      </div>
+      <div class="hero-stat">
+        <span class="val">{{ doctor ? doctor.experience : '0' }}</span>
+        <span class="lbl">Ans exp.</span>
+      </div>
+    </div>
+
+  </div>
+</div>
     <!-- Today's Appointments + Patient List -->
     <div class="row g-3 mb-3">
 

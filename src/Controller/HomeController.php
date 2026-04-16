@@ -27,17 +27,4 @@ class HomeController extends AbstractController
     }
     
     
-    #[Route('/profile', name: 'app_profile')]
-    public function profile(): Response
-    {
-        // 🔐 Vérifie utilisateur connecté
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('app_login');
-        }
-
-        return $this->render('front/profile.html.twig', [
-            'currentUser' => $this->getUser(),
-            'sessionRole' => $this->getUser()->getRoles(),
-        ]);
-    }
 }

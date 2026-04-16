@@ -21,51 +21,54 @@ class AdminController extends AbstractController
     // 🏠 DASHBOARD ADMIN
     // =========================
 #[Route('/admin_dash', name: 'app_admin_dashboard')]
-public function index(ManagerRegistry $doctrine): Response
-{
-    $em = $doctrine->getManager();
+    public function index(ManagerRegistry $doctrine): Response
+    {
+        // ✅ Vérifier connexion + rôle
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return $this->redirectToRoute('app_home');
+        }
 
-    // ✅ récupérer users
-    $users = $em->getRepository(User::class)->findAll();
+        $em = $doctrine->getManager();
 
-    // ✅ filtrer par role
-    $doctors  = array_filter($users, fn($u) => strtolower($u->getRole()) === 'doctor');
-    $patients = array_filter($users, fn($u) => strtolower($u->getRole()) === 'patient');
-    $admins   = array_filter($users, fn($u) => strtolower($u->getRole()) === 'admin');
+        $users          = $em->getRepository(User::class)->findAll();
+        $doctorEntities = $em->getRepository(Doctor::class)->findAll();
 
-    // 🔥 récupérer les vraies entités Doctor
-    $doctorEntities = $em->getRepository(Doctor::class)->findAll();
+        // ✅ Filtrer par rôle
+        $doctors  = array_values(array_filter($users, fn($u) => strtolower($u->getRole()) === 'doctor'));
+        $patients = array_values(array_filter($users, fn($u) => strtolower($u->getRole()) === 'patient'));
+        $admins   = array_values(array_filter($users, fn($u) => strtolower($u->getRole()) === 'admin'));
 
-    $stats = [
-        'totaluser'        => count($users),
-        'totalDoctors'     => count($doctors),
-        'totalAdmins'      => count($admins),
-        'totalPatients'    => count($patients),
+        // ✅ isBlocked → utiliser isBlocked() ou getIsBlocked() selon ton entity
+        // Si ta propriété s'appelle $is_blocked → getter = isBlocked() ou getIsBlocked()
+        $stats = [
+            'totaluser'        => count($users),
+            'totalDoctors'     => count($doctors),
+            'totalAdmins'      => count($admins),
+            'totalPatients'    => count($patients),
+            'activeuser'       => count(array_filter($users,  fn($u) => !$u->getIs_blocked())),
+            'blockeduser'      => count(array_filter($users,  fn($u) => $u->getIs_blocked())),
+            'activeDoctors'    => count(array_filter($doctorEntities, fn($d) => $d->getActif())),
+            'availableDoctors' => count(array_filter($doctorEntities, fn($d) => $d->getDisponible())),
+        ];
 
-        'activeuser'       => count(array_filter($users, fn($u) => !$u->getIs_blocked())),
-        'blockeduser'      => count(array_filter($users, fn($u) => $u->getIs_blocked())),
-
-        // ✅ CORRECTION ICI
-        'activeDoctors'    => count(array_filter($doctorEntities, fn($d) => $d->getActif())),
-        'availableDoctors' => count(array_filter($doctorEntities, fn($d) => $d->getDisponible())),
-    ];
-
-    return $this->render('back/admin.html.twig', [
-        'users'     => $users,
-        'doctors'   => $doctors,
-        'admins'    => $admins,
-        'patients'  => $patients,
-        'stats'     => $stats,
-
-        'chartData' => [
-            'doctors'  => $stats['totalDoctors'],
-            'patients' => $stats['totalPatients'],
-            'admins'   => $stats['totalAdmins'],
-            'active'   => $stats['activeuser'],
-            'blocked'  => $stats['blockeduser'],
-        ],
-    ]);
-}
+        return $this->render('back/admin.html.twig', [
+            'users'     => $users,
+            'doctors'   => $doctors,
+            'admins'    => $admins,
+            'patients'  => $patients,
+            'stats'     => $stats,
+            'chartData' => [
+                'doctors'  => $stats['totalDoctors'],
+                'patients' => $stats['totalPatients'],
+                'admins'   => $stats['totalAdmins'],
+                'active'   => $stats['activeuser'],
+                'blocked'  => $stats['blockeduser'],
+            ],
+        ]);
+    }
     #[Route('/admin_base/add', name: 'admin_add_users', methods: ['GET', 'POST'])]
     public function add(Request $request, ManagerRegistry $doctrine): Response
     {
