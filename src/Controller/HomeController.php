@@ -26,11 +26,6 @@ class HomeController extends AbstractController
         return $this->render('front/doctors.html.twig');
     }
     
-    #[Route('/appointment', name: 'app_appointment')]
-    public function appointment(): Response
-    {
-        return $this->render('front/appointment.html.twig');
-    }
     
     #[Route('/profile', name: 'app_profile')]
     public function profile(): Response

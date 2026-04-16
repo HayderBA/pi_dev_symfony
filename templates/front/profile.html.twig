@@ -63,7 +63,7 @@
     {% if 'ROLE_ADMIN' in app.user.roles %}
         {{ path('app_admin_dashboard') }}
     {% elseif 'ROLE_DOCTOR' in app.user.roles %}
-        {{ path('app_doctor_dashboard') }}
+        {{ path('app_doctor_dash') }}
     {% else %}
         {{ path('app_home') }}
     {% endif %}
@@ -141,7 +141,7 @@
       {% if 'ROLE_ADMIN' in app.user.roles %}
           {{ path('app_admin_dashboard') }}
       {% elseif 'ROLE_DOCTOR' in app.user.roles %}
-          {{ path('app_doctor_dashboard') }}
+          {{ path('app_doctor_dash') }}
       {% else %}
           {{ path('app_home') }}
       {% endif %}

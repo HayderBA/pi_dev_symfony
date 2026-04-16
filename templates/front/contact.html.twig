@@ -3,21 +3,24 @@
 {% block body %}
 
 <!-- ================= HEADER ================= -->
-<header id="header" class="header fixed-top">
 
+  <header id="header" class="header fixed-top">
 
-  <div class="container d-flex align-items-center justify-content-between">
+    <div class="branding d-flex align-items-cente">
 
-    <a href="{{ path('app_home') }}" class="logo d-flex align-items-center">
-      <img src="{{asset('assets/img/logoGrowmind.png')}}" alt="">
-    </a>
+      <div class="container position-relative d-flex align-items-center justify-content-between">
+        <a href="index.html" class="logo d-flex align-items-center">
+          <!-- Uncomment the line below if you also wish to use an image logo -->
+          <!--<img src="{{asset('assets/img/logoGrowmind.png')}}" alt="">-->
+          <h1 class="sitename">GrowMind</h1>
+        </a>
 
-    <nav id="navmenu" class="navmenu">
-      
+        <nav id="navmenu" class="navmenu">
+          
         <ul>
           <li><a href="{{ path('app_home') }}">Accueil</a></li>
           <li><a href="{{ path('app_doctors') }}">Medecin</a></li>
-          <li><a href="{{ path('app_appointment') }}" >Evenement</a></li>
+          <li><a href="#" >Evenement</a></li>
 
           <li class="dropdown">
             <a href="#">
@@ -26,20 +29,89 @@
             </a>
             <ul>
               <li><a href="#">Cabinet</a></li>
-              <li><a href="{{ path('app_appointment') }}">Rendez-vous</a></li>
+              <li><a href="#">Rendez-vous</a></li>
               <li><a href="#">Santé & bien-être</a></li>
               <li><a href="#">Forum</a></li>
-              <li><a href="#">Ressources</a></li>
+              <li><a href="#">Ressources et bibliotheque</a></li>
             </ul>
           </li>
 
           <li><a href="{{ path('app_contact') }}">Contact</a></li>
-    </nav>
+           <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+        </nav>
+        {# ── Utilisateur connecté ou boutons login/register ── #}
+            {% if app.user %}
+<li style="position:relative; list-style:none;">
 
-  </div>
+  <a href="#" onclick="toggleMenu(event)" 
+     style="display:flex; align-items:center; gap:8px; text-decoration:none; color:#1e293b; font-weight:500;">
 
-</header>
+    <span style="
+      width:30px; height:30px; border-radius:50%;
+      background: linear-gradient(135deg, #16c784, #1e88e5);
+      color:#fff; font-weight:700; font-size:12px;
+      display:inline-flex; align-items:center; justify-content:center;
+    ">
+      {{ app.user.name|first|upper }}{{ app.user.secondName|first|upper }}
+    </span>
 
+    <span>{{ app.user.name }}</span>
+  </a>
+
+  <!-- DROPDOWN -->
+  <ul id="userMenu"
+      style="
+        display:none;
+        position:absolute;
+        top:120%;
+        right:0;
+        background:#fff;
+        border-radius:10px;
+        min-width:180px;
+        padding:8px 0;
+        box-shadow:0 10px 25px rgba(0,0,0,0.1);
+        z-index:999;
+      ">
+
+    <li style="padding:8px 16px; font-size:12px; color:#64748b;">
+      {{ app.user.email }}
+    </li>
+
+    <li><a href="{{path('app_profile')}}" style="display:block; padding:10px 16px; text-decoration:none;">Mon Profil</a></li>
+    <li>
+  <a href="
+  {% if 'ROLE_ADMIN ' in app.user.roles %}
+      {{ path('app_admin_dashboard') }}
+  {% elseif 'ROLE_DOCTOR ' in app.user.roles %}
+      {{ path('app_doctor_dash') }}
+  {% else %}
+      {{ path('app_home') }}
+  {% endif %}
+  "
+  style="display:block; padding:10px 16px; text-decoration:none;">
+    Tableau de bord
+  </a>
+</li>
+
+    <li>
+      <a href="{{ path('app_logout') }}" style="display:block; padding:10px 16px; color:red;">
+        Déconnexion
+      </a>
+    </li>
+
+  </ul>
+
+</li>
+{% endif %}
+          </ul>
+          <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+        </nav>
+
+      </div>
+
+    </div>
+
+  </header>
 <!-- ================= MAIN ================= -->
 <main class="main">
 
@@ -118,4 +190,27 @@
   <p>© Clinic - All rights reserved</p>
 </footer>
 
+<script src="assets/js/main.js"></script>
+  <script>
+function toggleMenu(event) {
+  event.preventDefault();
+
+  let menu = document.getElementById("userMenu");
+
+  if (menu.style.display === "block") {
+    menu.style.display = "none";
+  } else {
+    menu.style.display = "block";
+  }
+}
+
+/* fermer si clic ailleurs */
+document.addEventListener("click", function(e) {
+  let menu = document.getElementById("userMenu");
+
+  if (!e.target.closest("li")) {
+    if (menu) menu.style.display = "none";
+  }
+});
+</script>
 {% endblock %}

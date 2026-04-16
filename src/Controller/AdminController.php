@@ -250,15 +250,5 @@ public function index(ManagerRegistry $doctrine): Response
     {
         return $this->render('back/side_header_doctor.html.twig');
     }
-    
-    
-    // =========================
-    // 👨‍⚕️ DASHBOARD DOCTOR
-    // =========================
-    #[Route('/doctor', name: 'app_doctor_dashboard')]
-    public function doctor(): Response
-    {
-        return $this->render('back/doctor.html.twig');
-    }
 
 }

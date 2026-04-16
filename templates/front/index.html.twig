@@ -27,7 +27,7 @@
         <ul>
           <li><a href="{{ path('app_home') }}">Accueil</a></li>
           <li><a href="{{ path('app_doctors') }}">Medecin</a></li>
-          <li><a href="{{ path('app_appointment') }}" >Evenement</a></li>
+          <li><a href="#" >Evenement</a></li>
 
           <li class="dropdown">
             <a href="#">
@@ -36,7 +36,7 @@
             </a>
             <ul>
               <li><a href="#">Cabinet</a></li>
-              <li><a href="{{ path('app_appointment') }}">Rendez-vous</a></li>
+              <li><a href="#">Rendez-vous</a></li>
               <li><a href="#">Santé & bien-être</a></li>
               <li><a href="#">Forum</a></li>
               <li><a href="#">Ressources et bibliotheque</a></li>
@@ -85,6 +85,20 @@
     </li>
 
     <li><a href="{{path('app_profile')}}" style="display:block; padding:10px 16px; text-decoration:none;">Mon Profil</a></li>
+    <li>
+  <a href="
+  {% if 'ROLE_ADMIN' in app.user.roles %}
+          {{ path('app_admin_dashboard') }}
+      {% elseif 'ROLE_DOCTOR' in app.user.roles %}
+          {{ path('app_doctor_dash') }}
+      {% else %}
+          {{ path('app_home') }}
+      {% endif %}
+  "
+  style="display:block; padding:10px 16px; text-decoration:none;">
+    Tableau de bord
+  </a>
+</li>
 
     <li>
       <a href="{{ path('app_logout') }}" style="display:block; padding:10px 16px; color:red;">
@@ -436,7 +450,7 @@
 
         <div class="action-buttons">
           <a href="#!" class="btn-secondary">Voir détails</a>
-          <a href="{{ path('app_appointment') }}" class="btn-primary">Réserver</a>
+          <a href="#" class="btn-primary">Réserver</a>
         </div>
 
       </div><!-- End Profile -->
