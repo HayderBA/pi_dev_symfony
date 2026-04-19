@@ -296,4 +296,63 @@ class Rendezvou
 
         return $this;
     }
+
+    // ========== AJOUTS POUR LE PAIEMENT ==========
+
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private ?bool $estPaye = false;
+
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $stripeSessionId = null;
+
+    #[ORM\Column(type: 'float', nullable: true)]
+    private ?float $montant = null;
+
+    #[ORM\Column(type: 'float', nullable: true)]
+    private ?float $tarifConsultation = null;
+
+    // Getters et setters pour le paiement
+    public function isEstPaye(): ?bool 
+    { 
+        return $this->estPaye; 
+    }
+
+    public function setEstPaye(?bool $estPaye): self 
+    { 
+        $this->estPaye = $estPaye; 
+        return $this; 
+    }
+
+    public function getStripeSessionId(): ?string 
+    { 
+        return $this->stripeSessionId; 
+    }
+
+    public function setStripeSessionId(?string $stripeSessionId): self 
+    { 
+        $this->stripeSessionId = $stripeSessionId; 
+        return $this; 
+    }
+
+    public function getMontant(): ?float 
+    { 
+        return $this->montant; 
+    }
+
+    public function setMontant(?float $montant): self 
+    { 
+        $this->montant = $montant; 
+        return $this; 
+    }
+
+    public function getTarifConsultation(): ?float 
+    { 
+        return $this->tarifConsultation; 
+    }
+
+    public function setTarifConsultation(?float $tarifConsultation): self 
+    { 
+        $this->tarifConsultation = $tarifConsultation; 
+        return $this; 
+    }
 }

@@ -1,0 +1,84 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Paiement - Cabinet Médical{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0">💳 Paiement en ligne</h4>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <i class="bi bi-credit-card" style="font-size: 3rem;"></i>
+                        <h5 class="mt-2">{{ rdv.nomPatient }} {{ rdv.prenomPatient }}</h5>
+                    </div>
+                    
+                    <table class="table table-borderless">
+                        <tr>
+                            <td>📅 Date :</td>
+                            <td><strong>{{ rdv.dateRdv|date('d/m/Y') }}</strong></td>
+                        </tr>
+                        <tr>
+                            <td>⏰ Heure :</td>
+                            <td><strong>{{ rdv.heure|date('H:i') }}</strong></td>
+                        </tr>
+                        <tr>
+                            <td>🏥 Type :</td>
+                            <td><strong>{{ rdv.typeCons }}</strong></td>
+                        </tr>
+                        <tr class="table-primary">
+                            <td>💰 Montant :</td>
+                            <td><strong class="text-success">{{ montant }} TND</strong></td>
+                        </tr>
+                    </table>
+                    
+                    <div class="d-grid gap-2 mt-4">
+                        <button id="checkout-button" class="btn btn-success btn-lg">
+                            <i class="bi bi-lock"></i> Payer {{ montant }} TND
+                        </button>
+                        <a href="{{ path('front_rendezvous_index') }}" class="btn btn-secondary">
+                            Annuler
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        const stripe = Stripe('{{ stripe_public_key }}');
+        const button = document.getElementById('checkout-button');
+        
+        button.addEventListener('click', async () => {
+            button.disabled = true;
+            button.innerHTML = '<i class="bi bi-hourglass-split"></i> Redirection...';
+            
+            try {
+                const response = await fetch('{{ path('paiement_create_session', {id: rdv.idRdv}) }}');
+                const session = await response.json();
+                
+                const result = await stripe.redirectToCheckout({
+                    sessionId: session.id
+                });
+                
+                if (result.error) {
+                    button.disabled = false;
+                    button.innerHTML = '<i class="bi bi-lock"></i> Payer {{ montant }} TND';
+                    alert(result.error.message);
+                }
+            } catch (error) {
+                button.disabled = false;
+                button.innerHTML = '<i class="bi bi-lock"></i> Payer {{ montant }} TND';
+                alert('Erreur de connexion. Réessayez.');
+            }
+        });
+    </script>
+{% endblock %}

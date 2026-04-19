@@ -23,6 +23,22 @@ class RendezvouRepository extends ServiceEntityRepository
         parent::__construct($registry, Rendezvou::class);
     }
 
+     /**
+     * Récupérer le tarif d'un psychologue depuis la table SQL
+     */
+    public function getTarifPsychologue(int $idPsychologue): float
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        
+        // Correction : utilisation de ? au lieu de :id
+        $sql = 'SELECT tarif FROM psychologue WHERE idPsychologue = ?';
+        $result = $conn->executeQuery($sql, [$idPsychologue]);
+        $tarif = $result->fetchOne();
+        
+        return $tarif ? (float) $tarif : 50.00;
+    }
+
+
     /**
      * Recherche patient (nom, prénom, email), filtre statut et plage de dates, tri.
      *

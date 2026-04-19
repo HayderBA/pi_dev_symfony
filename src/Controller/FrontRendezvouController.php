@@ -6,11 +6,11 @@ use App\Entity\Rendezvou;
 use App\Form\RendezvouType;
 use App\Service\RendezVousMetierService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class FrontRendezvouController extends AbstractController
 {
@@ -45,14 +45,17 @@ class FrontRendezvouController extends AbstractController
             : null;
 
         $psyRows = $conn->fetchAllAssociative(
-            'SELECT idPsychologue, idCabinet FROM psychologue ORDER BY idPsychologue ASC'
+            'SELECT idPsychologue, idCabinet, tarif FROM psychologue ORDER BY idPsychologue ASC'
         );
         $psychologueChoices = [];
         $psychologuesByCabinet = [];
+        $psychologueTarifs = [];
         foreach ($psyRows as $row) {
             $id = (int) $row['idPsychologue'];
             $cab = (int) $row['idCabinet'];
+            $tarif = (float) $row['tarif'];
             $psychologueChoices['Psychologue #' . $id] = $id;
+            $psychologueTarifs[$id] = $tarif;
             if (!isset($psychologuesByCabinet[$cab])) {
                 $psychologuesByCabinet[$cab] = [];
             }
@@ -82,11 +85,17 @@ class FrontRendezvouController extends AbstractController
                     new FormError('Le psychologue choisi ne correspond pas au cabinet sélectionné.')
                 );
             } else {
-            $em->persist($rdv);
-            $em->flush();
+                // 🔥 AJOUT : Récupérer et stocker le tarif du psychologue
+                $tarif = $psychologueTarifs[$selectedPsychologueId] ?? 50.00;
+                $rdv->setTarifConsultation($tarif);
+                
+                $em->persist($rdv);
+                $em->flush();
 
-            $this->addFlash('success', 'Votre rendez-vous a été pris avec succès !');
-            return $this->redirectToRoute('front_rendezvous_index');
+                $this->addFlash('success', 'Votre rendez-vous a été pris avec succès !');
+                
+                // 🔥 MODIFICATION : Rediriger vers le paiement au lieu de la liste
+                return $this->redirectToRoute('paiement_index', ['id' => $rdv->getIdRdv()]);
             }
         }
 
