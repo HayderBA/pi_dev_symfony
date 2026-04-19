@@ -170,6 +170,16 @@
             </table>
         </div>
 
+        {# PAGINATION #}
+        <<div class="d-flex justify-content-center mt-4">
+            {{ knp_pagination_render(rendezvous, null, {}, {
+                'align': 'center',
+                'size': 'medium',
+                'rounded': true,
+                'page_range': 5
+            }) }}
+        </div>
+
         {% for rdv in rendezvous %}
         <div class="modal fade" id="modal{{ rdv.idRdv }}" tabindex="-1">
             <div class="modal-dialog">

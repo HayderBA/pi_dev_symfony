@@ -6,6 +6,7 @@ use App\Entity\Rendezvou;
 use App\Form\RendezvouType;
 use App\Service\RendezVousMetierService;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,9 +16,21 @@ use Symfony\Component\Routing\Annotation\Route;
 class AdminRendezvouController extends AbstractController
 {
     #[Route('/', name: 'admin_rendezvous_index')]
-    public function index(Request $request, RendezVousMetierService $rendezVousMetier): Response
+    public function index(Request $request, RendezVousMetierService $rendezVousMetier, PaginatorInterface $paginator): Response
     {
-        return $this->render('back/rendezvous_index.html.twig', $rendezVousMetier->buildListeData($request));
+        $data = $rendezVousMetier->buildListeData($request);
+        
+        // Pagination : 10 résultats par page
+        $rendezvous = $paginator->paginate(
+            $data['rendezvous'],  // La requête ou les données à paginer
+            $request->query->getInt('page', 1),  // Numéro de page
+            10  // Nombre d'éléments par page
+        );
+        
+        // Remplacer les données paginées
+        $data['rendezvous'] = $rendezvous;
+        
+        return $this->render('back/rendezvous_index.html.twig', $data);
     }
 
     #[Route('/new', name: 'admin_rendezvous_new')]

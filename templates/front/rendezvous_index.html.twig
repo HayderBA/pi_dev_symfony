@@ -161,6 +161,16 @@
                 </tbody>
             </table>
         </div>
+        
+        {# PAGINATION - SOLUTION 1 #}
+        <div class="d-flex justify-content-center mt-4">
+            {{ knp_pagination_render(rendezvous, null, {}, {
+                'align': 'center',
+                'size': 'medium',
+                'rounded': true,
+                'page_range': 5
+            }) }}
+        </div>
     </div>
 {% endif %}
 {% endblock %}

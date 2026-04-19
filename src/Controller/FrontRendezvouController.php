@@ -6,6 +6,7 @@ use App\Entity\Rendezvou;
 use App\Form\RendezvouType;
 use App\Service\RendezVousMetierService;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,9 +16,21 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class FrontRendezvouController extends AbstractController
 {
     #[Route('/rendezvous', name: 'front_rendezvous_index')]
-    public function index(Request $request, RendezVousMetierService $rendezVousMetier): Response
+    public function index(Request $request, RendezVousMetierService $rendezVousMetier, PaginatorInterface $paginator): Response
     {
-        return $this->render('front/rendezvous_index.html.twig', $rendezVousMetier->buildListeData($request));
+        $data = $rendezVousMetier->buildListeData($request);
+        
+        // Pagination : 10 résultats par page
+        $rendezvous = $paginator->paginate(
+            $data['rendezvous'],  // Les données à paginer
+            $request->query->getInt('page', 1),  // Numéro de page
+            10  // Nombre d'éléments par page
+        );
+        
+        // Remplacer les données paginées
+        $data['rendezvous'] = $rendezvous;
+        
+        return $this->render('front/rendezvous_index.html.twig', $data);
     }
 
     #[Route('/prendre-rendez-vous', name: 'front_rendezvous_new')]
@@ -94,7 +107,7 @@ class FrontRendezvouController extends AbstractController
 
                 $this->addFlash('success', 'Votre rendez-vous a été pris avec succès !');
                 
-                // 🔥 MODIFICATION : Rediriger vers le paiement au lieu de la liste
+                // 🔥 MODIFICATION : Rediriger vers la liste (pas vers paiement)
                 return $this->redirectToRoute('front_rendezvous_index');
             }
         }
