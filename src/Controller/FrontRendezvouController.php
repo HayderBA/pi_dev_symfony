@@ -95,7 +95,7 @@ class FrontRendezvouController extends AbstractController
                 $this->addFlash('success', 'Votre rendez-vous a été pris avec succès !');
                 
                 // 🔥 MODIFICATION : Rediriger vers le paiement au lieu de la liste
-                return $this->redirectToRoute('paiement_index', ['id' => $rdv->getIdRdv()]);
+                return $this->redirectToRoute('front_rendezvous_index');
             }
         }
 

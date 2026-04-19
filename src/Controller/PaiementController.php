@@ -10,6 +10,8 @@ use Stripe\Stripe;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 
 class PaiementController extends AbstractController
 {
@@ -69,16 +71,29 @@ class PaiementController extends AbstractController
         return $this->json(['id' => $checkoutSession->id]);
     }
 
-    // Paiement réussi
+    // Paiement réussi + Envoi email
     #[Route('/paiement/success/{id}', name: 'paiement_success')]
-    public function success(Rendezvou $rdv, EntityManagerInterface $em): Response
+    public function success(Rendezvou $rdv, EntityManagerInterface $em, MailerInterface $mailer): Response
     {
         // Marquer le rendez-vous comme payé
         $rdv->setEstPaye(true);
         $rdv->setStatut('confirme');
         $em->flush();
         
-        $this->addFlash('success', '✅ Paiement effectué avec succès ! Votre rendez-vous est confirmé.');
+        // ========== ENVOI D'EMAIL DE CONFIRMATION ==========
+        $email = (new Email())
+            ->from('no-reply@cabinet-medical.tn')
+            ->to($rdv->getEmailPatient())
+            ->subject('✅ Confirmation de paiement - Cabinet Médical')
+            ->html($this->renderView('front/confirmation_paiement.html.twig', [
+                'rdv' => $rdv,
+                'montant' => $rdv->getMontant()
+            ]));
+        
+        $mailer->send($email);
+        // ===================================================
+        
+        $this->addFlash('success', '✅ Paiement effectué avec succès ! Un email de confirmation vous a été envoyé.');
         
         return $this->redirectToRoute('front_rendezvous_index');
     }

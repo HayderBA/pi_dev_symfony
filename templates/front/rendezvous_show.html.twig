@@ -18,9 +18,30 @@
                 <p><strong>Date :</strong> {{ rdv.dateRdv|date('d/m/Y') }}</p>
                 <p><strong>Heure :</strong> {{ rdv.heure|date('H:i') }}</p>
                 <p><strong>Type :</strong> {{ rdv.typeCons }}</p>
-                <p><strong>Statut :</strong> <span class="badge bg-secondary">{{ rdv.statut }}</span></p>
+                <p><strong>Statut :</strong>
+                    {% if rdv.statut == 'confirme' %}
+                        <span class="badge bg-success">Confirmé</span>
+                    {% elseif rdv.statut == 'annule' %}
+                        <span class="badge bg-danger">Annulé</span>
+                    {% else %}
+                        <span class="badge bg-warning text-dark">En attente</span>
+                    {% endif %}
+                </p>
+                <p><strong>Paiement :</strong>
+                    {% if rdv.estPaye %}
+                        <span class="badge bg-success">✅ Payé ({{ rdv.montant }} €)</span>
+                    {% else %}
+                        <span class="badge bg-danger">❌ Non payé</span>
+                    {% endif %}
+                </p>
+                {% if rdv.montant %}
+                <p><strong>Montant :</strong> {{ rdv.montant }} €</p>
+                {% endif %}
             </div>
             <div class="card-body border-top d-flex flex-wrap gap-2">
+                {% if rdv.statut == 'confirme' and not rdv.estPaye %}
+                    <a href="{{ path('paiement_index', {id: rdv.idRdv}) }}" class="btn btn-success">Payer maintenant</a>
+                {% endif %}
                 <a href="{{ path('front_rendezvous_edit', {id: rdv.idRdv}) }}" class="btn btn-primary">Modifier</a>
                 <a href="{{ path('front_rendezvous_index') }}" class="btn btn-outline-secondary">Retour à la liste</a>
             </div>

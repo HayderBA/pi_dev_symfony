@@ -29,6 +29,15 @@
                 <span class="badge bg-warning text-dark">En attente</span>
             {% endif %}
         </p>
+        <p><strong>Paiement :</strong>
+            {% if rdv.estPaye %}
+                <span class="badge bg-success">✅ Payé</span>
+            {% else %}
+                <span class="badge bg-danger">❌ Non payé</span>
+            {% endif %}
+        </p>
+        <p><strong>Montant :</strong> {{ rdv.montant ? rdv.montant ~ ' €' : 'Non renseigné' }}</p>
+        <p><strong>Session Stripe :</strong> {{ rdv.stripeSessionId ?: 'Non renseigné' }}</p>
         <div class="mt-4 d-flex gap-2 flex-wrap">
             <a href="{{ path('admin_rendezvous_edit', {id: rdv.idRdv}) }}" class="btn-gm-primary"><i class="bi bi-pencil"></i> Modifier</a>
             <a href="{{ path('admin_rendezvous_index') }}" class="btn-gm-outline">Retour à la liste</a>

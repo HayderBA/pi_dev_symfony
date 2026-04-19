@@ -125,6 +125,7 @@
                         <th>Heure</th>
                         <th>Type</th>
                         <th>Statut</th>
+                        <th>Paiement</th>
                         <th class="text-end">Actions</th>
                     </tr>
                 </thead>
@@ -143,6 +144,13 @@
                                 <span class="badge bg-danger">Annulé</span>
                             {% else %}
                                 <span class="badge bg-warning text-dark">En attente</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if rdv.estPaye %}
+                                <span class="badge bg-success">✅ Payé</span>
+                            {% else %}
+                                <span class="badge bg-danger">❌ Non payé</span>
                             {% endif %}
                         </td>
                         <td class="text-end text-nowrap">

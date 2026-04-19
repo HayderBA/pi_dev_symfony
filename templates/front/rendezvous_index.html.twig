@@ -119,6 +119,7 @@
                         <th>Date</th>
                         <th>Heure</th>
                         <th>Statut</th>
+                        <th>Paiement</th>
                         <th class="text-end">Actions</th>
                     </tr>
                 </thead>
@@ -128,10 +129,28 @@
                             <td>{{ rdv.prenomPatient }} {{ rdv.nomPatient }}</td>
                             <td>{{ rdv.dateRdv|date('d/m/Y') }}</td>
                             <td>{{ rdv.heure|date('H:i') }}</td>
-                            <td><span class="badge bg-secondary">{{ rdv.statut }}</span></td>
+                            <td>
+                                {% if rdv.statut == 'confirme' %}
+                                    <span class="badge bg-success">Confirmé</span>
+                                {% elseif rdv.statut == 'annule' %}
+                                    <span class="badge bg-danger">Annulé</span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">En attente</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if rdv.estPaye %}
+                                    <span class="badge bg-success">✅ Payé</span>
+                                {% else %}
+                                    <span class="badge bg-danger">❌ Non payé</span>
+                                {% endif %}
+                            </td>
                             <td class="text-end text-nowrap">
                                 <a href="{{ path('front_rendezvous_show', {id: rdv.idRdv}) }}" class="btn btn-sm btn-outline-primary">Voir</a>
                                 <a href="{{ path('front_rendezvous_edit', {id: rdv.idRdv}) }}" class="btn btn-sm btn-outline-secondary">Modifier</a>
+                                {% if rdv.statut == 'confirme' and not rdv.estPaye %}
+                                    <a href="{{ path('paiement_index', {id: rdv.idRdv}) }}" class="btn btn-sm btn-success">Payer</a>
+                                {% endif %}
                                 <form method="post" action="{{ path('front_rendezvous_delete', {id: rdv.idRdv}) }}" class="d-inline">
                                     <input type="hidden" name="_token" value="{{ csrf_token('delete_front_rdv' ~ rdv.idRdv) }}">
                                     <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
