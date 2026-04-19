@@ -9,11 +9,36 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\Repository\UserRepository;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Scheb\TwoFactorBundle\Model\Google\TwoFactorInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'users')]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface , TwoFactorInterface
+
 {
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $googleAuthenticatorSecret = null;
+
+    public function getGoogleAuthenticatorSecret(): ?string
+    {
+        return $this->googleAuthenticatorSecret;
+    }
+
+    public function setGoogleAuthenticatorSecret(?string $secret): void
+    {
+        $this->googleAuthenticatorSecret = $secret;
+    }
+
+   public function isGoogleAuthenticatorEnabled(): bool
+    {
+        return in_array('ROLE_PATIENT', $this->getRoles())
+            && $this->googleAuthenticatorSecret !== null;
+    }
+    public function getGoogleAuthenticatorUsername(): string
+{
+    return $this->email;
+}
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
@@ -441,6 +466,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->getPatients()->removeElement($patient);
         return $this;
     }
+    public function isPatient(): bool
+    {
+        return in_array('ROLE_PATIENT', $this->getRoles(), true);
+    }
 
     #[ORM\OneToMany(targetEntity: Reponse::class, mappedBy: 'user')]
     private Collection $reponses;
@@ -583,15 +612,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     #[ORM\ManyToMany(targetEntity: Ressource::class, inversedBy: 'users')]
-    #[ORM\JoinTable(
-        name: 'favori',
-        joinColumns: [
-            new ORM\JoinColumn(name: 'userId', referencedColumnName: 'id')
-        ],
-        inverseJoinColumns: [
-            new ORM\JoinColumn(name: 'ressourceId', referencedColumnName: 'id')
-        ]
-    )]
+    
     private Collection $ressources;
 
     public function __construct()
@@ -689,24 +710,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return (string) $this->email;
     }
 
-    public function getRoles(): array
-        {
-            $roles = [];
+   public function getRoles(): array
+{
+    $roles = [];
 
-        if ($this->role === 'admin') {
-            $roles[] = 'ROLE_ADMIN';
-        }
+    match(strtolower($this->role ?? '')) {
+        'patient' => $roles[] = 'ROLE_PATIENT',
+        'doctor'  => $roles[] = 'ROLE_DOCTOR',
+        'admin'   => $roles[] = 'ROLE_ADMIN',
+        default   => null,
+    };
 
-        if ($this->role === 'doctor') {
-            $roles[] = 'ROLE_DOCTOR';
-        }
+    $roles[] = 'ROLE_USER';
 
-        if ($this->role === 'patient') {
-            $roles[] = 'ROLE_PATIENT';
-        }
-
-        return array_unique($roles);
-    }
+    return array_unique($roles);
+}
 
     public function eraseCredentials(): void
     {

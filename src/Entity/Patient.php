@@ -42,7 +42,7 @@ class Patient
         return $this;
     }
 
-    #[ORM\Column(type: 'decimal', nullable: true)]
+    #[ORM\Column(type: 'float', nullable: true)]
     private ?float $weight = null;
 
     public function getWeight(): ?float
@@ -56,7 +56,7 @@ class Patient
         return $this;
     }
 
-    #[ORM\Column(type: 'decimal', nullable: true)]
+    #[ORM\Column(type: 'float', nullable: true)]
     private ?float $height = null;
 
     public function getHeight(): ?float

@@ -30,7 +30,11 @@ class AlertesUrgence
     }
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'alertesUrgences')]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+#[ORM\JoinColumn(
+    name: 'user_id',
+    referencedColumnName: 'id',
+    onDelete: 'CASCADE'
+)]
     private ?User $user = null;
 
     public function getUser(): ?User

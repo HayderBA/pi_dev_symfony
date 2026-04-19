@@ -170,15 +170,15 @@ class Ressource
     }
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'ressources')]
-    #[ORM\JoinTable(
-        name: 'favori',
-        joinColumns: [
-            new ORM\JoinColumn(name: 'ressourceId', referencedColumnName: 'id')
-        ],
-        inverseJoinColumns: [
-            new ORM\JoinColumn(name: 'userId', referencedColumnName: 'id')
-        ]
-    )]
+#[ORM\JoinTable(
+    name: 'favori_user_ressource',
+    joinColumns: [
+        new ORM\JoinColumn(name: 'ressourceId', referencedColumnName: 'id')
+    ],
+    inverseJoinColumns: [
+        new ORM\JoinColumn(name: 'userId', referencedColumnName: 'id')
+    ]
+)]
     private Collection $users;
 
     public function __construct()

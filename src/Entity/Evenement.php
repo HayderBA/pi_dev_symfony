@@ -85,7 +85,7 @@ class Evenement
         return $this;
     }
 
-    #[ORM\Column(type: 'decimal', nullable: true)]
+    #[ORM\Column(type: 'float', nullable: true)]
     private ?float $popularity_score = null;
 
     public function getPopularity_score(): ?float
@@ -113,7 +113,7 @@ class Evenement
         return $this;
     }
 
-    #[ORM\Column(type: 'decimal', nullable: true)]
+    #[ORM\Column(type: 'float', nullable: true)]
     private ?float $dynamic_price = null;
 
     public function getDynamic_price(): ?float
@@ -127,7 +127,7 @@ class Evenement
         return $this;
     }
 
-    #[ORM\Column(type: 'decimal', nullable: true)]
+    #[ORM\Column(type: 'float', nullable: true)]
     private ?float $base_price = null;
 
     public function getBase_price(): ?float

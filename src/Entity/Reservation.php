@@ -129,7 +129,7 @@ class Reservation
         return $this;
     }
 
-    #[ORM\Column(type: 'decimal', nullable: true)]
+    #[ORM\Column(type: 'float', nullable: true)]
     private ?float $fraud_probability = null;
 
     public function getFraud_probability(): ?float

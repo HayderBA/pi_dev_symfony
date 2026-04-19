@@ -27,7 +27,7 @@ class Admin
 
     public function getId_user(): ?int
     {
-        return $this->id;
+        return $this->id_user;
     }
 
     public function getUser(): ?User

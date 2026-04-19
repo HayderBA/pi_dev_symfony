@@ -113,7 +113,7 @@ class Avi
         return $this;
     }
 
-    #[ORM\Column(type: 'decimal', nullable: true)]
+    #[ORM\Column(type: 'float', nullable: true)]
     private ?float $sentiment_score = null;
 
     public function getSentiment_score(): ?float
@@ -127,7 +127,7 @@ class Avi
         return $this;
     }
 
-    #[ORM\Column(type: 'decimal', nullable: true)]
+    #[ORM\Column(type: 'float', nullable: true)]
     private ?float $authenticity_score = null;
 
     public function getAuthenticity_score(): ?float
