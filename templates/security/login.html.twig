@@ -185,7 +185,11 @@ label {
                 <label for="_remember_me">Remember me</label>
             </div>
         #}
-
+        {# ligne 188 - remplace l'ancien lien #}
+        <a href="{{ path('forgot_password') }}" 
+          style="display:block; text-align:center; margin: 8px 36px 0; font-size:13px; color:var(--muted); text-decoration:none;">
+            Mot de passe oublié ?
+        </a>
         <button class="btn btn-lg btn-primary" type="submit">
             Sign in
         </button>
