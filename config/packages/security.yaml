@@ -46,6 +46,8 @@ security:
 
   # ✅ access_control est ICI — au même niveau que firewalls, PAS dedans
   access_control:
+    - { path: ^/mot-de-passe-oublie, roles: PUBLIC_ACCESS }
+    - { path: ^/reinitialiser, roles: PUBLIC_ACCESS }
     - { path: ^/login,       roles: PUBLIC_ACCESS }
     - { path: ^/register,    roles: PUBLIC_ACCESS }
     - { path: ^/logout,      roles: PUBLIC_ACCESS }
