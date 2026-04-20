@@ -1,0 +1,151 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 500px;
+            width: 100%;
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+        .medecin-card {
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .medecin-card:hover {
+            transform: translateY(-3px);
+        }
+        .distance {
+            font-size: 12px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <h1 class="mb-3">Carte des médecins disponibles</h1>
+    <p class="text-muted mb-4">Trouvez le médecin le plus proche de chez vous</p>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div id="map" style="height: 500px;"></div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Médecins à proximité</h5>
+                </div>
+                <div class="card-body p-0" id="medecins-list">
+                    <div class="list-group list-group-flush">
+                        {% for medecin in medecins %}
+                            <div class="list-group-item medecin-card" data-lat="{{ medecin.latitude }}" data-lon="{{ medecin.longitude }}" data-nom="{{ medecin.nom }}">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>{{ medecin.nom }}</strong>
+                                        <div class="small text-muted">{{ medecin.adresse }}</div>
+                                        <div class="small text-success distance" id="dist-{{ loop.index }}">Calcul...</div>
+                                    </div>
+                                    <a href="{{ path('messages_new', {'userId': medecin.id}) }}" class="btn btn-sm btn-primary">
+                                        Contacter
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="alert alert-info">
+                <strong>Zones d'alerte :</strong> Les zones en rouge indiquent les secteurs avec une activité de détresse élevée.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    let patientLat = 36.8065;
+    let patientLon = 10.1815;
+    
+    var map = L.map('map').setView([patientLat, patientLon], 12);
+    
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO',
+        subdomains: 'abcd',
+        maxZoom: 19
+    }).addTo(map);
+    
+    var patientMarker = L.marker([patientLat, patientLon]).addTo(map);
+    patientMarker.bindPopup('Vous êtes ici');
+    
+    var medecins = {{ medecins|json_encode|raw }};
+    var markers = [];
+    
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        var R = 6371;
+        var dLat = (lat2 - lat1) * Math.PI / 180;
+        var dLon = (lon2 - lon1) * Math.PI / 180;
+        var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+    }
+    
+    medecins.forEach(function(medecin, index) {
+        var marker = L.marker([medecin.latitude, medecin.longitude]).addTo(map);
+        marker.bindPopup('<strong>' + medecin.nom + '</strong><br>' + medecin.adresse);
+        markers.push(marker);
+        
+        var distance = calculateDistance(patientLat, patientLon, medecin.latitude, medecin.longitude);
+        var distDiv = document.getElementById('dist-' + (index + 1));
+        if (distDiv) {
+            distDiv.innerHTML = distance.toFixed(1) + ' km';
+        }
+    });
+    
+    var zonesAlerte = {{ zonesAlerte|json_encode|raw }};
+    
+    zonesAlerte.forEach(function(zone) {
+        L.circle([zone.latitude, zone.longitude], {
+            color: 'red',
+            fillColor: '#f03',
+            fillOpacity: 0.2,
+            radius: zone.rayon
+        }).addTo(map).bindPopup('Zone d\'alerte: ' + zone.niveau);
+    });
+    
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var newLat = position.coords.latitude;
+            var newLon = position.coords.longitude;
+            map.setView([newLat, newLon], 12);
+            patientMarker.setLatLng([newLat, newLon]);
+            
+            medecins.forEach(function(medecin, index) {
+                var distance = calculateDistance(newLat, newLon, medecin.latitude, medecin.longitude);
+                var distDiv = document.getElementById('dist-' + (index + 1));
+                if (distDiv) {
+                    distDiv.innerHTML = distance.toFixed(1) + ' km';
+                }
+            });
+        });
+    }
+    
+    document.querySelectorAll('.medecin-card').forEach(function(card, index) {
+        card.addEventListener('click', function() {
+            var lat = parseFloat(card.dataset.lat);
+            var lon = parseFloat(card.dataset.lon);
+            map.setView([lat, lon], 15);
+            markers[index].openPopup();
+        });
+    });
+</script>
+{% endblock %}

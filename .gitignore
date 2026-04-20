@@ -17,3 +17,5 @@
 ###> symfony/asset-mapper ###
 /assets/vendor/
 ###< symfony/asset-mapper ###
+echo "config/firebase_credentials.json" >> .gitignore
+git add .gitignoreconfig/firebase_credentials.json

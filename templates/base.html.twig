@@ -29,6 +29,52 @@
         <script src="{{ asset('assets/vendor/swiper/swiper-bundle.min.js') }}"></script>
         <script src="{{ asset('assets/js/main.js') }}"></script>
     {% endblock %}
+    <!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-messaging-compat.js"></script>
+
+<script>
+    // Configuration Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyCr5Zp_5-IwxqPFgPZa1Xtpv07NKc9NQMs",
+        authDomain: "growmind-a5559.firebaseapp.com",
+        projectId: "growmind-a5559",
+        storageBucket: "growmind-a5559.firebasestorage.app",
+        messagingSenderId: "675370108793",
+        appId: "1:675370108793:web:1cc21d37dd099a174611a8"
+    };
+
+    // Initialiser Firebase
+    firebase.initializeApp(firebaseConfig);
+    const messaging = firebase.messaging();
+
+    // Demander la permission et obtenir le token
+    Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+            console.log('Notifications autorisées');
+            
+            messaging.getToken({ 
+                vapidKey: 'BOCwidXMMnFIgI7bFdHczXL5vxdOVXfJEEdqkXsIQVqP9ryoI-MBWlsdTlikvO29dniaHfD84p4NnPij8HTf_ds' 
+            }).then(token => {
+                console.log('Token FCM:', token);
+                fetch('/api/notification/enregistrer-token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: token })
+                });
+            }).catch(err => console.error('Erreur token:', err));
+        }
+    });
+
+    // Recevoir les notifications en premier plan
+    messaging.onMessage((payload) => {
+        console.log('Notification reçue:', payload);
+        new Notification(payload.notification.title, {
+            body: payload.notification.body,
+            icon: '/favicon.ico'
+        });
+    });
+</script>
 
 </body>
 </html>

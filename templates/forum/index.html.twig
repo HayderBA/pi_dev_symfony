@@ -2,214 +2,618 @@
 
 {% block stylesheets %}
     {{ parent() }}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { background: linear-gradient(135deg, #f4f9fc 0%, #e6f0f5 100%); }
-        .decor-bubble {
-            position: fixed;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(102,126,234,0.12) 0%, rgba(102,126,234,0) 70%);
-            pointer-events: none;
-            z-index: 0;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            background-attachment: fixed;
+            color: #1a2a3a;
         }
-        .bubble-1 { top: 10%; left: -5%; width: 40%; height: 40%; }
-        .bubble-2 { bottom: 5%; right: -5%; width: 45%; height: 45%; background: radial-gradient(circle, rgba(22,199,132,0.08) 0%, rgba(0,0,0,0) 70%); }
-        .specialty-card { transition: transform 0.2s, box-shadow 0.2s; }
-        .specialty-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.08); }
-        .search-input-group { position: relative; }
-        .search-input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #aaa; z-index: 10; }
-        .search-input-group input { padding-left: 40px; border-radius: 50px; border: 1px solid #e0e3ef; height: 46px; background-color: #fff; }
-        .search-input-group input:focus { border-color: #2c7a7d; box-shadow: 0 0 0 3px rgba(44,122,125,.2); outline: none; }
-        .stat-item { background: white; padding: 1rem; border-radius: 0.75rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: transform 0.2s; }
-        .stat-item:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-        .stat-category-card { transition: transform 0.2s, box-shadow 0.2s; cursor: default; }
-        .stat-category-card:hover { transform: translateY(-5px); box-shadow: 0 12px 24px rgba(0,0,0,0.15); }
-        .btn-teal { background: linear-gradient(135deg, #2c7a7d, #319795); border: none; color: white; }
-        .btn-teal:hover { background: linear-gradient(135deg, #236b6d, #2a7e7c); color: white; }
-        .btn-outline-teal { border: 1px solid #2c7a7d; color: #2c7a7d; background: transparent; }
-        .btn-outline-teal:hover { background: #2c7a7d; color: white; }
-        .logo-text { font-size: 1.5rem; font-weight: 700; background: linear-gradient(135deg, #2c7a7d, #319795); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: -0.5px; text-decoration: none; }
+        
+        @keyframes fadeUp {
+            0% { opacity: 0; transform: translateY(40px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeLeft {
+            0% { opacity: 0; transform: translateX(-30px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes fadeRight {
+            0% { opacity: 0; transform: translateX(30px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+        
+        .scroll-animate {
+            opacity: 0;
+            transition: all 0.7s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        
+        .scroll-animate.visible {
+            opacity: 1;
+            transform: translateY(0) translateX(0);
+        }
+        
+        .fade-up { transform: translateY(40px); }
+        .fade-left { transform: translateX(-30px); }
+        .fade-right { transform: translateX(30px); }
+        
+        .back-home-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 12px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-home-btn:hover {
+            transform: translateX(-5px);
+            background: white;
+        }
+        
+        .page-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .page-title h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .page-title p {
+            color: #64748b;
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #2c3e50;
+        }
+        
+        .stat-label {
+            color: #64748b;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-top: 0.25rem;
+        }
+        
+        .category-chip {
+            background: white;
+            border-radius: 50px;
+            padding: 8px 24px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            color: #4a5568;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .category-chip:hover {
+            background: #2c3e50;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .post-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        
+        .post-card:hover {
+            transform: translateX(8px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+        }
+        
+        .avatar {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 14px 20px;
+            border-radius: 50px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52,152,219,0.1);
+        }
+        
+        .carte-section {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+        }
+        
+        #carte-map {
+            height: 400px;
+            width: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        #sos-button {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 1000;
+        }
+        
+        .sos-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 14px 28px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(231,76,60,0.3);
+        }
+        
+        .sos-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .floating-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #2c3e50;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 999;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .floating-btn:hover {
+            transform: translateY(-5px);
+            background: #3498db;
+        }
+        
+        .chat-sidebar {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            z-index: 1000;
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 12px 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .ia-avatar {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+        
+        .chat-messages {
+            height: 450px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            background: #f8fafc;
+        }
+        
+        .user-message { text-align: right; margin-bottom: 16px; }
+        .user-message .message-bubble {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            display: inline-block;
+            padding: 10px 14px;
+            border-radius: 18px;
+            max-width: 85%;
+        }
+        
+        .ia-message { text-align: left; margin-bottom: 16px; }
+        .ia-message .message-bubble {
+            background: white;
+            color: #1a2a3a;
+            display: inline-block;
+            padding: 10px 14px;
+            border-radius: 18px;
+            max-width: 85%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .message-time { font-size: 10px; color: #94a3b8; margin-top: 4px; padding-left: 12px; }
+        
+        .chat-input { padding: 12px; background: white; border-top: 1px solid #e2e8f0; }
+        .chat-input form { display: flex; gap: 8px; }
+        .chat-input input { flex: 1; padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 50px; outline: none; }
+        .chat-input input:focus { border-color: #3498db; }
+        .chat-input button { background: #3498db; border: none; width: 40px; height: 40px; border-radius: 50%; color: white; cursor: pointer; }
+        
+        @media (max-width: 768px) {
+            .stat-number { font-size: 1.8rem; }
+            .avatar { width: 40px; height: 40px; font-size: 1rem; }
+            .chat-sidebar { width: 300px; }
+            #carte-map { height: 300px; }
+            .page-title h1 { font-size: 2rem; }
+            .sos-btn { padding: 10px 20px; font-size: 0.9rem; }
+        }
     </style>
 {% endblock %}
 
 {% block body %}
-<div class="decor-bubble bubble-1"></div>
-<div class="decor-bubble bubble-2"></div>
+<a href="{{ path('app_home') }}" class="back-home-btn">
+    <i class="bi bi-arrow-left"></i> Retour à l'accueil
+</a>
 
-<header id="header" class="header fixed-top">
-    <div class="branding d-flex align-items-center">
-        <div class="container position-relative d-flex align-items-center justify-content-between">
-            <a href="{{ path('app_home') }}" class="logo d-flex align-items-center">
-                <span class="logo-text">GROWMIND</span>
-            </a>
-            <nav id="navmenu" class="navmenu">
-                <ul>
-                    <li><a href="{{ path('app_home') }}">Accueil</a></li>
-                    <li><a href="{{ path('app_doctors') }}">Medecin</a></li>
-                    <li><a href="{{ path('app_appointment') }}">Evenement</a></li>
-                    <li class="dropdown">
-                        <a href="#"><span>Plus</span><i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                        <ul>
-                            <li><a href="#">Cabinet</a></li>
-                            <li><a href="{{ path('app_appointment') }}">Rendez-vous</a></li>
-                            <li><a href="#">Santé & bien-être</a></li>
-                            <li><a href="{{ path('forum_index') }}">Forum</a></li>
-                            <li><a href="#">Ressources</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="{{ path('app_contact') }}">Contact</a></li>
-                </ul>
-                <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-            </nav>
+<div class="container py-5">
+    
+    <div class="page-title scroll-animate fade-up">
+        <h1>Forum des discussions</h1>
+        <p>Un espace bienveillant pour partager, s'écouter et progresser ensemble</p>
+    </div>
+    
+    <div class="row mb-5 scroll-animate fade-up">
+        <div class="col-md-8 mx-auto">
+            <div class="d-flex gap-3">
+                <input type="text" id="searchForum" class="search-input" placeholder="Rechercher une discussion...">
+                <a href="{{ path('forum_new') }}" class="btn" style="background:#2c3e50; color:white; border-radius:50px; padding:12px 28px; text-decoration:none;">+ Nouvelle discussion</a>
+            </div>
         </div>
     </div>
-</header>
-
-<main class="main">
-    <div class="page-title text-center">
-        <h1>Forum des discussions</h1>
-        <p>Un espace bienveillant pour partager, s'écouter et progresser ensemble.</p>
+    
+    <div class="row mb-5 g-4">
+        <div class="col-md-3 col-6 scroll-animate fade-up">
+            <div class="stat-card">
+                <div class="stat-number">{{ posts|length }}</div>
+                <div class="stat-label">Discussions</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 scroll-animate fade-up" style="animation-delay:0.1s">
+            <div class="stat-card">
+                <div class="stat-number">{{ urgentPosts|default(0) }}</div>
+                <div class="stat-label">Urgentes</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 scroll-animate fade-up" style="animation-delay:0.2s">
+            <div class="stat-card">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Soutien</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 scroll-animate fade-up" style="animation-delay:0.3s">
+            <div class="stat-card">
+                <div class="stat-number">{{ medecinsData|length }}</div>
+                <div class="stat-label">Médecins</div>
+            </div>
+        </div>
     </div>
-
-    <section class="section">
-        <div class="container">
-            {# Barre d'outils #}
-            <div class="row justify-content-center mb-4">
-                <div class="col-lg-8">
-                    <div class="d-flex flex-wrap gap-3 align-items-center justify-content-between">
-                        <div class="flex-grow-1">
-                            <div class="search-input-group">
-                                <i class="bi bi-search"></i>
-                                <input type="text" id="searchForum" class="form-control" placeholder="Rechercher une discussion…">
-                            </div>
-                        </div>
-                        <a href="{{ path('forum_new') }}" class="btn btn-teal rounded-pill">
-                            <i class="bi bi-plus-lg me-1"></i>Nouvelle discussion
-                        </a>
-                    </div>
-                </div>
+    
+    <div class="row mb-5 scroll-animate fade-up">
+        <div class="col-12">
+            <div class="d-flex flex-wrap justify-content-center gap-2">
+                <a href="{{ path('forum_index') }}" class="category-chip">Toutes</a>
+                {% for cat in ['Anxiété','Stress','Dépression','Méditation','Sommeil','Estime de soi'] %}
+                    <a href="{{ path('forum_categorie', {'categorie': cat}) }}" class="category-chip">{{ cat }}</a>
+                {% endfor %}
             </div>
-
-            {# Filtres par catégorie #}
-            <div class="row justify-content-center mb-5">
-                <div class="col-lg-8">
-                    <div class="d-flex flex-wrap justify-content-center gap-2">
-                        {% if not currentCategorie %}
-                            <a href="{{ path('forum_index') }}" class="btn btn-sm btn-teal rounded-pill">Toutes</a>
-                        {% else %}
-                            <a href="{{ path('forum_index') }}" class="btn btn-sm btn-outline-teal rounded-pill">Toutes</a>
-                        {% endif %}
-                        {% for cat in ['Anxiété','Stress','Dépression','Méditation','Sommeil','Estime de soi'] %}
-                            {% if currentCategorie == cat %}
-                                <a href="{{ path('forum_categorie', {'categorie': cat}) }}" class="btn btn-sm btn-teal rounded-pill">{{ cat }}</a>
-                            {% else %}
-                                <a href="{{ path('forum_categorie', {'categorie': cat}) }}" class="btn btn-sm btn-outline-teal rounded-pill">{{ cat }}</a>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-
-            {# Statistiques générales #}
-            <div class="row text-center mb-5 g-4 justify-content-center">
-                <div class="col-md-3 col-6"><div class="stat-item"><h3 class="fw-bold" style="color:#2c7a7d;">{{ totalPosts|default(0) }}</h3><p class="text-muted mb-0">Discussions</p></div></div>
-                <div class="col-md-3 col-6"><div class="stat-item"><h3 class="fw-bold text-danger">{{ urgentPosts|default(0) }}</h3><p class="text-muted mb-0">Urgentes</p></div></div>
-                <div class="col-md-3 col-6"><div class="stat-item"><h3 class="fw-bold" style="color:#2c7a7d;">24/7</h3><p class="text-muted mb-0">Soutien</p></div></div>
-            </div>
-
-            {# Statistiques par catégorie (couleurs dégradées) #}
-            {% set categoriesStats = {} %}
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12">
             {% for post in posts %}
-                {% set cat = post.categorie|replace({'😢': '', '😟': '', '🧠': '', '💬': '', '🧘': '', '💤': '', '💪': ''})|trim %}
-                {% set categoriesStats = categoriesStats|merge({ (cat): (categoriesStats[cat]|default(0) + 1) }) %}
-            {% endfor %}
-
-            {% set categorieColors = {
-                'Méditation': 'linear-gradient(135deg, #a5d6a5, #4caf50)',
-                'Sommeil': 'linear-gradient(135deg, #90caf9, #2196f3)',
-                'Estime de soi': 'linear-gradient(135deg, #ffb74d, #ff9800)',
-                'Stress': 'linear-gradient(135deg, #ffa270, #f57c00)',
-                'Anxiété': 'linear-gradient(135deg, #ff8a7a, #e64a19)',
-                'Dépression': 'linear-gradient(135deg, #e57373, #d32f2f)',
-                'Général': 'linear-gradient(135deg, #b0bec5, #78909c)'
-            } %}
-
-            {% if categoriesStats|length > 0 %}
-                <div class="row mt-5"><div class="col-12"><h4 class="text-center mb-4">Discussions par catégorie</h4></div></div>
-                <div class="row g-4 justify-content-center">
-                    {% for cat, count in categoriesStats %}
-                        <div class="col-md-3 col-sm-6">
-                            <div class="stat-category-card text-center p-3 rounded-4 shadow-sm" style="background: {{ categorieColors[cat]|default('linear-gradient(135deg, #b0bec5, #78909c)') }}; color: white;">
-                                <h5 class="fw-bold mb-2">{{ cat }}</h5>
-                                <div class="display-4 fw-bold">{{ count }}</div>
-                                <p class="mb-0 small">discussion(s)</p>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-
-            {# Liste des discussions #}
-            {% if posts is empty %}
-                <div class="text-center py-5">
-                    <i class="bi bi-chat-dots fs-1 text-muted"></i>
-                    <p class="mt-3">Aucune discussion pour le moment.</p>
-                    <a href="{{ path('forum_new') }}" class="btn btn-teal rounded-pill">Lancer la première discussion</a>
-                </div>
-            {% else %}
-                <div class="row g-4 mt-3">
-                    {% for post in posts %}
-                        {% set categoriePropre = post.categorie|replace({'😢': '', '😟': '', '🧠': '', '💬': '', '🧘': '', '💤': '', '💪': ''})|trim %}
-                        <div class="col-12" data-search="{{ post.nom|lower }} {{ categoriePropre|lower }} {{ post.contenu|lower }}">
-                            <div class="specialty-card bg-white rounded-3 shadow-sm overflow-hidden">
-                                <div class="specialty-content p-4">
-                                    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
-                                        <div>
-                                            <h3 class="h5 fw-bold"><a href="{{ path('forum_show', {'id': post.id}) }}" class="text-decoration-none">{{ post.nom }}</a></h3>
-                                            <div class="mb-2 d-flex flex-wrap gap-2 align-items-center">
-                                                <span class="badge bg-secondary rounded-pill px-3 py-2">{{ categoriePropre }}</span>
-                                                <span class="text-muted small"><i class="bi bi-person-circle me-1"></i>{{ post.nom }} <i class="bi bi-calendar3 ms-2 me-1"></i>{{ post.dateCreation|date('d/m/Y') }} <i class="bi bi-eye ms-2 me-1"></i>{{ post.vues }} vues</span>
-                                            </div>
-                                            <p class="card-text text-muted">{{ post.contenu|slice(0,150) }}{% if post.contenu|length > 150 %}…{% endif %}</p>
-                                        </div>
-                                        <div class="d-flex gap-2 flex-wrap">
-                                            <a href="{{ path('forum_show', {'id': post.id}) }}" class="btn btn-sm rounded-pill" style="color:#7c3aed; border:1px solid #7c3aed; background:transparent;"><i class="bi bi-eye"></i> Voir</a>
-                                            <a href="{{ path('forum_edit', {'id': post.id}) }}" class="btn btn-sm rounded-pill" style="color:#b45309; border:1px solid #b45309; background:transparent;"><i class="bi bi-pencil"></i> Modifier</a>
-                                            <form action="{{ path('forum_delete', {'id': post.id}) }}" method="POST" onsubmit="return confirm('Supprimer cette discussion ?')">
-                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
-                                                <button type="submit" class="btn btn-sm rounded-pill" style="color:#991b1b; border:1px solid #991b1b; background:transparent;"><i class="bi bi-trash"></i> Supprimer</button>
-                                            </form>
-                                        </div>
+                <div class="post-card scroll-animate fade-right" data-search="{{ post.nom|lower }} {{ post.categorie|lower }}">
+                    <div class="d-flex gap-3">
+                        <div class="avatar flex-shrink-0">{{ post.nom|first|upper }}</div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex flex-wrap justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h3 class="h5 fw-bold mb-1">
+                                        <a href="{{ path('forum_show', {'id': post.id}) }}" class="text-decoration-none" style="color:#2c3e50;">{{ post.nom }}</a>
+                                    </h3>
+                                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                                        <span class="badge" style="background:#3498db;">{{ post.categorie }}</span>
+                                        <small class="text-muted"><i class="bi bi-person-circle"></i> {{ post.nom }}</small>
+                                        <small class="text-muted"><i class="bi bi-calendar3"></i> {{ post.dateCreation|date('d/m/Y') }}</small>
+                                        <small class="text-muted"><i class="bi bi-eye"></i> {{ post.vues }} vues</small>
                                     </div>
                                 </div>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-link text-muted" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item" href="{{ path('forum_show', {'id': post.id}) }}"><i class="bi bi-eye"></i> Voir</a></li>
+                                        <li><a class="dropdown-item" href="{{ path('forum_edit', {'id': post.id}) }}"><i class="bi bi-pencil"></i> Modifier</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <form action="{{ path('forum_delete', {'id': post.id}) }}" method="POST" onsubmit="return confirm('Supprimer cette discussion ?')">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
+                                                <button type="submit" class="dropdown-item text-danger"><i class="bi bi-trash"></i> Supprimer</button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
+                            <p class="text-muted mb-0">{{ post.contenu|slice(0,150) }}{% if post.contenu|length > 150 %}...{% endif %}</p>
                         </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-
-            {# Carte d'aide d'urgence #}
-            <div class="row mt-5 justify-content-center">
-                <div class="col-lg-6">
-                    <div class="text-white rounded-4 p-4 text-center shadow-lg" style="background: linear-gradient(135deg, #2c7a7d, #319795);">
-                        <i class="bi bi-telephone-fill fs-2 mb-2"></i>
-                        <h2 class="display-4 fw-bold">3114</h2>
-                        <p class="mb-0">Numéro national de prévention du suicide – 24h/24, gratuit et confidentiel.</p>
                     </div>
                 </div>
+            {% else %}
+                <div class="text-center py-5 bg-white rounded-4">
+                    <p class="text-muted">Aucune discussion pour le moment.</p>
+                    <a href="{{ path('forum_new') }}" class="btn" style="background:#2c3e50; color:white; border-radius:50px; padding:12px 28px;">Lancer la première discussion</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="carte-section scroll-animate fade-up mt-5">
+        <h3 class="fw-bold mb-3" style="color:#2c3e50;">Médecins à proximite</h3>
+        <p class="text-muted mb-3">Trouvez un medecin pres de chez vous. Les zones rouges indiquent les secteurs avec une activite de detresse elevee.</p>
+        <div id="carte-map"></div>
+        <div class="mt-2 text-center"><small class="text-muted">{{ medecinsData|length }} medecin(s) disponible(s) sur la carte</small></div>
+    </div>
+    
+    <div class="carte-section scroll-animate fade-up mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="fw-bold mb-0" style="color:#2c3e50;">Historique des alertes SOS</h3>
+            <button onclick="chargerHistorique()" class="btn btn-sm btn-outline-secondary rounded-pill">Rafraichir</button>
+        </div>
+        <div id="historique-container">
+            <div class="text-center py-4" id="historique-loading"><div class="spinner-border text-primary"></div><p class="mt-2">Chargement...</p></div>
+            <div id="historique-list" style="display: none;"></div>
+        </div>
+    </div>
+    
+    <div class="row mt-5 scroll-animate fade-up">
+        <div class="col-md-8 mx-auto">
+            <div class="text-center p-4 rounded-4" style="background: linear-gradient(135deg, #2c3e50, #3498db); color: white;">
+                <i class="bi bi-telephone-fill fs-1 mb-2"></i>
+                <h2 class="display-4 fw-bold">3114</h2>
+                <p class="mb-0">Numero national de prevention du suicide – 24h/24, gratuit et confidentiel.</p>
             </div>
         </div>
-    </section>
-</main>
+    </div>
+</div>
 
-<footer class="text-center p-4"><p>© GrowMind - Tous droits réservés</p></footer>
+<div id="sos-button">
+    <button class="sos-btn" onclick="sosUrgence()"><i class="bi bi-sos"></i> SOS URGENCE</button>
+</div>
 
+<div class="floating-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'});">
+    <i class="bi bi-arrow-up fs-4"></i>
+</div>
+
+<div class="chat-sidebar" id="chat-sidebar">
+    <div class="chat-header" onclick="toggleChat()">
+        <div class="d-flex align-items-center gap-2">
+            <div class="ia-avatar"></div>
+            <div><strong>Dr. IA GrowMind</strong><div class="small text-white-50">En ligne 24/7</div></div>
+        </div>
+        <i class="bi bi-chevron-down" id="chat-toggle-icon"></i>
+    </div>
+    <div id="chat-messages" class="chat-messages" style="display: none;">
+        <div class="messages-container" id="messages-container">
+            <div class="ia-message"><div class="message-bubble">Bonjour. Je suis votre assistant medical IA. Comment vous sentez-vous aujourd'hui ?</div><div class="message-time">maintenant</div></div>
+        </div>
+        <div class="chat-input">
+            <form id="chat-form" onsubmit="return false;">
+                <input type="text" id="chat-input-field" placeholder="Ecrivez votre message..." autocomplete="off">
+                <button type="submit"><i class="bi bi-send"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
+    // ========== ANIMATION SCROLL ==========
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.scroll-animate').forEach(el => observer.observe(el));
+    
+    // ========== RECHERCHE ==========
     document.getElementById('searchForum').addEventListener('input', function() {
-        let q = this.value.toLowerCase().trim();
-        document.querySelectorAll('[data-search]').forEach(card => {
+        let search = this.value.toLowerCase().trim();
+        document.querySelectorAll('.post-card').forEach(card => {
             let text = card.getAttribute('data-search') || '';
-            card.style.display = text.includes(q) ? '' : 'none';
+            card.style.display = text.includes(search) ? '' : 'none';
         });
     });
+    
+    // ========== CARTE DYNAMIQUE ==========
+    var medecins = {{ medecinsData|json_encode|raw }};
+    var zonesAlerte = {{ zonesAlerte|json_encode|raw }};
+    
+    console.log('Medecins charges:', medecins.length);
+    
+    // Si aucun medecin, utiliser des donnees par defaut
+    if (medecins.length === 0) {
+        medecins = [
+            { id: 1, nom: 'Dr. Mohamed Ben Ali', latitude: 36.8065, longitude: 10.1815, adresse: 'Tunis Centre' },
+            { id: 2, nom: 'Dr. Sarah Ben Ahmed', latitude: 36.8600, longitude: 10.1950, adresse: 'Ariana' },
+            { id: 3, nom: 'Dr. Sarra Hammami', latitude: 36.8400, longitude: 10.2100, adresse: 'Carthage' },
+            { id: 4, nom: 'Dr. Leila Mansouri', latitude: 36.8200, longitude: 10.2300, adresse: 'La Marsa' }
+        ];
+    }
+    
+    var map = L.map('carte-map').setView([36.8065, 10.1815], 11);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap',
+        subdomains: 'abcd',
+        maxZoom: 19
+    }).addTo(map);
+    
+    // Ajout des medecins
+    medecins.forEach(function(medecin) {
+        if (medecin.latitude && medecin.longitude) {
+            var marker = L.marker([medecin.latitude, medecin.longitude]).addTo(map);
+            marker.bindPopup('<strong>' + medecin.nom + '</strong><br>' + medecin.adresse);
+        }
+    });
+    
+    // Ajout des zones d'alerte
+    zonesAlerte.forEach(function(zone) {
+        if (zone.latitude && zone.longitude) {
+            L.circle([zone.latitude, zone.longitude], {
+                color: '#e74c3c', fillColor: '#e74c3c', fillOpacity: 0.2, radius: zone.rayon
+            }).addTo(map).bindPopup('Zone d\'alerte: ' + zone.niveau);
+        }
+    });
+    
+    // ========== FONCTIONS ==========
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        var R = 6371;
+        var dLat = (lat2 - lat1) * Math.PI / 180;
+        var dLon = (lon2 - lon1) * Math.PI / 180;
+        var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+    }
+    
+    function sosUrgence() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var patientLat = position.coords.latitude, patientLon = position.coords.longitude;
+                var medecinProche = null, distanceMin = Infinity;
+                medecins.forEach(function(medecin) {
+                    var distance = calculateDistance(patientLat, patientLon, medecin.latitude, medecin.longitude);
+                    if (distance < distanceMin) { distanceMin = distance; medecinProche = medecin; }
+                });
+                if (medecinProche && confirm('Medecin le plus proche : ' + medecinProche.nom + ' (' + distanceMin.toFixed(1) + ' km)\nEnvoyer l\'alerte ?')) {
+                    fetch('/api/urgence/sos', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ medecinId: medecinProche.id, patientLat: patientLat, patientLon: patientLon, distance: distanceMin })
+                    }).then(r => r.json()).then(data => {
+                        if (data.success) { alert('Alerte envoyee au Dr. ' + medecinProche.nom + ' !'); chargerHistorique(); }
+                        else alert('Erreur lors de l\'envoi');
+                    }).catch(() => alert('Erreur de connexion'));
+                } else alert('Aucun medecin disponible.\nAppelez le 3114.');
+            }, () => alert('Impossible de vous localiser.'));
+        } else alert('Geolocalisation non supportee.');
+    }
+    
+    function chargerHistorique() {
+        fetch('/api/urgence/historique').then(r => r.json()).then(data => {
+            const container = document.getElementById('historique-list'), loading = document.getElementById('historique-loading');
+            if (data.length === 0) container.innerHTML = '<div class="alert alert-info text-center">Aucune alerte SOS.</div>';
+            else {
+                let html = '<div class="list-group">';
+                data.forEach(a => { html += '<div class="list-group-item border-0 mb-2 rounded-3" style="background:#f8fafc;"><div class="d-flex justify-content-between"><div><span class="badge bg-danger me-2">SOS</span><strong>Dr. ' + a.medecinNom + '</strong><div class="small text-muted mt-1">' + a.distance + ' km - ' + a.createdAt + '</div></div><span class="badge bg-success">' + (a.statut === 'envoyee' ? 'Envoyee' : 'Traitee') + '</span></div></div>'; });
+                html += '</div>'; container.innerHTML = html;
+            }
+            loading.style.display = 'none'; container.style.display = 'block';
+        }).catch(() => { document.getElementById('historique-loading').innerHTML = '<div class="alert alert-warning">Erreur de chargement</div>'; });
+    }
+    document.addEventListener('DOMContentLoaded', chargerHistorique);
+    
+    // ========== CHATBOT ==========
+    function toggleChat() {
+        const messages = document.getElementById('chat-messages'), icon = document.getElementById('chat-toggle-icon');
+        if (messages.style.display === 'none') { messages.style.display = 'flex'; icon.classList.remove('bi-chevron-down'); icon.classList.add('bi-chevron-up'); }
+        else { messages.style.display = 'none'; icon.classList.remove('bi-chevron-up'); icon.classList.add('bi-chevron-down'); }
+    }
+    
+    document.getElementById('chat-form').addEventListener('submit', async function(e) {
+        e.preventDefault(); const input = document.getElementById('chat-input-field'), message = input.value.trim();
+        if (!message) return;
+        const container = document.getElementById('messages-container');
+        container.innerHTML += '<div class="user-message"><div class="message-bubble">' + escapeHtml(message) + '</div><div class="message-time">maintenant</div></div>';
+        input.value = ''; container.scrollTop = container.scrollHeight;
+        const typingDiv = document.createElement('div'); typingDiv.className = 'ia-message'; typingDiv.id = 'typing-indicator'; typingDiv.innerHTML = '<div class="message-bubble">Assistant ecrit...</div>'; container.appendChild(typingDiv); container.scrollTop = container.scrollHeight;
+        try {
+            const response = await fetch('/chat/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: message }) });
+            const data = await response.json(); document.getElementById('typing-indicator')?.remove();
+            if (data.success) { container.innerHTML += '<div class="ia-message"><div class="message-bubble">' + escapeHtml(data.reponse) + '</div><div class="message-time">maintenant</div></div>'; container.scrollTop = container.scrollHeight; }
+        } catch(error) { document.getElementById('typing-indicator')?.remove(); }
+    });
+    
+    function escapeHtml(text) { const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
 </script>
 {% endblock %}

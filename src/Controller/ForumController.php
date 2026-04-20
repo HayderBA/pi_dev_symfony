@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\ForumPost;
 use App\Entity\Reponse;
+use App\Entity\User;
 use App\Form\ForumPostType;
 use App\Form\ReponseType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -32,12 +33,79 @@ class ForumController extends AbstractController
         }
         $posts = $qb->orderBy('p.dateCreation', 'DESC')->getQuery()->getResult();
 
+        // ========== RÉCUPÉRATION DES MÉDECINS POUR LA CARTE ==========
+        $userRepo = $em->getRepository(User::class);
+        $medecins = $userRepo->findBy(['role' => 'medecin']);
+        
+        $medecinsData = [];
+        foreach ($medecins as $medecin) {
+            $medecinsData[] = [
+                'id' => $medecin->getId(),
+                'nom' => $medecin->getName() . ' ' . $medecin->getSecondName(),
+                'latitude' => $medecin->getLatitude() ?? 36.8065,
+                'longitude' => $medecin->getLongitude() ?? 10.1815,
+                'adresse' => $medecin->getAdresse() ?? 'Tunis, Tunisie'
+            ];
+        }
+
+        // ========== ZONES D'ALERTE DYNAMIQUES ==========
+        // Basées sur les posts contenant des mots-clés d'urgence
+        $zonesAlerte = [];
+        $motsUrgence = ['urgence', 'crise', 'suicide', 'mourir', 'panique', 'angoisse', 'détresse'];
+        
+        foreach ($posts as $post) {
+            $contenu = strtolower($post->getContenu());
+            foreach ($motsUrgence as $mot) {
+                if (strpos($contenu, $mot) !== false) {
+                    // Créer une zone d'alerte autour de ce post (coordonnées par défaut)
+                    $zonesAlerte[] = [
+                        'nom' => 'Zone ' . $post->getCategorie(),
+                        'latitude' => 36.8065 + (rand(0, 100) / 1000),
+                        'longitude' => 10.1815 + (rand(0, 100) / 1000),
+                        'rayon' => 2000,
+                        'niveau' => 'moyen'
+                    ];
+                    break;
+                }
+            }
+        }
+        
+        // Supprimer les doublons de zones
+        $zonesAlerte = array_unique($zonesAlerte, SORT_REGULAR);
+        
+        // Si aucune zone d'alerte trouvée, ajouter une zone par défaut
+        if (empty($zonesAlerte)) {
+            $zonesAlerte = [
+                [
+                    'nom' => 'Centre Tunis',
+                    'latitude' => 36.8065,
+                    'longitude' => 10.1815,
+                    'rayon' => 3000,
+                    'niveau' => 'élevé'
+                ]
+            ];
+        }
+
+        // Calculer le nombre de posts urgents
+        $urgentCount = 0;
+        foreach ($posts as $post) {
+            $contenu = strtolower($post->getContenu());
+            foreach ($motsUrgence as $mot) {
+                if (strpos($contenu, $mot) !== false) {
+                    $urgentCount++;
+                    break;
+                }
+            }
+        }
+
         return $this->render('forum/index.html.twig', [
             'posts'          => $posts,
             'searchQuery'    => $query,
             'currentCategorie' => $categorie,
             'totalPosts'     => count($posts),
-            'urgentPosts'    => 0,
+            'urgentPosts'    => $urgentCount,
+            'medecinsData'   => $medecinsData,
+            'zonesAlerte'    => $zonesAlerte
         ]);
     }
 
@@ -73,11 +141,9 @@ class ForumController extends AbstractController
             return $this->redirectToRoute('forum_index');
         }
 
-        // Incrémenter les vues
         $post->setVues($post->getVues() + 1);
         $em->flush();
 
-        // Formulaire de réponse
         $reponse = new Reponse();
         $reponse->setDateCreation(new \DateTimeImmutable());
         $reponse->setLikes(0);
