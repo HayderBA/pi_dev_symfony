@@ -1,0 +1,240 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvel evenement - Administration{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('assets/css/venue-map.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="admin-header">
+    <div class="container">
+        <div class="admin-header-content">
+            <div class="admin-breadcrumb">
+                <a href="{{ path('app_home') }}">Accueil</a>
+                <i class="fas fa-chevron-right"></i>
+                <a href="{{ path('app_evenement_admin') }}">Administration</a>
+                <i class="fas fa-chevron-right"></i>
+                <span>Nouvel evenement</span>
+            </div>
+            <div class="admin-title-section">
+                <div class="admin-icon">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <div>
+                    <h1>Creer un evenement</h1>
+                    <p>Ajoutez un atelier, une seance ou une sortie bien-etre avec une localisation moderne.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="admin-container">
+    <div class="container">
+        <div class="form-card">
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'class': 'modern-form'}}) }}
+
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form_label(form.titre, 'Titre de l evenement *', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.titre, {'attr': {'class': 'form-control-modern', 'placeholder': 'Ex: Atelier meditation en pleine conscience'}}) }}
+                    {{ form_errors(form.titre) }}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.description, {'attr': {'class': 'form-control-modern textarea', 'rows': 5, 'placeholder': 'Decrivez votre evenement...'}}) }}
+                    {{ form_errors(form.description) }}
+                </div>
+            </div>
+
+            <div class="form-row grid-2">
+                <div class="form-group">
+                    {{ form_label(form.date, 'Date *', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.date, {'attr': {'class': 'form-control-modern'}}) }}
+                    {{ form_errors(form.date) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.maxCapacity, 'Capacite maximale *', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.maxCapacity, {'attr': {'class': 'form-control-modern', 'min': 1, 'placeholder': 'Nombre de places'}}) }}
+                    {{ form_errors(form.maxCapacity) }}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    {% include 'back/_event_location_picker.html.twig' with {form: form, venueCatalogJson: venueCatalogJson} %}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form_label(form.basePrice, 'Prix de base (EUR)', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.basePrice, {'attr': {'class': 'form-control-modern', 'min': 0, 'step': 1, 'placeholder': 'Prix par personne'}}) }}
+                    {{ form_errors(form.basePrice) }}
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-save"></i> Creer l evenement
+                </button>
+                <a href="{{ path('app_evenement_admin') }}" class="btn-cancel">
+                    <i class="fas fa-times"></i> Annuler
+                </a>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+
+<style>
+    .admin-header {
+        background: linear-gradient(135deg, #0b3b3f 0%, #1a6d6b 50%, #2a9d8f 100%);
+        padding: 40px 0;
+        color: white;
+    }
+    .admin-breadcrumb {
+        font-size: 0.85rem;
+        margin-bottom: 20px;
+    }
+    .admin-breadcrumb a {
+        color: rgba(255,255,255,0.7);
+        text-decoration: none;
+    }
+    .admin-breadcrumb i {
+        margin: 0 8px;
+        font-size: 0.7rem;
+    }
+    .admin-title-section {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+    .admin-icon {
+        width: 60px;
+        height: 60px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+    }
+    .admin-title-section h1 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+    .admin-title-section p {
+        opacity: 0.86;
+        margin: 0;
+    }
+    .admin-container {
+        padding: 40px 0 60px;
+        background: #f5f7fc;
+        min-height: calc(100vh - 250px);
+    }
+    .form-card {
+        max-width: 980px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 28px;
+        padding: 40px;
+        box-shadow: 0 8px 28px rgba(0,0,0,0.05);
+    }
+    .modern-form .form-row {
+        margin-bottom: 24px;
+    }
+    .modern-form .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    .form-label {
+        display: block;
+        font-weight: 600;
+        color: #0b3b3f;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+    }
+    .form-control-modern {
+        width: 100%;
+        padding: 14px 18px;
+        border: 2px solid #e2e8f0;
+        border-radius: 16px;
+        font-size: 0.95rem;
+        transition: all 0.3s;
+    }
+    .form-control-modern:focus {
+        border-color: #2a9d8f;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(42,157,143,0.1);
+    }
+    .form-control-modern.textarea {
+        border-radius: 20px;
+        resize: vertical;
+    }
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #e2e8f0;
+    }
+    .btn-submit {
+        flex: 1;
+        background: linear-gradient(135deg, #2a9d8f, #1a6d6b);
+        border: none;
+        padding: 14px;
+        border-radius: 40px;
+        color: white;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(42,157,143,0.3);
+    }
+    .btn-cancel {
+        flex: 1;
+        background: transparent;
+        border: 2px solid #e2e8f0;
+        padding: 12px;
+        border-radius: 40px;
+        text-align: center;
+        text-decoration: none;
+        color: #64748b;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+    .btn-cancel:hover {
+        border-color: #ef476f;
+        color: #ef476f;
+    }
+    @media (max-width: 768px) {
+        .form-card {
+            padding: 24px;
+        }
+        .modern-form .grid-2 {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+        .form-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/venue-map.js') }}"></script>
+{% endblock %}

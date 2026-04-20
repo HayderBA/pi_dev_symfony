@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<!-- ================= HEADER ================= -->
+<header id="header" class="header fixed-top">
+
+  
+
+  <div class="container d-flex align-items-center justify-content-between">
+
+    <a href="{{ path('app_home') }}" class="logo">
+      <img src="{{asset('assets/img/logoGrowmind.png')}}" alt="">
+    </a>
+
+    <nav class="navmenu">
+      
+        <ul>
+          <li><a href="{{ path('app_home') }}">Accueil</a></li>
+          <li><a href="{{ path('app_doctors') }}">Medecin</a></li>
+          <li><a href="{{ path('app_appointment') }}">Evenement</a></li>
+
+          <li class="dropdown">
+            <a href="#">
+              <span>Plus</span>
+              <i class="bi bi-chevron-down toggle-dropdown"></i>
+            </a>
+            <ul>
+              <li><a href="#">Cabinet</a></li>
+              <li><a href="{{ path('app_appointment') }}">Rendez-vous</a></li>
+              <li><a href="#">Santé & bien-être</a></li>
+              <li><a href="#">Forum</a></li>
+              <li><a href="#">Ressources</a></li>
+            </ul>
+          </li>
+
+          <li><a href="{{ path('app_contact') }}">Contact</a></li>
+    </nav>
+
+  </div>
+
+</header>
+
+<!-- ================= MAIN ================= -->
+<main class="main">
+
+  <!-- Title -->
+  <div class="page-title text-center">
+    <h1>Doctors</h1>
+    <p>Meet our professional team</p>
+  </div>
+
+  <!-- Doctors -->
+  <section class="doctors section">
+
+    <div class="container">
+      <div class="row gy-4">
+
+        <!-- Doctor 1 -->
+        <div class="col-lg-3 col-md-6">
+          <div class="doctor-card">
+            <img src="{{ asset('assets/img/health/staff-1.webp') }}" class="img-fluid">
+            <h4>Dr. Marcus Johnson</h4>
+            <span>Cardiologist</span>
+            <a href="#" class="btn btn-primary mt-2">Book</a>
+          </div>
+        </div>
+
+        <!-- Doctor 2 -->
+        <div class="col-lg-3 col-md-6">
+          <div class="doctor-card">
+            <img src="{{ asset('assets/img/health/staff-2.webp') }}" class="img-fluid">
+            <h4>Dr. Sarah Williams</h4>
+            <span>Neurologist</span>
+            <a href="#" class="btn btn-primary mt-2">Book</a>
+          </div>
+        </div>
+
+        <!-- Doctor 3 -->
+        <div class="col-lg-3 col-md-6">
+          <div class="doctor-card">
+            <img src="{{ asset('assets/img/health/staff-3.webp') }}" class="img-fluid">
+            <h4>Dr. Michael Chen</h4>
+            <span>Orthopedic</span>
+            <a href="#" class="btn btn-primary mt-2">Book</a>
+          </div>
+        </div>
+
+        <!-- Doctor 4 -->
+        <div class="col-lg-3 col-md-6">
+          <div class="doctor-card">
+            <img src="{{ asset('assets/img/health/staff-4.webp') }}" class="img-fluid">
+            <h4>Dr. Emily Rodriguez</h4>
+            <span>Pediatrician</span>
+            <a href="#" class="btn btn-primary mt-2">Book</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer class="text-center p-4">
+  <p>© Clinic - All rights reserved</p>
+</footer>
+
+{% endblock %}

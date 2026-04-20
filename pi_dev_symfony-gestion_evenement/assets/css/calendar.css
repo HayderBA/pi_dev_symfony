@@ -1,0 +1,184 @@
+/* 🔥 Styles pour le calendrier dynamique GrowMind */
+/* Composant autonome - à ajouter dans votre bundle CSS */
+
+.growmind-calendar {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin: 40px 0 30px 0;
+    border-top: 4px solid #6BBF59;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 15px;
+}
+
+.calendar-header button {
+    background-color: #6BBF59;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.calendar-header button:hover {
+    background-color: #5aa84a;
+    transform: translateY(-2px);
+}
+
+.current-month {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+    flex: 1;
+    text-align: center;
+}
+
+.calendar-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.calendar-table th {
+    background-color: #f0f0f0;
+    padding: 12px;
+    text-align: center;
+    font-weight: bold;
+    color: #333;
+    font-size: 12px;
+}
+
+.calendar-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+    height: 50px;
+    vertical-align: top;
+    cursor: pointer;
+    position: relative;
+    transition: background-color 0.2s ease;
+}
+
+.calendar-table td:hover {
+    background-color: #f9f9f9;
+}
+
+.calendar-day.has-events {
+    background-color: #f0f8f0;
+    font-weight: bold;
+}
+
+.event-dot {
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    color: #6BBF59;
+    font-size: 12px;
+}
+
+.events-list {
+    margin-top: 20px;
+}
+
+.day-events h4 {
+    color: #333;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.event-card-small {
+    background: linear-gradient(135deg, #f0f8f0 0%, #f0f4ff 100%);
+    border-left: 4px solid #6BBF59;
+    padding: 15px;
+    border-radius: 4px;
+}
+
+.event-card-small h5 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 14px;
+}
+
+.event-card-small p {
+    margin: 5px 0;
+    font-size: 12px;
+    color: #666;
+}
+
+.btn-small {
+    display: inline-block;
+    background-color: #6BBF59;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 3px;
+    text-decoration: none;
+    font-size: 11px;
+    margin-top: 10px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-small:hover {
+    background-color: #5aa84a;
+}
+
+.no-events {
+    text-align: center;
+    color: #999;
+    padding: 20px;
+}
+
+/* Badge de popularité */
+.popularity-badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 3;
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .calendar-table td {
+        font-size: 12px;
+        height: 40px;
+        padding: 8px;
+    }
+
+    .events-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .calendar-header {
+        flex-wrap: wrap;
+    }
+
+    .current-month {
+        width: 100%;
+        order: -1;
+        margin-bottom: 10px;
+    }
+}

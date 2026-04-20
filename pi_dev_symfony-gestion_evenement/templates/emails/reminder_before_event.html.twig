@@ -1,0 +1,71 @@
+{# 🔥 Template email RAPPEL 24h AVANT l'événement avec QR code #}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f5f5f5; }
+        .container { max-width: 600px; margin: 0 auto; background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header { background:linear-gradient(135deg, #FF6B35 0%, #F7931E 100%); color: white; padding: 20px; border-radius: 8px; text-align: center; }
+        .header h1 { margin: 0; font-size: 24px; }
+        .alert { background-color: #fff3cd; border: 1px solid #ffc107; padding: 12px; border-radius: 4px; margin: 15px 0; }
+        .content { padding: 20px 0; color: #333; }
+        .qr-box { text-align: center; padding: 20px; background-color: #f9f9f9; border-radius: 8px; }
+        .qr-box img { max-width: 250px; height: auto; }
+        .button { display: inline-block; background-color: #6BBF59; color: white; padding: 12px 24px; border-radius: 4px; text-decoration: none; margin: 10px 0; }
+        .footer { text-align: center; padding: 20px 0; border-top: 1px solid #ddd; color: #666; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⏰ Demain c'est le grand jour!</h1>
+        </div>
+
+        <div class="alert">
+            ⏸ Votre événement commence <strong>demain</strong> dans {{ timeUntilEvent }}!
+        </div>
+
+        <div class="content">
+            <p>Bonjour,</p>
+            
+            <h3>📅 Détails de votre événement</h3>
+            <p>
+                <strong>{{ event.titre }}</strong><br>
+                📍 {{ event.localisation }}<br>
+                🕐 {{ event.date|date('d/m/Y H:i') }}<br>
+                👤 Réservation pour: {{ reservation.nom }}
+            </p>
+
+            <h3>✅ Ce qu'il faut faire:</h3>
+            <ul>
+                <li>✔ Arrivez 15 minutes avant le début</li>
+                <li>✔ Gardez votre QR code à portée de main (voir ci-dessous)</li>
+                <li>✔ Apportez une pièce d'identité si demandé</li>
+                <li>✔ Vérifiez les conditions météo</li>
+            </ul>
+
+            <h3>🎫 Votre billet (QR code)</h3>
+            <div class="qr-box">
+                <p>Présentez ce code à l'entrée:</p>
+                {% if qrCode %}
+                    <img src="{{ qrCode }}" alt="QR Code" style="border: 2px solid #6BBF59;">
+                {% endif %}
+                <p style="font-size: 12px; color: #666;">Sièges/Places: {{ reservation.seatNumber }}</p>
+            </div>
+
+            <p><strong>⚠ Important:</strong> Ce QR code expire après l'événement et n'est valable que pour l'accès à cet événement.</p>
+
+            <p style="text-align: center;">
+                <a href="{{ url('app_evenement_show', {id: event.id}) }}" class="button">Voir les détails</a>
+            </p>
+
+            <p>Des questions ou besoin d'aide? Contactez support@growmind.com</p>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2026 GrowMind. À bientôt!</p>
+        </div>
+    </div>
+</body>
+</html>

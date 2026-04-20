@@ -1,0 +1,324 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Evenements - GrowMind{% endblock %}
+
+{% block body %}
+<section class="hero-events">
+    <div class="hero-bg-gradient"></div>
+    <div class="container hero-content">
+        <div class="hero-badge">
+            <i class="fas fa-spa"></i> GrowMind Events
+        </div>
+        <h1 class="hero-title">
+            Explorez nos experiences<br>
+            <span class="hero-title-gradient">bien-etre et developpement</span>
+        </h1>
+        <p class="hero-subtitle">
+            Un agenda clair, des badges utiles et une reservation plus intelligente.
+        </p>
+        <div class="hero-search">
+            <div class="search-card">
+                <i class="fas fa-search search-icon"></i>
+                <form id="eventSearchForm" method="get" style="flex:1;display:flex;gap:10px;align-items:center;">
+                    <input type="text" name="search" class="search-input" placeholder="Rechercher un evenement..." value="{{ search }}">
+                    {% if selectedDate %}
+                        <input type="hidden" name="date" value="{{ selectedDate }}">
+                    {% endif %}
+                </form>
+                <button class="search-btn" type="submit" form="eventSearchForm">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="events-container">
+    <div class="container">
+        <div class="events-header">
+            <div class="section-tag">
+                <span class="tag-dot"></span>
+                Nos evenements
+            </div>
+            <h2 class="section-title">Calendrier et reservations</h2>
+            <p class="section-subtitle">
+                {% if selectedDate %}
+                    Evenements filtres pour le {{ selectedDate|date('d/m/Y') }}
+                {% else %}
+                    Cliquez sur un jour du calendrier pour filtrer les evenements
+                {% endif %}
+            </p>
+            {% if selectedDate %}
+                <a class="clear-filter-btn" href="{{ path('app_evenement_list') }}">Retirer le filtre</a>
+            {% endif %}
+        </div>
+
+        <div
+            id="eventCalendar"
+            class="calendar-shell"
+            data-events='{{ calendarEventsJson|raw }}'
+            data-selected-date="{{ selectedDate }}"
+            data-filter-url="{{ path('app_evenement_list') }}"
+        ></div>
+
+        <div class="events-grid">
+            {% for evenement in evenements %}
+                <article class="event-card">
+                    <div class="event-card-header">
+                        <div class="event-icon">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <div class="event-status {{ evenement.status == 'A venir' ? 'status-upcoming' : (evenement.status == 'Aujourd hui' ? 'status-today' : 'status-past') }}">
+                            {{ evenement.status }}
+                        </div>
+                        {% if evenement.popularityBadge %}
+                            <div class="popularity-badge {{ evenement.popularityBadge starts with '⚡' ? 'badge-warning' : 'badge-hot' }}">
+                                {{ evenement.popularityBadge }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="event-content">
+                        <h3 class="event-title">{{ evenement.titre }}</h3>
+                        <p class="event-description">{{ evenement.description ? evenement.description|slice(0, 120) ~ '...' : 'Evenement GrowMind a venir.' }}</p>
+
+                        <div class="event-meta">
+                            <span><i class="fas fa-calendar-alt"></i> {{ evenement.date|date('d/m/Y') }}</span>
+                            <span><i class="fas fa-map-marker-alt"></i> {{ evenement.localisation }}</span>
+                            <span><i class="fas fa-users"></i> {{ evenement.currentReservationsCount }}/{{ evenement.maxCapacity }}</span>
+                        </div>
+
+                        <div class="event-pricing">
+                            <div>
+                                <span class="price-label">Prix de base</span>
+                                <div class="event-price">{{ evenement.dynamicPrice|number_format(2, ',', ' ') }} EUR</div>
+                            </div>
+                            {% if evenement.isDynamicPriceActive %}
+                                <div class="dynamic-badge">Prix dynamique actif</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="capacity-bar">
+                            <div class="capacity-fill" style="width: {{ evenement.occupancyRate }}%"></div>
+                        </div>
+
+                        <a href="{{ path('app_evenement_show', {'id': evenement.id}) }}" class="event-btn">
+                            Voir et reserver
+                        </a>
+                    </div>
+                </article>
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-calendar-times"></i>
+                    <h3>Aucun evenement trouve</h3>
+                    <p>Essayez un autre jour ou une autre recherche.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --gm-blue: #1E5BA8;
+        --gm-green: #6BBF59;
+        --gm-mint: #eff7ea;
+        --gm-gold: #D4AF37;
+        --gm-soft-blue: #d9ecff;
+    }
+
+    .hero-events {
+        background: linear-gradient(135deg, var(--gm-blue), #2782b8, var(--gm-green));
+        color: #fff;
+        padding: 90px 0 70px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-content { position: relative; z-index: 1; text-align: center; }
+    .hero-badge {
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+        padding: 10px 18px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.14);
+        margin-bottom: 20px;
+    }
+    .hero-title { font-size: 3rem; font-weight: 800; margin-bottom: 12px; }
+    .hero-title-gradient { color: #d9ffcf; }
+    .hero-subtitle { max-width: 720px; margin: 0 auto 28px; opacity: 0.92; }
+    .search-card {
+        background: #fff;
+        border-radius: 999px;
+        padding: 8px 10px 8px 18px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        max-width: 640px;
+        margin: 0 auto;
+    }
+    .search-input { width: 100%; border: none; outline: none; padding: 12px 0; }
+    .search-icon { color: var(--gm-blue); }
+    .search-btn {
+        width: 48px;
+        height: 48px;
+        border: none;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--gm-green), var(--gm-blue));
+        color: #fff;
+    }
+
+    .events-container { background: var(--gm-mint); padding: 60px 0 90px; }
+    .events-header { text-align: center; margin-bottom: 32px; }
+    .section-tag { color: var(--gm-blue); font-weight: 700; margin-bottom: 10px; }
+    .section-title { color: #183153; font-size: 2.2rem; font-weight: 800; }
+    .section-subtitle { color: #4c5c69; }
+    .clear-filter-btn {
+        display: inline-block;
+        margin-top: 12px;
+        text-decoration: none;
+        color: var(--gm-blue);
+        font-weight: 700;
+    }
+
+    .calendar-shell {
+        background: #fff;
+        border-radius: 28px;
+        padding: 24px;
+        box-shadow: 0 12px 30px rgba(30, 91, 168, 0.08);
+        margin-bottom: 32px;
+        border: 1px solid rgba(30, 91, 168, 0.06);
+    }
+
+    .events-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 24px;
+    }
+
+    .event-card {
+        background: #fff;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 12px 24px rgba(30, 91, 168, 0.08);
+        position: relative;
+    }
+
+    .event-card-header {
+        padding: 24px;
+        background: linear-gradient(135deg, #f3fbff, #edf8ea);
+        position: relative;
+        min-height: 110px;
+    }
+
+    .event-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, var(--gm-blue), var(--gm-green));
+        color: #fff;
+        font-size: 1.8rem;
+    }
+
+    .event-status {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: #fff;
+        padding: 8px 14px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .status-upcoming { color: var(--gm-blue); }
+    .status-today { color: #0f8f5f; }
+    .status-past { color: #8a8a8a; }
+
+    .popularity-badge {
+        position: absolute;
+        left: 24px;
+        bottom: 18px;
+        padding: 7px 14px;
+        border-radius: 999px;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .badge-hot { background: linear-gradient(135deg, #ff7b2f, #d9480f); }
+    .badge-warning { background: linear-gradient(135deg, #f59f00, #e8590c); }
+
+    .event-content { padding: 24px; }
+    .event-title { font-size: 1.25rem; font-weight: 800; color: #183153; margin-bottom: 10px; }
+    .event-description { color: #586473; min-height: 50px; }
+    .event-meta {
+        display: grid;
+        gap: 8px;
+        margin: 18px 0;
+        color: #4c5c69;
+        font-size: 14px;
+    }
+    .event-meta i { color: var(--gm-blue); margin-right: 6px; }
+    .event-pricing {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+    }
+    .price-label { display: block; color: #6c7a89; font-size: 12px; }
+    .event-price { color: var(--gm-blue); font-size: 1.45rem; font-weight: 800; }
+    .dynamic-badge {
+        background: #fff4d7;
+        color: #b26a00;
+        padding: 7px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+    .capacity-bar {
+        height: 8px;
+        background: #dde7ef;
+        border-radius: 999px;
+        overflow: hidden;
+        margin-bottom: 18px;
+    }
+    .capacity-fill {
+        height: 100%;
+        background: linear-gradient(135deg, var(--gm-green), var(--gm-blue));
+        border-radius: 999px;
+    }
+    .event-btn {
+        display: inline-flex;
+        justify-content: center;
+        width: 100%;
+        text-decoration: none;
+        padding: 14px 20px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--gm-blue), var(--gm-green));
+        color: #fff;
+        font-weight: 700;
+    }
+
+    .empty-state {
+        grid-column: 1 / -1;
+        background: #fff;
+        border-radius: 24px;
+        padding: 50px;
+        text-align: center;
+    }
+
+    @media (max-width: 768px) {
+        .hero-title { font-size: 2.2rem; }
+        .search-card { border-radius: 24px; }
+        .event-pricing { flex-direction: column; align-items: flex-start; }
+    }
+</style>
+
+<script src="{{ asset('assets/js/calendar.js') }}"></script>
+{% endblock %}

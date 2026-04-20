@@ -1,0 +1,121 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<!-- ================= HEADER ================= -->
+<header id="header" class="header fixed-top">
+
+
+  <div class="container d-flex align-items-center justify-content-between">
+
+    <a href="{{ path('app_home') }}" class="logo d-flex align-items-center">
+      <img src="{{asset('assets/img/logoGrowmind.png')}}" alt="">
+    </a>
+
+    <nav id="navmenu" class="navmenu">
+      
+        <ul>
+          <li><a href="{{ path('app_home') }}">Accueil</a></li>
+          <li><a href="{{ path('app_doctors') }}">Medecin</a></li>
+          <li><a href="{{ path('app_appointment') }}" >Evenement</a></li>
+
+          <li class="dropdown">
+            <a href="#">
+              <span>Plus</span>
+              <i class="bi bi-chevron-down toggle-dropdown"></i>
+            </a>
+            <ul>
+              <li><a href="#">Cabinet</a></li>
+              <li><a href="{{ path('app_appointment') }}">Rendez-vous</a></li>
+              <li><a href="#">Santé & bien-être</a></li>
+              <li><a href="#">Forum</a></li>
+              <li><a href="#">Ressources</a></li>
+            </ul>
+          </li>
+
+          <li><a href="{{ path('app_contact') }}">Contact</a></li>
+    </nav>
+
+  </div>
+
+</header>
+
+<!-- ================= MAIN ================= -->
+<main class="main">
+
+  <!-- Page Title -->
+  <div class="page-title text-center">
+    <h1>Contact</h1>
+    <p>Contact us for more information</p>
+  </div>
+
+  <!-- Contact Section -->
+  <section class="contact section">
+
+    <div class="container">
+      <div class="row g-5">
+
+        <!-- INFO -->
+        <div class="col-lg-5">
+          <h3>Our Address</h3>
+          <p>1842 Maple Avenue</p>
+
+          <h3>Email</h3>
+          <p>contact@example.com</p>
+
+          <h3>Hours</h3>
+          <p>Mon-Fri: 9 AM - 6 PM</p>
+        </div>
+
+        <!-- FORM -->
+        <div class="col-lg-7">
+
+          <h2>Send Message</h2>
+
+          <form>
+            <div class="row g-3">
+
+              <div class="col-md-6">
+                <input type="text" class="form-control" placeholder="Name">
+              </div>
+
+              <div class="col-md-6">
+                <input type="email" class="form-control" placeholder="Email">
+              </div>
+
+              <div class="col-12">
+                <input type="text" class="form-control" placeholder="Subject">
+              </div>
+
+              <div class="col-12">
+                <textarea class="form-control" rows="5" placeholder="Message"></textarea>
+              </div>
+
+              <div class="col-12">
+                <button class="btn btn-primary">Send</button>
+              </div>
+
+            </div>
+          </form>
+
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+  <!-- MAP -->
+  <div class="container-fluid">
+    <iframe src="https://www.google.com/maps?q=paris&output=embed"
+            width="100%" height="400" style="border:0;"></iframe>
+  </div>
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="text-center p-4">
+  <p>© Clinic - All rights reserved</p>
+</footer>
+
+{% endblock %}

@@ -1,0 +1,75 @@
+{# 🔥 Template email OFFRE SPECIALE - 20% de réduction #}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f5f5f5; }
+        .container { max-width: 600px; margin: 0 auto; background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #FF6B35 0%, #F39C12 100%); color: white; padding: 30px; border-radius: 8px; text-align: center; }
+        .header h1 { margin: 0; font-size: 32px; }
+        .promo-box { background-color: #fff8e1; border: 3px solid #FFC107; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 0; }
+        .promo-code { font-size: 28px; font-weight: bold; color: #F39C12; font-family: monospace; letter-spacing: 2px; }
+        .content { padding: 20px 0; color: #333; }
+        .button { display: inline-block; background-color: #F39C12; color: white; padding: 14px 30px; border-radius: 4px; text-decoration: none; margin: 10px 0; font-size: 16px; font-weight: bold; }
+        .footer { text-align: center; padding: 20px 0; border-top: 1px solid #ddd; color: #666; font-size: 12px; }
+        .conditions { font-size: 11px; color: #999; line-height: 1.6; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎁 20% DE REDUCTION!</h1>
+            <p style="margin: 10px 0 0 0; font-size: 18px;">Réservez votre prochain événement avec nous</p>
+        </div>
+
+        <div class="content">
+            <p>Bonjour {{ clientName }},</p>
+            
+            <p>Parce que vous êtes un client VIP de GrowMind, nous vous offrons une <strong>réduction exclusive de 20%</strong> sur votre prochain événement!</p>
+
+            <div class="promo-box">
+                <p style="margin: 0 0 10px 0;">Votre code promo personnel:</p>
+                <div class="promo-code">{{ discountCode }}</div>
+                <p style="margin: 10px 0 0 0;font-size: 12px; color: #666;">Cliquez pour copier</p>
+            </div>
+
+            <h3>💰 Comment utiliser votre code:</h3>
+            <ol>
+                <li>Parcourez nos événements</li>
+                <li>Sélectionnez votre événement préféré</li>
+                <li>Pendant la réservation, entrez votre code: <strong>{{ discountCode }}</strong></li>
+                <li>La réduction de 20% sera appliquée automatiquement</li>
+            </ol>
+
+            <p style="text-align: center;">
+                <a href="{{ url('app_evenement_list') }}" class="button">🎟️ Réserver maintenant</a>
+            </p>
+
+            <hr style="border: 1px solid #ddd; margin: 20px 0;">
+
+            <h3>📅 Événements populaires cette semaine:</h3>
+            <p>Ne manquez pas nos événements les plus demandés! Retrouvez les meilleures offres avec votre code promo.</p>
+
+            <div class="conditions">
+                <strong>Conditions:</strong><br>
+                • Code valable une seule fois<br>
+                • Fonctionne sur tous les événements<br>
+                • Rédution non cumulable avec d'autres offres<br>
+                • Valable jusqu'au 31/12/2026<br>
+                • Remboursement impossible - crédits GrowMind non transférables
+            </div>
+
+            <p style="margin-top: 20px;">
+                Des questions? Contactez-nous:<br>
+                📧 support@growmind.com<br>
+                ☎️ +33 (0)1 XX XX XX XX
+            </p>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2026 GrowMind. À bientôt!</p>
+        </div>
+    </div>
+</body>
+</html>

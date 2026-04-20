@@ -1,0 +1,10 @@
+twig:
+    default_path: '%kernel.project_dir%/templates'
+    file_name_pattern: '*.twig'
+    globals:
+        app_name: 'GrowMind'
+        app_email: 'noreply@growmind.com'
+
+when@test:
+    twig:
+        strict_variables: true

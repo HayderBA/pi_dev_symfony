@@ -1,0 +1,9 @@
+framework:
+    mailer:
+        transports:
+            default: '%env(MAILER_DSN)%'
+        
+        # Configure message headers (optional but recommended)
+        envelope:
+            sender: '%env(MAILER_FROM)%'
+            recipients: []

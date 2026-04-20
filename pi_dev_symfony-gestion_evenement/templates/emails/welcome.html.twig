@@ -1,0 +1,54 @@
+{# 🔥 Template email de bienvenue - Première réservation #}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f5f5f5; }
+        .container { max-width: 600px; margin: 0 auto; background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #6BBF59 0%, #1E5BA8 100%); color: white; padding: 20px; border-radius: 8px; text-align: center; }
+        .header h1 { margin: 0; font-size: 28px; }
+        .content { padding: 20px 0; color: #333; }
+        .button { display: inline-block; background-color: #6BBF59; color: white; padding: 12px 24px; border-radius: 4px; text-decoration: none; margin: 10px 0; }
+        .footer { text-align: center; padding: 20px 0; border-top: 1px solid #ddd; color: #666; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✨ Bienvenue à GrowMind!</h1>
+        </div>
+
+        <div class="content">
+            <p>Bonjour <strong>{{ clientName }}</strong>,</p>
+            
+            <p>Merci d'avoir réservé chez <strong>GrowMind</strong>! Nous sommes ravi de vous voir rejoindre notre communauté d'amateurs d'événements exclusifs.</p>
+
+            <h3>Votre première réservation</h3>
+            <p>
+                📅 <strong>{{ event.titre }}</strong><br>
+                📍 Lieu: {{ event.localisation }}<br>
+                🕐 Date: {{ event.date|date('d/m/Y H:i') }}
+            </p>
+
+            <h3>Avantages membre GrowMind:</h3>
+            <ul>
+                <li>✅ Accès prioritaire aux nouveaux événements</li>
+                <li>🎁 Offres exclusives et réductions</li>
+                <li>💳 Programme de fidélité points</li>
+                <li>📬 Newsletter curatée personnalisée</li>
+            </ul>
+
+            <p style="text-align: center;">
+                <a href="{{ url('app_evenement_list') }}" class="button">Découvrir nos événements</a>
+            </p>
+
+            <p>Des questions? Contactez-nous à support@growmind.com</p>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2026 GrowMind. Tous droits réservés.</p>
+        </div>
+    </div>
+</body>
+</html>
