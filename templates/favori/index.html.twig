@@ -1,0 +1,63 @@
+{% extends 'back/base_back.html.twig' %}
+
+{% block title %}Gestion des Favoris{% endblock %}
+
+{% block admin_content %}
+<div class="page-header mb-4">
+  <div class="page-header-content">
+    <h1>Gestion des Favoris</h1>
+    <p>Consulter les favoris des utilisateurs.</p>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-12">
+    <div class="gm-card">
+      <div class="gm-card-header mb-3">
+        <span class="gm-card-title"><i class="bi bi-heart-fill text-danger me-2"></i>Liste des Favoris</span>
+      </div>
+      <div class="gm-card-body p-0" style="padding:0!important;">
+        <div style="overflow-x:auto;">
+          <table class="gm-table">
+            <thead>
+              <tr>
+                <th>Ressource</th>
+                <th>Date d'ajout</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for favori in favoris %}
+                <tr>
+                    <td><span class="tag tag-patient">{{ favori.ressource ? favori.ressource.title : 'N/A' }}</span></td>
+                    <td style="color:var(--text-muted);font-size:13px">{{ favori.dateAjout ? favori.dateAjout|date('d M, Y') : '' }}</td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <a href="{{ path('app_favori_show', {'id': favori.id}) }}" class="btn-icon-sm text-decoration-none" title="Voir"><i class="bi bi-eye"></i></a>
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3" class="text-center py-4" style="color:var(--text-muted);font-size:13px;">
+                        <i class="bi bi-heart fs-4 d-block mb-2"></i>
+                        Aucun favori trouvé
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="d-flex align-items-center justify-content-between px-4 py-3 border-top">
+          <span style="font-size:12.5px;color:var(--text-muted);">
+            {% set firstItem = (favoris.currentPageNumber - 1) * favoris.itemNumberPerPage + 1 %}
+            {% set lastItem  = firstItem + favoris|length - 1 %}
+            Affichage {{ firstItem }}–{{ lastItem }} sur {{ favoris.totalItemCount }} favoris
+          </span>
+          <div>{{ knp_pagination_render(favoris) }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

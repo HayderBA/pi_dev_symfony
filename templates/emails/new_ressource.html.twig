@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nouvelle ressource — GrowMind</title>
+</head>
+<body style="margin:0;padding:0;background:#f0f4f8;font-family:'Segoe UI',Helvetica,Arial,sans-serif;">
+
+<!-- Wrapper -->
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f4f8;padding:40px 20px;">
+  <tr>
+    <td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+
+        <!-- ── HEADER ── -->
+        <tr>
+          <td style="background:linear-gradient(135deg,#0d1b2a 0%,#1a2d45 100%);border-radius:20px 20px 0 0;padding:40px 48px;text-align:center;">
+            <!-- Logo mark -->
+            <div style="display:inline-block;width:56px;height:56px;background:linear-gradient(135deg,#16c784,#1e88e5);border-radius:16px;text-align:center;line-height:56px;font-size:26px;margin-bottom:18px;">🧠</div>
+            <div style="font-size:26px;font-weight:800;color:#ffffff;letter-spacing:-0.5px;margin-bottom:4px;">GrowMind</div>
+            <div style="font-size:12px;color:#16c784;font-weight:600;letter-spacing:2px;text-transform:uppercase;">Mental Health Platform</div>
+          </td>
+        </tr>
+
+        <!-- ── NEW BADGE ── -->
+        <tr>
+          <td style="background:#ffffff;padding:32px 48px 0;text-align:center;">
+            <span style="display:inline-block;background:linear-gradient(135deg,#dcfce7,#dbeafe);color:#1565c0;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px;letter-spacing:1px;text-transform:uppercase;border:1px solid #bfdbfe;">
+              ✨ Nouvelle ressource publiée
+            </span>
+          </td>
+        </tr>
+
+        <!-- ── TITLE ── -->
+        <tr>
+          <td style="background:#ffffff;padding:20px 48px 28px;text-align:center;">
+            <h1 style="margin:0;font-size:26px;font-weight:800;color:#0d1b2a;line-height:1.25;">
+              {{ ressource.title }}
+            </h1>
+            <p style="margin:12px 0 0;font-size:14px;color:#64748b;line-height:1.6;">
+              {{ ressource.description }}
+            </p>
+          </td>
+        </tr>
+
+        <!-- ── RESOURCE CARD ── -->
+        <tr>
+          <td style="background:#ffffff;padding:0 48px 32px;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;overflow:hidden;">
+              <tr>
+                <td style="padding:24px 28px;">
+
+                  <!-- Meta grid -->
+                  <table width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                      <td width="50%" style="padding:0 8px 16px 0;vertical-align:top;">
+                        <div style="font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Type</div>
+                        <span style="display:inline-block;background:#dbeafe;color:#1e40af;font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;">
+                          {% if ressource.type == 'VIDEO' %}🎥{% elseif ressource.type == 'FORMATION' %}🎓{% elseif ressource.type == 'EVENT' %}📅{% else %}📄{% endif %}
+                          {{ ressource.type }}
+                        </span>
+                      </td>
+                      <td width="50%" style="padding:0 0 16px 8px;vertical-align:top;">
+                        <div style="font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Catégorie</div>
+                        <span style="display:inline-block;background:#dcfce7;color:#15803d;font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;">
+                          {{ ressource.category }}
+                        </span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td width="50%" style="padding:0 8px 0 0;vertical-align:top;">
+                        <div style="font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Auteur</div>
+                        <div style="font-size:13px;font-weight:600;color:#1a2332;">{{ ressource.author }}</div>
+                      </td>
+                      <td width="50%" style="padding:0 0 0 8px;vertical-align:top;">
+                        <div style="font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Date de création</div>
+                        <div style="font-size:13px;font-weight:600;color:#1a2332;">
+                          {{ ressource.dateCreation ? ressource.dateCreation|date('d/m/Y') : publishedAt|date('d/m/Y') }}
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+
+                  <!-- Divider -->
+                  <div style="height:1px;background:#e2e8f0;margin:20px 0;"></div>
+
+                  <!-- Status -->
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <div style="font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;">Statut :</div>
+                    {% if ressource.status == 'PUBLISHED' %}
+                      <span style="display:inline-block;background:#dcfce7;color:#15803d;font-size:12px;font-weight:700;padding:3px 12px;border-radius:20px;">● Publié</span>
+                    {% else %}
+                      <span style="display:inline-block;background:#fff7ed;color:#c2410c;font-size:12px;font-weight:700;padding:3px 12px;border-radius:20px;">● Brouillon</span>
+                    {% endif %}
+                    {% if hasPdf %}
+                      <span style="display:inline-block;background:#fee2e2;color:#dc2626;font-size:12px;font-weight:700;padding:3px 12px;border-radius:20px;margin-left:6px;">📎 PDF joint</span>
+                    {% endif %}
+                  </div>
+
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- ── CONTENT PREVIEW ── -->
+        {% if ressource.content and not hasPdf %}
+        <tr>
+          <td style="background:#ffffff;padding:0 48px 32px;">
+            <div style="background:linear-gradient(135deg,#0d1b2a,#1e3a5f);border-radius:14px;padding:24px 28px;color:#fff;">
+              <div style="font-size:11px;font-weight:700;color:#16c784;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Aperçu du contenu</div>
+              <p style="margin:0;font-size:13.5px;color:rgba(255,255,255,.8);line-height:1.7;">
+                {{ ressource.content|slice(0, 320) }}{% if ressource.content|length > 320 %}…{% endif %}
+              </p>
+            </div>
+          </td>
+        </tr>
+        {% endif %}
+
+        <!-- ── CTA BUTTON ── -->
+        <tr>
+          <td style="background:#ffffff;padding:0 48px 40px;text-align:center;">
+            <a href="#"
+               style="display:inline-block;background:linear-gradient(135deg,#16c784,#1e88e5);color:#ffffff;text-decoration:none;font-size:15px;font-weight:700;padding:14px 40px;border-radius:12px;letter-spacing:0.3px;">
+              Voir la ressource →
+            </a>
+            <p style="margin:16px 0 0;font-size:12px;color:#94a3b8;">
+              Connectez-vous à la plateforme GrowMind pour consulter et gérer cette ressource.
+            </p>
+          </td>
+        </tr>
+
+        <!-- ── DIVIDER ── -->
+        <tr>
+          <td style="background:#ffffff;padding:0 48px;">
+            <div style="height:1px;background:linear-gradient(90deg,transparent,#e2e8f0,transparent);"></div>
+          </td>
+        </tr>
+
+        <!-- ── FOOTER ── -->
+        <tr>
+          <td style="background:#ffffff;border-radius:0 0 20px 20px;padding:28px 48px;text-align:center;">
+            <p style="margin:0 0 8px;font-size:12px;color:#94a3b8;line-height:1.6;">
+              Cet email a été envoyé automatiquement par <strong style="color:#64748b;">GrowMind Platform</strong>.<br>
+              Notifié le {{ publishedAt|date('d/m/Y à H:i') }}
+            </p>
+            <p style="margin:0;font-size:11px;color:#cbd5e1;">
+              © {{ publishedAt|date('Y') }} GrowMind · Mental Health Platform
+            </p>
+          </td>
+        </tr>
+
+        <!-- ── BOTTOM SPACER ── -->
+        <tr><td style="height:32px;"></td></tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>

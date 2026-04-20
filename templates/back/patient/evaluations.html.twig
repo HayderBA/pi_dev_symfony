@@ -1,0 +1,84 @@
+{% extends 'back/patient/base_patient.html.twig' %}
+
+{% block title %}Mes Avis - GrowMind{% endblock %}
+
+{% block patient_content %}
+<div class="page-header mb-4" style="background: linear-gradient(135deg, #0d1b2a 0%, #ef4444 100%); border-radius: 16px; padding: 28px; color: #fff;">
+  <div class="page-header-content">
+    <h1>Mes Avis & Évaluations</h1>
+    <p>Consultez et gérez les retours que vous avez partagés sur nos ressources.</p>
+  </div>
+</div>
+
+<div class="gm-card">
+  <div class="gm-card-header border-bottom pb-3">
+    <span class="gm-card-title"><i class="bi bi-chat-left-heart-fill me-2" style="color:#ef4444"></i>Historique de mes avis</span>
+  </div>
+  <div class="gm-card-body p-0">
+    <div class="table-responsive">
+      <table class="gm-table">
+        <thead>
+          <tr>
+            <th class="ps-4">Ressource</th>
+            <th>Note</th>
+            <th>Commentaire</th>
+            <th>Date de publication</th>
+            <th class="text-end pe-4">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for eval in my_evaluations %}
+          <tr>
+            <td class="ps-4">
+              <div class="d-flex align-items-center gap-2">
+                 <div class="avatar-xs" style="background: var(--blue-light); color: var(--blue-dark); width: 28px; height: 28px; font-size: 10px;">
+                    <i class="bi bi-book"></i>
+                 </div>
+                 <span class="fw-bold">{{ eval.ressource ? eval.ressource.title : 'N/A' }}</span>
+              </div>
+            </td>
+            <td>
+              <div class="text-warning">
+                {% for i in 1..5 %}
+                   {% if i <= eval.note %}
+                      <i class="bi bi-star-fill"></i>
+                   {% else %}
+                      <i class="bi bi-star"></i>
+                   {% endif %}
+                {% endfor %}
+                <span class="ms-1 text-muted" style="font-size: 11px;">({{ eval.note }}/5)</span>
+              </div>
+            </td>
+            <td style="max-width: 300px;">
+               <p class="mb-0 text-muted text-truncate" title="{{ eval.commentaire }}" style="font-size: 13px;">{{ eval.commentaire }}</p>
+            </td>
+            <td style="font-size: 13px; color: var(--text-muted)">
+               {{ eval.dateEvaluation|date('d M Y') }}
+            </td>
+            <td class="text-end pe-4">
+              <div class="d-flex gap-2 justify-content-end">
+                <a href="{{ path('app_evaluation_edit', {id: eval.id}) }}" class="btn-icon-sm" title="Modifier l'avis"><i class="bi bi-pencil"></i></a>
+                <form method="post" action="{{ path('app_evaluation_delete', {id: eval.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet avis ?');">
+                  <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ eval.id) }}">
+                  <button class="btn-icon-sm" style="color:#ef4444" title="Supprimer"><i class="bi bi-trash"></i></button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="5" class="text-center py-5">
+               <div class="text-muted">
+                  <i class="bi bi-chat-square-dots fs-1 d-block mb-3"></i>
+                  <p>Vous n'avez pas encore publié d'avis.</p>
+                  <a href="{{ path('app_patient_ressources') }}" class="btn-gm-primary btn-sm">Découvrir les ressources</a>
+               </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -4,7 +4,16 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
-
+    uploads_directory: '%kernel.project_dir%/public/uploads'
+    pdf_directory: '%kernel.project_dir%/public/uploads/pdfs'
+    cloudinary.cloud_name: '%env(CLOUDINARY_CLOUD_NAME)%'
+    cloudinary.api_key: '%env(CLOUDINARY_API_KEY)%'
+    cloudinary.api_secret: '%env(CLOUDINARY_API_SECRET)%'
+    cloudinary.upload_preset: '%env(CLOUDINARY_UPLOAD_PRESET)%'
+    gemini.api_key: '%env(GEMINI_API_KEY)%'
+    mailer.from_email: '%env(MAILER_FROM_EMAIL)%'
+    mailer.from_name: '%env(MAILER_FROM_NAME)%'
+    mailer.notify_email: '%env(MAILER_NOTIFY_EMAIL)%'
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -19,6 +28,16 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+
+    App\Service\GeminiService:
+        arguments:
+            $apiKey: '%gemini.api_key%'
+
+    App\Service\MailerService:
+        arguments:
+            $fromEmail:    '%mailer.from_email%'
+            $fromName:     '%mailer.from_name%'
+            $notifyEmail:  '%mailer.notify_email%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

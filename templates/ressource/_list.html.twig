@@ -1,0 +1,32 @@
+{% for ressource in ressources %}
+    <tr>
+        <td style="font-weight:600;font-size:13.5px">{{ ressource.title }}</td>
+        <td><span class="tag" style="background:var(--blue-light);color:var(--blue-dark);">{{ ressource.type }}</span></td>
+        <td style="color:var(--text-muted);font-size:13px">{{ ressource.category }}</td>
+        <td style="color:var(--text-muted);font-size:13px">{{ ressource.author }}</td>
+        <td>
+            {% if ressource.status == 'PUBLISHED' %}
+                <span class="tag tag-active">Publié</span>
+            {% else %}
+                <span class="tag tag-pending">Brouillon</span>
+            {% endif %}
+        </td>
+        <td>
+            <div class="d-flex gap-1">
+                <a href="{{ path('app_ressource_show', {'id': ressource.id}) }}" class="btn-icon-sm text-decoration-none" title="Voir"><i class="bi bi-eye"></i></a>
+                <a href="{{ path('app_ressource_edit', {'id': ressource.id}) }}" class="btn-icon-sm text-decoration-none" title="Modifier"><i class="bi bi-pencil"></i></a>
+                <a href="{{ path('app_ressource_export_pdf', {'id': ressource.id}) }}" class="btn-icon-sm text-decoration-none" title="Exporter en PDF" style="color:#dc2626;"><i class="bi bi-filetype-pdf"></i></a>
+                {% if ressource.content starts with 'PDF::' %}
+                    <a href="{{ path('app_ressource_download', {'id': ressource.id}) }}" class="btn-icon-sm text-decoration-none" title="Télécharger PDF" style="color:#ef4444;"><i class="bi bi-file-earmark-pdf-fill"></i></a>
+                {% endif %}
+            </div>
+        </td>
+    </tr>
+{% else %}
+    <tr>
+        <td colspan="7" class="text-center py-4" style="color:var(--text-muted);font-size:13px;">
+            <i class="bi bi-inbox fs-4 d-block mb-2"></i>
+            Aucune ressource trouvée
+        </td>
+    </tr>
+{% endfor %}

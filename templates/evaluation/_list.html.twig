@@ -1,0 +1,28 @@
+{% for evaluation in evaluations %}
+    <tr>
+        <td><span class="tag tag-doctor">{{ evaluation.ressource ? evaluation.ressource.title : 'N/A' }}</span></td>
+        <td>
+            {% for i in 1..5 %}
+                {% if i <= evaluation.note %}
+                    <i class="bi bi-star-fill text-warning"></i>
+                {% else %}
+                    <i class="bi bi-star" style="color:var(--text-muted)"></i>
+                {% endif %}
+            {% endfor %}
+            <span style="font-size:11px;color:var(--text-muted);margin-left:5px;">({{ evaluation.note }}/5)</span>
+        </td>
+        <td style="color:var(--text-muted);font-size:13px">{{ evaluation.dateEvaluation ? evaluation.dateEvaluation|date('d M, Y') : '' }}</td>
+        <td>
+            <div class="d-flex gap-1">
+                <a href="{{ path('app_evaluation_show', {'id': evaluation.id}) }}" class="btn-icon-sm text-decoration-none" title="Voir"><i class="bi bi-eye"></i></a>
+            </div>
+        </td>
+    </tr>
+{% else %}
+    <tr>
+        <td colspan="5" class="text-center py-4" style="color:var(--text-muted);font-size:13px;">
+            <i class="bi bi-inbox fs-4 d-block mb-2"></i>
+            Aucune évaluation trouvée
+        </td>
+    </tr>
+{% endfor %}
