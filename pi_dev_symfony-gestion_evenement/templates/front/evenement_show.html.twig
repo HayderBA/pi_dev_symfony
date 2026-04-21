@@ -4,11 +4,22 @@
 
 {% block stylesheets %}
     {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('assets/css/event-experience.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/venue-map.css') }}">
 {% endblock %}
 
 {% block body %}
-<section class="event-hero">
+<section
+    class="event-hero"
+    data-event-detail
+    data-event-id="{{ evenement.id }}"
+    data-event-title="{{ evenement.titre }}"
+    data-event-date="{{ evenement.date|date('d/m/Y') }}"
+    data-event-location="{{ evenement.localisation }}"
+    data-event-price="{{ evenement.dynamicPrice|number_format(2, ',', ' ') }} EUR"
+    data-event-url="{{ path('app_evenement_show', {'id': evenement.id}) }}"
+    data-event-description="{{ evenement.description ? evenement.description|slice(0, 120) : 'Evenement GrowMind a venir.' }}"
+>
     <div class="container event-hero-content">
         <a class="event-back" href="{{ path('app_evenement_list') }}">
             <i class="fas fa-arrow-left"></i> Retour aux evenements
@@ -27,6 +38,20 @@
         </div>
 
         <h1 class="event-title">{{ evenement.titre }}</h1>
+        <div class="gm-event-actions">
+            <button type="button" class="gm-event-action gm-favorite-btn" data-favorite-toggle data-event-id="{{ evenement.id }}">
+                <span data-favorite-icon>♡</span>
+                <span data-favorite-text>Favori</span>
+            </button>
+            <button type="button" id="gmCopyEventLink" class="gm-event-action">
+                <span>🔗</span>
+                <span data-copy-label>Copier le lien</span>
+            </button>
+            <button type="button" id="gmShareEvent" class="gm-event-action">
+                <span>↗</span>
+                <span>Partager</span>
+            </button>
+        </div>
         <div class="event-info-grid">
             <div class="info-item">
                 <span>Date</span>
@@ -43,6 +68,66 @@
             <div class="info-item">
                 <span>Prix de base</span>
                 <strong>{{ evenement.dynamicPrice|number_format(2, ',', ' ') }} EUR</strong>
+            </div>
+        </div>
+
+        <div class="gm-smart-panel">
+            <div class="gm-smart-panel-top">
+                <div>
+                    <span class="gm-smart-kicker">Experience moderne</span>
+                    <h3>Compte a rebours et rappel intelligent</h3>
+                    <p>Suivez le temps restant, activez un rappel navigateur et ajoutez l evenement a votre agenda.</p>
+                </div>
+                <span class="gm-smart-badge">{{ evenement.getPlacesRestantes() }} places restantes</span>
+            </div>
+
+            <div class="gm-countdown" id="gmCountdown" data-event-date="{{ evenement.date|date('Y-m-d') }}">
+                <div class="gm-countdown-box">
+                    <strong id="gmCountdownDays">--</strong>
+                    <span>Jours</span>
+                </div>
+                <div class="gm-countdown-box">
+                    <strong id="gmCountdownHours">--</strong>
+                    <span>Heures</span>
+                </div>
+                <div class="gm-countdown-box">
+                    <strong id="gmCountdownMinutes">--</strong>
+                    <span>Minutes</span>
+                </div>
+            </div>
+
+            <div class="gm-smart-insights">
+                <div class="gm-smart-insight">
+                    <span class="gm-smart-label">Disponibilite</span>
+                    <strong>{{ evenement.isComplet() ? 'Complet' : evenement.getPlacesRestantes() ~ ' places libres' }}</strong>
+                </div>
+                <div class="gm-smart-insight">
+                    <span class="gm-smart-label">Conseil</span>
+                    <strong>
+                        {% if evenement.isDynamicPriceActive %}
+                            Reservez tot, le prix dynamique est actif
+                        {% elseif evenement.getPlacesRestantes() < 15 %}
+                            Priorite a la reservation, il reste peu de places
+                        {% else %}
+                            Bonne disponibilite pour reserver sereinement
+                        {% endif %}
+                    </strong>
+                </div>
+            </div>
+
+            <div class="gm-smart-actions">
+                <button type="button" id="gmNotifyEvent" class="gm-event-action">
+                    <span>🔔</span>
+                    <span id="gmNotifyLabel">Activer un rappel</span>
+                </button>
+                <a href="{{ evenement.googleCalendarLink }}" target="_blank" rel="noopener noreferrer" class="gm-event-action">
+                    <span>📅</span>
+                    <span>Google Calendar</span>
+                </a>
+                <a href="{{ path('app_evenement_ical', {'id': evenement.id}) }}" class="gm-event-action">
+                    <span>⬇</span>
+                    <span>Fichier .ics</span>
+                </a>
             </div>
         </div>
     </div>
@@ -513,6 +598,7 @@
 </style>
 
 <script src="{{ asset('assets/js/venue-map.js') }}"></script>
+<script src="{{ asset('assets/js/event-experience.js') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     if (window.GrowMindVenueMaps) {

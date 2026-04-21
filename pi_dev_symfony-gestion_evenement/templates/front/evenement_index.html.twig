@@ -2,6 +2,11 @@
 
 {% block title %}Evenements - GrowMind{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('assets/css/event-experience.css') }}">
+{% endblock %}
+
 {% block body %}
 <section class="hero-events">
     <div class="hero-bg-gradient"></div>
@@ -61,9 +66,47 @@
             data-filter-url="{{ path('app_evenement_list') }}"
         ></div>
 
+        <section class="gm-memory-grid">
+            <article class="gm-memory-card">
+                <div class="gm-memory-top">
+                    <div>
+                        <h3>Vos favoris</h3>
+                        <p>Gardez sous la main les evenements que vous voulez comparer ou reserver plus tard.</p>
+                    </div>
+                    <span class="gm-memory-badge">Pratique et moderne</span>
+                </div>
+                <div id="gmFavoritesGrid" class="gm-mini-grid"></div>
+            </article>
+
+            <article class="gm-memory-card">
+                <div class="gm-memory-top">
+                    <div>
+                        <h3>Recemment consultes</h3>
+                        <p>Retrouvez vite les pages evenement deja ouvertes pendant votre navigation.</p>
+                    </div>
+                    <span class="gm-memory-badge">Memoire locale</span>
+                </div>
+                <div id="gmRecentGrid" class="gm-mini-grid"></div>
+            </article>
+        </section>
+
         <div class="events-grid">
             {% for evenement in evenements %}
-                <article class="event-card">
+                <article
+                    class="event-card"
+                    data-event-card
+                    data-event-id="{{ evenement.id }}"
+                    data-event-title="{{ evenement.titre }}"
+                    data-event-date="{{ evenement.date|date('d/m/Y') }}"
+                    data-event-location="{{ evenement.localisation }}"
+                    data-event-price="{{ evenement.dynamicPrice|number_format(2, ',', ' ') }} EUR"
+                    data-event-url="{{ path('app_evenement_show', {'id': evenement.id}) }}"
+                    data-event-description="{{ evenement.description ? evenement.description|slice(0, 120) : 'Evenement GrowMind a venir.' }}"
+                >
+                    <button type="button" class="gm-favorite-btn" data-favorite-toggle data-event-id="{{ evenement.id }}">
+                        <span data-favorite-icon>♡</span>
+                        <span data-favorite-text>Favori</span>
+                    </button>
                     <div class="event-card-header">
                         <div class="event-icon">
                             <i class="fas fa-leaf"></i>
@@ -321,4 +364,5 @@
 </style>
 
 <script src="{{ asset('assets/js/calendar.js') }}"></script>
+<script src="{{ asset('assets/js/event-experience.js') }}"></script>
 {% endblock %}
