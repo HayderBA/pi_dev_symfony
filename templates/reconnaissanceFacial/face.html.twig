@@ -6,22 +6,23 @@
     @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap');
 
     :root {
-        --bg: #0a0a0f;
-        --surface: #13131a;
-        --border: #1e1e2e;
-        --accent: #6c63ff;
-        --accent2: #00d4aa;
-        --danger: #ff4d6d;
-        --text: #e8e8f0;
-        --muted: #6b6b80;
+        --bg:       #f0f7ff;
+        --surface:  #ffffff;
+        --border:   #daeaf7;
+        --green:    #16c784;
+        --green-dk: #0fa36a;
+        --blue:     #1e88e5;
+        --blue-dk:  #1565c0;
+        --danger:   #e53935;
+        --text:     #0d1b2a;
+        --muted:    #5a7a94;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-        background: var(--bg);
-        color: var(--text);
         font-family: 'DM Sans', sans-serif;
+        background: var(--bg);
         min-height: 100vh;
     }
 
@@ -32,19 +33,22 @@
         justify-content: center;
         padding: 2rem;
         background:
-            radial-gradient(ellipse 60% 50% at 20% 20%, rgba(108,99,255,0.12) 0%, transparent 60%),
-            radial-gradient(ellipse 40% 40% at 80% 80%, rgba(0,212,170,0.08) 0%, transparent 60%),
+            radial-gradient(ellipse 70% 60% at 10% 10%, rgba(22,199,132,0.18) 0%, transparent 55%),
+            radial-gradient(ellipse 60% 50% at 90% 90%, rgba(30,136,229,0.18) 0%, transparent 55%),
+            radial-gradient(ellipse 50% 40% at 50% 50%, rgba(255,255,255,0.9) 0%, transparent 80%),
             var(--bg);
     }
 
     .face-card {
         background: var(--surface);
         border: 1px solid var(--border);
-        border-radius: 24px;
+        border-radius: 28px;
         padding: 2.5rem;
         width: 100%;
         max-width: 440px;
-        box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+        box-shadow:
+            0 4px 24px rgba(30,136,229,0.10),
+            0 20px 60px rgba(22,199,132,0.08);
     }
 
     .face-header {
@@ -53,42 +57,45 @@
     }
 
     .face-icon {
-        width: 56px;
-        height: 56px;
-        background: linear-gradient(135deg, var(--accent), var(--accent2));
-        border-radius: 16px;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--green), var(--blue));
+        border-radius: 18px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.6rem;
+        font-size: 1.7rem;
         margin: 0 auto 1rem;
-        box-shadow: 0 8px 24px rgba(108,99,255,0.35);
+        box-shadow: 0 8px 24px rgba(22,199,132,0.30);
     }
 
     .face-title {
         font-family: 'Syne', sans-serif;
-        font-size: 1.6rem;
+        font-size: 1.7rem;
         font-weight: 800;
         letter-spacing: -0.03em;
-        color: var(--text);
+        background: linear-gradient(135deg, var(--green-dk), var(--blue));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
     }
 
     .face-subtitle {
         color: var(--muted);
         font-size: 0.875rem;
         margin-top: 0.4rem;
-        font-weight: 300;
+        font-weight: 400;
     }
 
-    /* Webcam container */
     .video-container {
         position: relative;
-        border-radius: 16px;
+        border-radius: 18px;
         overflow: hidden;
-        background: #000;
+        background: #0d1b2a;
         aspect-ratio: 4/3;
         margin-bottom: 1.5rem;
-        border: 1px solid var(--border);
+        border: 2px solid var(--border);
+        box-shadow: 0 4px 20px rgba(30,136,229,0.12);
     }
 
     #video {
@@ -96,62 +103,56 @@
         height: 100%;
         object-fit: cover;
         display: block;
-        transform: scaleX(-1); /* miroir */
+        transform: scaleX(-1);
     }
 
-    /* Overlay scan effect */
     .scan-line {
         position: absolute;
         top: 0; left: 0; right: 0;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        height: 3px;
+        background: linear-gradient(90deg, transparent, var(--green), var(--blue), transparent);
         animation: scanDown 2.5s ease-in-out infinite;
         opacity: 0;
         transition: opacity 0.3s;
     }
 
-    .scanning .scan-line {
-        opacity: 1;
-    }
+    .scanning .scan-line { opacity: 1; }
 
     @keyframes scanDown {
         0%   { top: 0%; }
         100% { top: 100%; }
     }
 
-    /* Corner brackets */
     .corner {
         position: absolute;
-        width: 24px;
-        height: 24px;
-        border-color: var(--accent2);
+        width: 26px;
+        height: 26px;
         border-style: solid;
-        opacity: 0.7;
+        border-color: var(--green);
+        opacity: 0.9;
     }
-    .corner-tl { top: 12px; left: 12px; border-width: 2px 0 0 2px; border-radius: 4px 0 0 0; }
-    .corner-tr { top: 12px; right: 12px; border-width: 2px 2px 0 0; border-radius: 0 4px 0 0; }
-    .corner-bl { bottom: 12px; left: 12px; border-width: 0 0 2px 2px; border-radius: 0 0 0 4px; }
+    .corner-tl { top: 12px; left: 12px;   border-width: 2px 0 0 2px; border-radius: 4px 0 0 0; }
+    .corner-tr { top: 12px; right: 12px;  border-width: 2px 2px 0 0; border-radius: 0 4px 0 0; }
+    .corner-bl { bottom: 12px; left: 12px;  border-width: 0 0 2px 2px; border-radius: 0 0 0 4px; }
     .corner-br { bottom: 12px; right: 12px; border-width: 0 2px 2px 0; border-radius: 0 0 4px 0; }
 
-    /* Status badge */
     .status-badge {
         position: absolute;
         bottom: 12px;
         left: 50%;
         transform: translateX(-50%);
-        background: rgba(0,0,0,0.7);
+        background: rgba(13,27,42,0.75);
         backdrop-filter: blur(8px);
-        border: 1px solid var(--border);
+        border: 1px solid rgba(255,255,255,0.15);
         border-radius: 20px;
-        padding: 4px 14px;
+        padding: 5px 16px;
         font-size: 0.75rem;
         font-weight: 500;
-        color: var(--muted);
+        color: #fff;
         white-space: nowrap;
         transition: all 0.3s;
     }
 
-    /* Buttons */
     .btn-group {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -160,12 +161,12 @@
     }
 
     .btn {
-        padding: 0.8rem 1rem;
+        padding: 0.85rem 1rem;
         border: none;
-        border-radius: 12px;
+        border-radius: 14px;
         font-family: 'DM Sans', sans-serif;
-        font-size: 0.875rem;
-        font-weight: 500;
+        font-size: 0.9rem;
+        font-weight: 600;
         cursor: pointer;
         transition: all 0.2s;
         display: flex;
@@ -175,65 +176,65 @@
     }
 
     .btn:disabled {
-        opacity: 0.4;
+        opacity: 0.45;
         cursor: not-allowed;
+        transform: none !important;
+        box-shadow: none !important;
     }
 
     .btn-register {
-        background: rgba(108,99,255,0.15);
-        color: var(--accent);
-        border: 1px solid rgba(108,99,255,0.3);
+        background: linear-gradient(135deg, rgba(22,199,132,0.12), rgba(22,199,132,0.05));
+        color: var(--green-dk);
+        border: 1.5px solid rgba(22,199,132,0.4);
     }
 
     .btn-register:hover:not(:disabled) {
-        background: rgba(108,99,255,0.25);
-        border-color: var(--accent);
-        transform: translateY(-1px);
+        background: linear-gradient(135deg, rgba(22,199,132,0.2), rgba(22,199,132,0.1));
+        border-color: var(--green);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(22,199,132,0.2);
     }
 
     .btn-scan {
-        background: linear-gradient(135deg, var(--accent), #8b85ff);
+        background: linear-gradient(135deg, var(--green), var(--blue));
         color: #fff;
-        box-shadow: 0 4px 16px rgba(108,99,255,0.4);
+        box-shadow: 0 4px 16px rgba(22,199,132,0.35);
     }
 
     .btn-scan:hover:not(:disabled) {
-        transform: translateY(-1px);
-        box-shadow: 0 6px 20px rgba(108,99,255,0.5);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(30,136,229,0.35);
     }
 
-    .btn-scan:active:not(:disabled) {
-        transform: translateY(0);
-    }
+    .btn-scan:active:not(:disabled) { transform: translateY(0); }
 
-    /* Result box */
     .result-box {
-        border-radius: 12px;
+        border-radius: 14px;
         padding: 1rem 1.2rem;
         font-size: 0.875rem;
         display: none;
         animation: fadeIn 0.3s ease;
-        border: 1px solid transparent;
+        border: 1.5px solid transparent;
     }
 
     .result-box.success {
-        background: rgba(0,212,170,0.1);
-        border-color: rgba(0,212,170,0.3);
-        color: var(--accent2);
+        background: linear-gradient(135deg, rgba(22,199,132,0.08), rgba(22,199,132,0.04));
+        border-color: rgba(22,199,132,0.35);
+        color: var(--green-dk);
         display: block;
     }
 
     .result-box.error {
-        background: rgba(255,77,109,0.1);
-        border-color: rgba(255,77,109,0.3);
+        background: rgba(229,57,53,0.07);
+        border-color: rgba(229,57,53,0.3);
         color: var(--danger);
         display: block;
     }
 
     .result-box.info {
-        background: rgba(108,99,255,0.1);
-        border-color: rgba(108,99,255,0.3);
-        color: var(--accent);
+        background: linear-gradient(135deg, rgba(30,136,229,0.08), rgba(30,136,229,0.04));
+        border-color: rgba(30,136,229,0.3);
+        color: var(--blue-dk);
         display: block;
     }
 
@@ -244,12 +245,11 @@
         font-family: 'Syne', sans-serif;
     }
 
-    /* Confidence bar */
     .confidence-bar-wrap {
         margin-top: 0.6rem;
-        background: rgba(255,255,255,0.08);
+        background: rgba(0,0,0,0.07);
         border-radius: 99px;
-        height: 6px;
+        height: 7px;
         overflow: hidden;
     }
 
@@ -257,7 +257,7 @@
         height: 100%;
         border-radius: 99px;
         transition: width 0.8s ease;
-        background: linear-gradient(90deg, var(--accent2), #00ffcc);
+        background: linear-gradient(90deg, var(--green), var(--blue));
     }
 
     @keyframes fadeIn {
@@ -277,7 +277,6 @@
             <p class="face-subtitle">Vérification biométrique sécurisée</p>
         </div>
 
-        <!-- Webcam -->
         <div class="video-container" id="videoContainer">
             <video id="video" autoplay playsinline></video>
             <div class="scan-line"></div>
@@ -290,17 +289,18 @@
 
         <canvas id="canvas"></canvas>
 
-        <!-- Boutons -->
         <div class="btn-group">
-            <button class="btn btn-register" id="btnRegister" onclick="registerFace()" disabled>
-                📸 Enregistrer
-            </button>
-            <button class="btn btn-scan" id="btnScan" onclick="capture()" disabled>
-                🔍 Scanner
-            </button>
+            {% if not has_face %}
+                <button class="btn btn-register" id="btnRegister" onclick="registerFace()" disabled style="grid-column: span 2;">
+                    📸 Enregistrer mon visage
+                </button>
+            {% else %}
+                <button class="btn btn-scan" id="btnScan" onclick="capture()" disabled style="grid-column: span 2;">
+                    🔍 Scanner mon visage
+                </button>
+            {% endif %}
         </div>
 
-        <!-- Résultat -->
         <div class="result-box" id="resultBox">
             <div class="result-title" id="resultTitle"></div>
             <div id="resultMsg"></div>
@@ -313,11 +313,11 @@
 </div>
 
 <script>
-const video       = document.getElementById('video');
-const canvas      = document.getElementById('canvas');
-const statusBadge = document.getElementById('statusBadge');
-const btnRegister = document.getElementById('btnRegister');
-const btnScan     = document.getElementById('btnScan');
+const video          = document.getElementById('video');
+const canvas         = document.getElementById('canvas');
+const statusBadge    = document.getElementById('statusBadge');
+const btnRegister    = document.getElementById('btnRegister');
+const btnScan        = document.getElementById('btnScan');
 const videoContainer = document.getElementById('videoContainer');
 
 // ✅ Démarrer la webcam
@@ -326,18 +326,18 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(stream => {
             video.srcObject = stream;
             statusBadge.textContent = '🟢 Caméra active';
-            statusBadge.style.color = '#00d4aa';
-            btnRegister.disabled = false;
-            btnScan.disabled = false;
+            statusBadge.style.color = '#16c784';
+            // ✅ Vérifier si le bouton existe avant (évite "Cannot set properties of null")
+            if (btnRegister) btnRegister.disabled = false;
+            if (btnScan)     btnScan.disabled     = false;
         })
         .catch(err => {
             statusBadge.textContent = '❌ Caméra inaccessible';
-            statusBadge.style.color = '#ff4d6d';
+            statusBadge.style.color = '#e53935';
             showResult('error', 'Erreur caméra', err.message);
         });
 });
 
-// 📸 Capturer une image depuis la webcam
 function getSnapshot() {
     canvas.width  = video.videoWidth;
     canvas.height = video.videoHeight;
@@ -345,16 +345,15 @@ function getSnapshot() {
     return canvas.toDataURL('image/jpeg', 0.9);
 }
 
-// 🔄 Afficher le résultat
 function showResult(type, title, msg, confidence = null) {
-    const box   = document.getElementById('resultBox');
-    const tit   = document.getElementById('resultTitle');
-    const msgEl = document.getElementById('resultMsg');
+    const box     = document.getElementById('resultBox');
+    const tit     = document.getElementById('resultTitle');
+    const msgEl   = document.getElementById('resultMsg');
     const barWrap = document.getElementById('barWrap');
     const barFill = document.getElementById('barFill');
 
-    box.className = 'result-box ' + type;
-    tit.textContent = title;
+    box.className     = 'result-box ' + type;
+    tit.textContent   = title;
     msgEl.textContent = msg;
 
     if (confidence !== null) {
@@ -365,79 +364,65 @@ function showResult(type, title, msg, confidence = null) {
     }
 }
 
-// 📸 Enregistrer le visage de l'admin
+// 📸 Enregistrer le visage
 function registerFace() {
     if (!video.videoWidth) { showResult('error', 'Erreur', 'Webcam non prête !'); return; }
 
-    btnRegister.disabled = true;
-    btnRegister.textContent = '⏳ Enregistrement...';
+    if (btnRegister) { btnRegister.disabled = true; btnRegister.textContent = '⏳ Enregistrement...'; }
     showResult('info', 'En cours...', 'Enregistrement de votre visage de référence.');
-
-    const image = getSnapshot();
 
     fetch("{{ path('face_upload') }}", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image })
+        body: JSON.stringify({ image: getSnapshot() })
     })
     .then(r => r.json())
     .then(data => {
-        btnRegister.disabled = false;
-        btnRegister.innerHTML = '📸 Enregistrer';
-
         if (data.success) {
-            showResult('success', '✅ Visage enregistré !', 'Vous pouvez maintenant scanner votre visage pour vous authentifier.');
+            showResult('success', '✅ Visage enregistré !', 'Redirection vers la vérification...');
+            setTimeout(() => { window.location.reload(); }, 1500);
         } else {
+            if (btnRegister) { btnRegister.disabled = false; btnRegister.innerHTML = '📸 Enregistrer mon visage'; }
             showResult('error', '❌ Échec', data.error || 'Erreur inconnue');
         }
     })
     .catch(() => {
-        btnRegister.disabled = false;
-        btnRegister.innerHTML = '📸 Enregistrer';
+        if (btnRegister) { btnRegister.disabled = false; btnRegister.innerHTML = '📸 Enregistrer mon visage'; }
         showResult('error', '❌ Erreur', 'Impossible de contacter le serveur.');
     });
 }
 
-// 🔍 Scanner et comparer le visage
+// 🔍 Scanner le visage
 function capture() {
     if (!video.videoWidth) { showResult('error', 'Erreur', 'Webcam non prête !'); return; }
 
-    btnScan.disabled = true;
-    btnScan.textContent = '⏳ Analyse...';
+    if (btnScan) { btnScan.disabled = true; btnScan.textContent = '⏳ Analyse...'; }
     videoContainer.classList.add('scanning');
     showResult('info', 'Analyse en cours...', 'Comparaison avec votre visage de référence.');
-
-    const image = getSnapshot();
 
     fetch("{{ path('face_test') }}", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image })
+        body: JSON.stringify({ image: getSnapshot() })
     })
     .then(r => r.json())
     .then(data => {
-        btnScan.disabled = false;
-        btnScan.innerHTML = '🔍 Scanner';
+        if (btnScan) { btnScan.disabled = false; btnScan.innerHTML = '🔍 Scanner mon visage'; }
         videoContainer.classList.remove('scanning');
 
-        if (data.error) {
-            showResult('error', '❌ Erreur', data.error);
-            return;
-        }
+        if (data.error) { showResult('error', '❌ Erreur', data.error); return; }
 
         const score = parseFloat(data.confidence).toFixed(1);
 
         if (data.success) {
-            showResult('success', '✅ Accès autorisé', 'Score de confiance : ' + score + '%', data.confidence);
-            // Redirection vers le dashboard admin après 2 secondes
+            showResult('success', '✅ Accès autorisé', 'Score : ' + score + '% — Redirection...', data.confidence);
             setTimeout(() => { window.location.href = "{{ path('app_home') }}"; }, 2000);
         } else {
-            showResult('error', '❌ Accès refusé', 'Score de confiance : ' + score + '% (minimum requis : 80%)', data.confidence);
+            showResult('error', '❌ Accès refusé', 'Score : ' + score + '% (minimum requis : 80%)', data.confidence);
         }
     })
     .catch(() => {
-        btnScan.disabled = false;
-        btnScan.innerHTML = '🔍 Scanner';
+        if (btnScan) { btnScan.disabled = false; btnScan.innerHTML = '🔍 Scanner mon visage'; }
         videoContainer.classList.remove('scanning');
         showResult('error', '❌ Erreur', 'Impossible de contacter le serveur.');
     });

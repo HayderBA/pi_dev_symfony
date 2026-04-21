@@ -17,9 +17,16 @@ class FaceController extends AbstractController
      * 🟢 Page webcam Face ID
      */
     #[Route('/face', name: 'face_page')]
-    public function facePage(): Response
+    public function facePage(AdminRepository $adminRepository): Response
     {
-        return $this->render('reconnaissanceFacial/face.html.twig');
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+        $admin = $adminRepository->findOneBy(['user' => $user]);
+        $hasFace = $admin && $admin->getFaceImage();
+
+        return $this->render('reconnaissanceFacial/face.html.twig', [
+            'has_face' => $hasFace
+        ]);
     }
 
     /**
