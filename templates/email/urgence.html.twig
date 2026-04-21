@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Urgence GrowMind</title>
+</head>
+<body style="font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px;">
+    <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden;">
+        <div style="background: linear-gradient(135deg, #e74c3c, #c0392b); padding: 20px; text-align: center;">
+            <h1 style="color: white; margin: 0;">Alerte Urgence</h1>
+        </div>
+        <div style="padding: 20px;">
+            <h3>Patient :</h3>
+            <p><strong>Nom :</strong> {{ patient.name }} {{ patient.secondName }}</p>
+            <p><strong>Distance :</strong> {{ distance }} km</p>
+            <p><strong>Localisation :</strong> <a href="https://www.google.com/maps?q={{ latitude }},{{ longitude }}">Voir sur Google Maps</a></p>
+            
+            <hr>
+            
+            <h3>Médecin à contacter :</h3>
+            <p><strong>Nom :</strong> {{ medecin.name }} {{ medecin.secondName }}</p>
+            <p><strong>Email :</strong> {{ medecin.email }}</p>
+            <p><strong>Téléphone :</strong> {{ medecin.phone|default('Non renseigné') }}</p>
+            
+            <hr>
+            <p style="color: #718096;">GrowMind - Plateforme de santé mentale</p>
+            <p><small>Ceci est un test. En production, cet email serait envoyé directement au médecin.</small></p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,32 @@
+forum:
+    title: "Discussion Forum"
+    subtitle: "A caring space to share, listen and grow together"
+    search: "Search a discussion..."
+    new: "New discussion"
+    back: "Back to home"
+    empty: "No discussions yet"
+sos:
+    button: "SOS EMERGENCY"
+    alert: "Alert sent"
+map:
+    title: "Nearby Doctors"
+    doctors: "doctor(s) available"
+quiz:
+    title: "Wellness assessment"
+    question1: "Do you feel nervous, anxious or stressed?"
+    question2: "Difficulty falling asleep or staying asleep?"
+    question3: "Feeling sad, depressed or hopeless?"
+    question4: "Loss of interest in activities you used to enjoy?"
+    never: "Never"
+    sometimes: "Sometimes"
+    often: "Often"
+    always: "Always"
+history:
+    title: "SOS History"
+    empty: "No alerts"
+    sent: "Sent"
+chat:
+    title: "GrowMind Assistant"
+    placeholder: "Write your message..."
+resources:
+    title: "Resources"

@@ -31,6 +31,10 @@ class User
     #[ORM\Column(length: 50)]
     private ?string $role = null;
 
+    // ========== TÉLÉPHONE POUR SMS ==========
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $phone = null;
+
     // ========== GÉOLOCALISATION ==========
     #[ORM\Column(type: 'decimal', precision: 10, scale: 8, nullable: true)]
     private ?float $latitude = null;
@@ -41,6 +45,10 @@ class User
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $adresse = null;
 
+    // ========== TELEGRAM CHAT ID ==========
+    #[ORM\Column(nullable: true)]
+    private ?string $telegramChatId = null;
+
     // ========== FIREBASE TOKEN ==========
     #[ORM\Column(name: "fcm_token", type: "string", length: 255, nullable: true)]
     private ?string $fcmToken = null;
@@ -48,10 +56,10 @@ class User
     // ========== RELATIONS ==========
     #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'sender')]
     private Collection $sentMessages;
-
+        
     #[ORM\ManyToMany(targetEntity: Conversation::class, mappedBy: 'participants')]
     private Collection $conversations;
-
+    
     public function __construct()
     {
         $this->sentMessages = new ArrayCollection();
@@ -71,6 +79,10 @@ class User
     public function getRole(): ?string { return $this->role; }
     public function setRole(string $role): static { $this->role = $role; return $this; }
 
+    // ========== TÉLÉPHONE ==========
+    public function getPhone(): ?string { return $this->phone; }
+    public function setPhone(?string $phone): static { $this->phone = $phone; return $this; }
+
     // ========== GÉOLOCALISATION ==========
     public function getLatitude(): ?float { return $this->latitude; }
     public function setLatitude(?float $latitude): static { $this->latitude = $latitude; return $this; }
@@ -78,6 +90,10 @@ class User
     public function setLongitude(?float $longitude): static { $this->longitude = $longitude; return $this; }
     public function getAdresse(): ?string { return $this->adresse; }
     public function setAdresse(?string $adresse): static { $this->adresse = $adresse; return $this; }
+
+    // ========== TELEGRAM ==========
+    public function getTelegramChatId(): ?string { return $this->telegramChatId; }
+    public function setTelegramChatId(?string $telegramChatId): static { $this->telegramChatId = $telegramChatId; return $this; }
 
     // ========== FIREBASE TOKEN ==========
     public function getFcmToken(): ?string { return $this->fcmToken; }

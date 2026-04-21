@@ -9,219 +9,307 @@
         
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            background: linear-gradient(135deg, #e8f4f8 0%, #d1e8f0 100%);
             background-attachment: fixed;
             color: #1a2a3a;
         }
         
-        @keyframes fadeUp {
-            0% { opacity: 0; transform: translateY(40px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes fadeLeft {
-            0% { opacity: 0; transform: translateX(-30px); }
-            100% { opacity: 1; transform: translateX(0); }
-        }
-        
-        @keyframes fadeRight {
-            0% { opacity: 0; transform: translateX(30px); }
-            100% { opacity: 1; transform: translateX(0); }
-        }
-        
-        .scroll-animate {
+        /* ===== ANIMATION SCROLL FLUIDE ===== */
+        .scroll-reveal {
             opacity: 0;
+            transform: translateY(30px);
             transition: all 0.7s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         }
-        
-        .scroll-animate.visible {
+        .scroll-reveal.visible {
             opacity: 1;
-            transform: translateY(0) translateX(0);
+            transform: translateY(0);
         }
         
-        .fade-up { transform: translateY(40px); }
-        .fade-left { transform: translateX(-30px); }
-        .fade-right { transform: translateX(30px); }
-        
+        /* ===== BOUTON RETOUR ===== */
         .back-home-btn {
             position: fixed;
             top: 20px;
             left: 20px;
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(10px);
-            padding: 12px 20px;
-            border-radius: 50px;
+            padding: 12px 22px;
+            border-radius: 40px;
             text-decoration: none;
-            color: #2c3e50;
+            color: #1a4a6e;
             font-weight: 600;
-            font-size: 14px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
+            font-size: 0.95rem;
             z-index: 1000;
             display: flex;
             align-items: center;
             gap: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s;
         }
+        .back-home-btn:hover { background: #1a4a6e; color: white; transform: translateX(-3px); }
         
-        .back-home-btn:hover {
-            transform: translateX(-5px);
-            background: white;
-        }
-        
-        .page-title {
+        /* ===== HEADER ===== */
+        .page-header {
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 2.5rem;
+            padding: 1rem;
         }
-        
-        .page-title h1 {
-            font-size: 3rem;
+        .page-header h1 {
+            font-size: 2.8rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #2c3e50, #3498db);
+            background: linear-gradient(135deg, #1a4a6e, #2c8c6e);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            letter-spacing: -0.5px;
         }
-        
-        .page-title p {
-            color: #64748b;
+        .page-header p {
+            color: #5a6e8a;
             font-size: 1.1rem;
-            margin-top: 0.5rem;
+            margin-top: 0.8rem;
         }
         
+        /* ===== STATS ===== */
+        .stats-container {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
         .stat-card {
             background: white;
-            border-radius: 24px;
-            padding: 1.5rem;
+            padding: 1.2rem 2.2rem;
+            border-radius: 28px;
             text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
+            min-width: 130px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
         }
+        .stat-card:hover { transform: translateY(-5px); }
+        .stat-number { font-size: 2rem; font-weight: 800; color: #1a4a6e; }
+        .stat-label { font-size: 0.85rem; color: #5a6e8a; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; }
         
-        .stat-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        /* ===== CATEGORIES ===== */
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
         }
-        
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: #2c3e50;
-        }
-        
-        .stat-label {
-            color: #64748b;
-            font-size: 0.9rem;
-            font-weight: 500;
-            margin-top: 0.25rem;
-        }
-        
         .category-chip {
-            background: white;
-            border-radius: 50px;
-            padding: 8px 24px;
+            padding: 10px 28px;
+            border-radius: 40px;
             text-decoration: none;
-            font-weight: 500;
             font-size: 0.9rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            color: #4a5568;
+            font-weight: 600;
+            background: white;
+            color: #1a4a6e;
             border: 1px solid #e2e8f0;
+            transition: all 0.3s;
         }
+        .category-chip:hover { background: #1a4a6e; color: white; transform: translateY(-2px); }
         
-        .category-chip:hover {
-            background: #2c3e50;
+        /* ===== SEARCH & NEW BUTTON ===== */
+        .action-bar {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        .search-input {
+            flex: 1;
+            max-width: 500px;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 50px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-new {
+            background: linear-gradient(135deg, #1a4a6e, #2c8c6e);
             color: white;
-            transform: translateY(-2px);
+            padding: 14px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.3s;
         }
+        .btn-new:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(26,74,110,0.3); }
         
+        /* ===== LAYOUT 2 COLONNES ===== */
+        .two-columns {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+        .main-col { flex: 2; }
+        .sidebar-col { flex: 1.2; }
+        
+        /* ===== POSTS ===== */
         .post-card {
             background: white;
             border-radius: 20px;
             padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 1.2rem;
+            display: flex;
+            gap: 1rem;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
+        .post-card:hover { transform: translateX(5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
         
-        .post-card:hover {
-            transform: translateX(8px);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
-        }
-        
-        .avatar {
-            width: 52px;
-            height: 52px;
-            background: linear-gradient(135deg, #2c3e50, #3498db);
+        /* Avatar différent selon rôle */
+        .avatar-patient {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, #8bb4d4, #5a9bc0);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: 700;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
+        }
+        .avatar-medecin {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, #2c8c6e, #1a6e54);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.3rem;
         }
         
-        .search-input {
-            flex: 1;
-            padding: 14px 20px;
-            border-radius: 50px;
-            border: 1px solid #e2e8f0;
-            background: white;
-            outline: none;
-            transition: all 0.3s ease;
-        }
+        .post-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .post-title a { color: #1a4a6e; text-decoration: none; }
+        .post-meta { display: flex; gap: 1.2rem; font-size: 0.8rem; color: #5a6e8a; margin-bottom: 0.8rem; flex-wrap: wrap; }
+        .badge-category { background: #e8f0fe; color: #1a4a6e; padding: 3px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+        .post-excerpt { font-size: 0.9rem; color: #4a5a6e; line-height: 1.5; }
         
-        .search-input:focus {
-            border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52,152,219,0.1);
-        }
-        
-        .carte-section {
+        /* ===== SIDEBAR CARDS ===== */
+        .sidebar-card {
             background: white;
             border-radius: 24px;
-            padding: 2rem;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .sidebar-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1a4a6e;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #eef2f6;
         }
         
-        #carte-map {
-            height: 400px;
-            width: 100%;
+        /* Map */
+        #carte-map { height: 280px; width: 100%; border-radius: 16px; margin-bottom: 0.5rem; }
+        
+        /* ===== QUIZ ===== */
+        .quiz-question { margin-bottom: 1rem; }
+        .quiz-question p { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem; color: #2c3e50; }
+        .quiz-option {
+            display: inline-block;
+            padding: 6px 16px;
+            margin: 0 6px 6px 0;
+            background: #f0f2f5;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quiz-option:hover { background: #1a4a6e; color: white; }
+        .quiz-result {
+            margin-top: 1rem;
+            padding: 14px;
             border-radius: 16px;
-            overflow: hidden;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .quiz-result.low { background: #e8f5e9; border-left: 4px solid #4caf50; }
+        .quiz-result.moderate { background: #fff3e0; border-left: 4px solid #ff9800; }
+        .quiz-result.severe { background: #ffebee; border-left: 4px solid #f44336; }
+        
+        /* Solution */
+        .solution-box {
+            margin-top: 1rem;
+            padding: 14px;
+            background: #e8f0fe;
+            border-radius: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+        .solution-btn {
+            background: #1a4a6e;
+            color: white;
+            padding: 8px 18px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
         }
         
+        /* ===== HISTORY ===== */
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eef2f6;
+        }
+        .history-doctor { font-weight: 600; font-size: 0.9rem; }
+        .history-date { font-size: 0.75rem; color: #5a6e8a; margin-top: 2px; }
+        .history-actions button { background: none; border: none; cursor: pointer; font-size: 1rem; margin-left: 8px; padding: 4px 8px; border-radius: 8px; transition: all 0.2s; }
+        .history-actions button:hover { background: #f0f2f5; }
+        
+        /* ===== SOS BUTTON ===== */
         #sos-button {
             position: fixed;
             bottom: 30px;
             left: 30px;
             z-index: 1000;
         }
-        
         .sos-btn {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            background: linear-gradient(135deg, #d32f2f, #b71c1c);
             color: white;
             border: none;
             border-radius: 50px;
-            padding: 14px 28px;
-            font-weight: 700;
+            padding: 14px 32px;
+            font-weight: 800;
             font-size: 1rem;
             cursor: pointer;
-            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 4px 15px rgba(231,76,60,0.3);
+            box-shadow: 0 4px 20px rgba(211,47,47,0.4);
+            transition: all 0.3s;
+            animation: pulse 2s infinite;
         }
-        
-        .sos-btn:hover {
-            transform: scale(1.05);
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(211,47,47,0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(211,47,47,0); }
+            100% { box-shadow: 0 0 0 0 rgba(211,47,47,0); }
         }
+        .sos-btn:hover { transform: scale(1.03); }
         
-        .floating-btn {
+        .floating-top {
             position: fixed;
             bottom: 30px;
             right: 30px;
-            background: #2c3e50;
+            background: #1a4a6e;
             width: 50px;
             height: 50px;
             border-radius: 50%;
@@ -230,390 +318,338 @@
             justify-content: center;
             color: white;
             cursor: pointer;
-            transition: all 0.3s ease;
             z-index: 999;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            font-size: 1.2rem;
         }
+        .floating-top:hover { background: #2c8c6e; transform: translateY(-3px); }
         
-        .floating-btn:hover {
-            transform: translateY(-5px);
-            background: #3498db;
-        }
-        
+        /* ===== CHATBOT AGRANDI ===== */
         .chat-sidebar {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 350px;
+            bottom: 100px;
+            right: 30px;
+            width: 380px;
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            border-radius: 24px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
             z-index: 1000;
             overflow: hidden;
+            transition: all 0.3s;
         }
-        
         .chat-header {
-            background: linear-gradient(135deg, #2c3e50, #3498db);
+            background: linear-gradient(135deg, #1a4a6e, #2c8c6e);
             color: white;
-            padding: 12px 16px;
+            padding: 16px 20px;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-size: 1rem;
+            font-weight: 600;
         }
-        
-        .ia-avatar {
-            width: 40px;
-            height: 40px;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-        }
-        
-        .chat-messages {
-            height: 450px;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .messages-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px;
-            background: #f8fafc;
-        }
-        
+        .chat-messages { height: 420px; display: flex; flex-direction: column; }
+        .messages-container { flex: 1; overflow-y: auto; padding: 16px; background: #f8fafc; }
         .user-message { text-align: right; margin-bottom: 16px; }
         .user-message .message-bubble {
-            background: linear-gradient(135deg, #2c3e50, #3498db);
+            background: linear-gradient(135deg, #1a4a6e, #2c8c6e);
             color: white;
             display: inline-block;
-            padding: 10px 14px;
-            border-radius: 18px;
+            padding: 12px 18px;
+            border-radius: 22px;
             max-width: 85%;
+            font-size: 0.9rem;
+            font-weight: 500;
         }
-        
         .ia-message { text-align: left; margin-bottom: 16px; }
         .ia-message .message-bubble {
             background: white;
             color: #1a2a3a;
             display: inline-block;
-            padding: 10px 14px;
-            border-radius: 18px;
+            padding: 12px 18px;
+            border-radius: 22px;
             max-width: 85%;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            font-size: 0.9rem;
+            font-weight: 500;
         }
+        .message-time { font-size: 0.7rem; color: #94a3b8; margin-top: 5px; padding-left: 12px; }
+        .chat-input { padding: 14px; background: white; border-top: 1px solid #eef2f6; display: flex; gap: 10px; }
+        .chat-input input { flex: 1; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 50px; outline: none; font-size: 0.9rem; font-family: 'Inter', sans-serif; }
+        .chat-input button { background: #1a4a6e; border: none; width: 42px; height: 42px; border-radius: 50%; color: white; cursor: pointer; font-size: 1.2rem; transition: all 0.2s; }
+        .chat-input button:hover { background: #2c8c6e; transform: scale(1.05); }
         
-        .message-time { font-size: 10px; color: #94a3b8; margin-top: 4px; padding-left: 12px; }
-        
-        .chat-input { padding: 12px; background: white; border-top: 1px solid #e2e8f0; }
-        .chat-input form { display: flex; gap: 8px; }
-        .chat-input input { flex: 1; padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 50px; outline: none; }
-        .chat-input input:focus { border-color: #3498db; }
-        .chat-input button { background: #3498db; border: none; width: 40px; height: 40px; border-radius: 50%; color: white; cursor: pointer; }
-        
-        @media (max-width: 768px) {
-            .stat-number { font-size: 1.8rem; }
-            .avatar { width: 40px; height: 40px; font-size: 1rem; }
-            .chat-sidebar { width: 300px; }
-            #carte-map { height: 300px; }
-            .page-title h1 { font-size: 2rem; }
-            .sos-btn { padding: 10px 20px; font-size: 0.9rem; }
-        }
+        @media (max-width: 1000px) { .two-columns { flex-direction: column; } .chat-sidebar { width: 330px; right: 15px; } }
+        @media (max-width: 768px) { .stat-number { font-size: 1.5rem; } .stat-card { padding: 0.8rem 1.5rem; } .page-header h1 { font-size: 2rem; } }
     </style>
 {% endblock %}
 
 {% block body %}
+<!-- Back button -->
 <a href="{{ path('app_home') }}" class="back-home-btn">
-    <i class="bi bi-arrow-left"></i> Retour à l'accueil
+    ← Retour accueil
 </a>
 
-<div class="container py-5">
+<div class="container py-4">
     
-    <div class="page-title scroll-animate fade-up">
-        <h1>Forum des discussions</h1>
+    <!-- Header -->
+    <div class="page-header scroll-reveal">
+        <h1> Forum des discussions</h1>
         <p>Un espace bienveillant pour partager, s'écouter et progresser ensemble</p>
     </div>
     
-    <div class="row mb-5 scroll-animate fade-up">
-        <div class="col-md-8 mx-auto">
-            <div class="d-flex gap-3">
-                <input type="text" id="searchForum" class="search-input" placeholder="Rechercher une discussion...">
-                <a href="{{ path('forum_new') }}" class="btn" style="background:#2c3e50; color:white; border-radius:50px; padding:12px 28px; text-decoration:none;">+ Nouvelle discussion</a>
-            </div>
-        </div>
+    <!-- Stats -->
+    <div class="stats-container scroll-reveal">
+        <div class="stat-card"><div class="stat-number">{{ posts|length }}</div><div class="stat-label">Discussions</div></div>
+        <div class="stat-card"><div class="stat-number">{{ urgentPosts|default(0) }}</div><div class="stat-label">Urgentes</div></div>
+        <div class="stat-card"><div class="stat-number">24/7</div><div class="stat-label">Soutien</div></div>
+        <div class="stat-card"><div class="stat-number">{{ medecinsData|length }}</div><div class="stat-label">Médecins</div></div>
     </div>
     
-    <div class="row mb-5 g-4">
-        <div class="col-md-3 col-6 scroll-animate fade-up">
-            <div class="stat-card">
-                <div class="stat-number">{{ posts|length }}</div>
-                <div class="stat-label">Discussions</div>
-            </div>
-        </div>
-        <div class="col-md-3 col-6 scroll-animate fade-up" style="animation-delay:0.1s">
-            <div class="stat-card">
-                <div class="stat-number">{{ urgentPosts|default(0) }}</div>
-                <div class="stat-label">Urgentes</div>
-            </div>
-        </div>
-        <div class="col-md-3 col-6 scroll-animate fade-up" style="animation-delay:0.2s">
-            <div class="stat-card">
-                <div class="stat-number">24/7</div>
-                <div class="stat-label">Soutien</div>
-            </div>
-        </div>
-        <div class="col-md-3 col-6 scroll-animate fade-up" style="animation-delay:0.3s">
-            <div class="stat-card">
-                <div class="stat-number">{{ medecinsData|length }}</div>
-                <div class="stat-label">Médecins</div>
-            </div>
-        </div>
+    <!-- Categories -->
+    <div class="categories scroll-reveal">
+        <a href="{{ path('forum_index') }}" class="category-chip">Toutes</a>
+        {% for cat in ['Anxiété','Stress','Dépression','Méditation','Sommeil','Estime de soi'] %}
+            <a href="{{ path('forum_categorie', {'categorie': cat}) }}" class="category-chip">{{ cat }}</a>
+        {% endfor %}
     </div>
     
-    <div class="row mb-5 scroll-animate fade-up">
-        <div class="col-12">
-            <div class="d-flex flex-wrap justify-content-center gap-2">
-                <a href="{{ path('forum_index') }}" class="category-chip">Toutes</a>
-                {% for cat in ['Anxiété','Stress','Dépression','Méditation','Sommeil','Estime de soi'] %}
-                    <a href="{{ path('forum_categorie', {'categorie': cat}) }}" class="category-chip">{{ cat }}</a>
-                {% endfor %}
-            </div>
-        </div>
+    <!-- Search & New -->
+    <div class="action-bar scroll-reveal">
+        <input type="text" id="searchForum" class="search-input" placeholder="Rechercher une discussion...">
+        <a href="{{ path('forum_new') }}" class="btn-new">+ Nouvelle discussion</a>
     </div>
     
-    <div class="row">
-        <div class="col-12">
+    <!-- Main 2 columns -->
+    <div class="two-columns">
+        
+        <!-- LEFT: Posts -->
+        <div class="main-col">
             {% for post in posts %}
-                <div class="post-card scroll-animate fade-right" data-search="{{ post.nom|lower }} {{ post.categorie|lower }}">
-                    <div class="d-flex gap-3">
-                        <div class="avatar flex-shrink-0">{{ post.nom|first|upper }}</div>
-                        <div class="flex-grow-1">
-                            <div class="d-flex flex-wrap justify-content-between align-items-start mb-2">
-                                <div>
-                                    <h3 class="h5 fw-bold mb-1">
-                                        <a href="{{ path('forum_show', {'id': post.id}) }}" class="text-decoration-none" style="color:#2c3e50;">{{ post.nom }}</a>
-                                    </h3>
-                                    <div class="d-flex flex-wrap gap-2 align-items-center">
-                                        <span class="badge" style="background:#3498db;">{{ post.categorie }}</span>
-                                        <small class="text-muted"><i class="bi bi-person-circle"></i> {{ post.nom }}</small>
-                                        <small class="text-muted"><i class="bi bi-calendar3"></i> {{ post.dateCreation|date('d/m/Y') }}</small>
-                                        <small class="text-muted"><i class="bi bi-eye"></i> {{ post.vues }} vues</small>
-                                    </div>
-                                </div>
-                                <div class="dropdown">
-                                    <button class="btn btn-sm btn-link text-muted" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a class="dropdown-item" href="{{ path('forum_show', {'id': post.id}) }}"><i class="bi bi-eye"></i> Voir</a></li>
-                                        <li><a class="dropdown-item" href="{{ path('forum_edit', {'id': post.id}) }}"><i class="bi bi-pencil"></i> Modifier</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li>
-                                            <form action="{{ path('forum_delete', {'id': post.id}) }}" method="POST" onsubmit="return confirm('Supprimer cette discussion ?')">
-                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
-                                                <button type="submit" class="dropdown-item text-danger"><i class="bi bi-trash"></i> Supprimer</button>
-                                            </form>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <p class="text-muted mb-0">{{ post.contenu|slice(0,150) }}{% if post.contenu|length > 150 %}...{% endif %}</p>
+                <div class="post-card scroll-reveal" data-search="{{ post.nom|lower }} {{ post.categorie|lower }}">
+                    <!-- Avatar différent selon rôle -->
+                    <div class="{% if post.role == 'medecin' %}avatar-medecin{% else %}avatar-patient{% endif %}">
+                        {{ post.nom|first|upper }}
+                    </div>
+                    <div style="flex:1">
+                        <div class="post-title"><a href="{{ path('forum_show', {'id': post.id}) }}">{{ post.nom }}</a></div>
+                        <div class="post-meta">
+                            <span class="badge-category">{{ post.categorie }}</span>
+                            <span>👤 {{ post.nom }}</span>
+                            <span>📅 {{ post.dateCreation|date('d/m/Y') }}</span>
+                            <span>👁️ {{ post.vues }} vues</span>
+                        </div>
+                        <div class="post-excerpt">{{ post.contenu|slice(0,130) }}{% if post.contenu|length > 130 %}...{% endif %}</div>
+                    </div>
+                    <div>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-link" data-bs-toggle="dropdown" style="font-size: 1.2rem;">⋮</button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ path('forum_show', {'id': post.id}) }}">👁️ Voir</a></li>
+                                <li><a class="dropdown-item" href="{{ path('forum_edit', {'id': post.id}) }}">✏️ Modifier</a></li>
+                                <li><form action="{{ path('forum_delete', {'id': post.id}) }}" method="POST"><input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}"><button class="dropdown-item text-danger">🗑 Supprimer</button></form></li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             {% else %}
-                <div class="text-center py-5 bg-white rounded-4">
-                    <p class="text-muted">Aucune discussion pour le moment.</p>
-                    <a href="{{ path('forum_new') }}" class="btn" style="background:#2c3e50; color:white; border-radius:50px; padding:12px 28px;">Lancer la première discussion</a>
-                </div>
+                <div class="text-center py-5">Aucune discussion. <a href="{{ path('forum_new') }}">Créez la première</a></div>
             {% endfor %}
         </div>
-    </div>
-    
-    <div class="carte-section scroll-animate fade-up mt-5">
-        <h3 class="fw-bold mb-3" style="color:#2c3e50;">Médecins à proximite</h3>
-        <p class="text-muted mb-3">Trouvez un medecin pres de chez vous. Les zones rouges indiquent les secteurs avec une activite de detresse elevee.</p>
-        <div id="carte-map"></div>
-        <div class="mt-2 text-center"><small class="text-muted">{{ medecinsData|length }} medecin(s) disponible(s) sur la carte</small></div>
-    </div>
-    
-    <div class="carte-section scroll-animate fade-up mt-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3 class="fw-bold mb-0" style="color:#2c3e50;">Historique des alertes SOS</h3>
-            <button onclick="chargerHistorique()" class="btn btn-sm btn-outline-secondary rounded-pill">Rafraichir</button>
-        </div>
-        <div id="historique-container">
-            <div class="text-center py-4" id="historique-loading"><div class="spinner-border text-primary"></div><p class="mt-2">Chargement...</p></div>
-            <div id="historique-list" style="display: none;"></div>
-        </div>
-    </div>
-    
-    <div class="row mt-5 scroll-animate fade-up">
-        <div class="col-md-8 mx-auto">
-            <div class="text-center p-4 rounded-4" style="background: linear-gradient(135deg, #2c3e50, #3498db); color: white;">
-                <i class="bi bi-telephone-fill fs-1 mb-2"></i>
-                <h2 class="display-4 fw-bold">3114</h2>
-                <p class="mb-0">Numero national de prevention du suicide – 24h/24, gratuit et confidentiel.</p>
+        
+        <!-- RIGHT: Sidebar -->
+        <div class="sidebar-col">
+            
+            <!-- Map with red alert zones -->
+            <div class="sidebar-card scroll-reveal">
+                <h3>🗺️ Médecins à proximité</h3>
+                <div id="carte-map"></div>
+                <div class="text-center small mt-2" style="font-size: 0.75rem;">{{ medecinsData|length }} médecin(s) disponible(s)</div>
+            </div>
+            
+            <!-- Smart Quiz -->
+            <div class="sidebar-card scroll-reveal">
+                <h3>📊 Évaluation bien-être</h3>
+                <div id="quiz-container">
+                    <div class="quiz-question"><p>1. Vous sentez-vous nerveux, stressé ?</p><div><span class="quiz-option" onclick="repondreQuiz(0,0)">Jamais</span><span class="quiz-option" onclick="repondreQuiz(0,1)">Parfois</span><span class="quiz-option" onclick="repondreQuiz(0,2)">Souvent</span><span class="quiz-option" onclick="repondreQuiz(0,3)">Toujours</span></div></div>
+                    <div class="quiz-question"><p>2. Difficultés à dormir ?</p><div><span class="quiz-option" onclick="repondreQuiz(1,0)">Jamais</span><span class="quiz-option" onclick="repondreQuiz(1,1)">Parfois</span><span class="quiz-option" onclick="repondreQuiz(1,2)">Souvent</span><span class="quiz-option" onclick="repondreQuiz(1,3)">Toujours</span></div></div>
+                    <div class="quiz-question"><p>3. Vous sentez-vous triste ou déprimé ?</p><div><span class="quiz-option" onclick="repondreQuiz(2,0)">Jamais</span><span class="quiz-option" onclick="repondreQuiz(2,1)">Parfois</span><span class="quiz-option" onclick="repondreQuiz(2,2)">Souvent</span><span class="quiz-option" onclick="repondreQuiz(2,3)">Toujours</span></div></div>
+                    <div class="quiz-question"><p>4. Perte d'intérêt pour vos activités ?</p><div><span class="quiz-option" onclick="repondreQuiz(3,0)">Jamais</span><span class="quiz-option" onclick="repondreQuiz(3,1)">Parfois</span><span class="quiz-option" onclick="repondreQuiz(3,2)">Souvent</span><span class="quiz-option" onclick="repondreQuiz(3,3)">Toujours</span></div></div>
+                </div>
+                <div id="quiz-result" style="display: none;"></div>
+                <div id="solution-box" style="display: none;"></div>
+            </div>
+            
+            <!-- QR Code -->
+            <div class="sidebar-card scroll-reveal text-center">
+                <h3>📱 Feedback consultation</h3>
+                <div id="qrcode" style="display: flex; justify-content: center; margin: 10px 0;"></div>
+                <div class="small text-muted" style="font-size: 0.7rem;">Scannez pour évaluer votre séance</div>
+            </div>
+            
+            <!-- History with export & delete -->
+            <div class="sidebar-card scroll-reveal">
+                <h3>📋 Historique SOS</h3>
+                <div id="history-list"><div class="text-center small text-muted">Chargement...</div></div>
+            </div>
+            
+            <!-- Resources -->
+            <div class="sidebar-card scroll-reveal">
+                <h3>📚 Ressources</h3>
+                <div style="margin-bottom: 12px;"><strong> Méditation guidée</strong><br><a href="https://www.youtube.com/watch?v=inpok4MKVLM" target="_blank" class="small" style="color: #1a4a6e;">Voir la vidéo →</a></div>
+                <div style="margin-bottom: 12px;"><strong> Gestion du sommeil</strong><br><a href="https://www.youtube.com/watch?v=ZToicYcHIOU" target="_blank" class="small" style="color: #1a4a6e;">Écouter →</a></div>
+                <div><strong> Respiration anti-stress</strong><br><a href="https://www.youtube.com/watch?v=1vx8iUvfyCY" target="_blank" class="small" style="color: #1a4a6e;">Commencer →</a></div>
             </div>
         </div>
     </div>
+    
+    <!-- Emergency banner -->
+    <div class="scroll-reveal" style="margin-top: 2rem; text-align: center; background: linear-gradient(135deg, #1a4a6e, #2c8c6e); color: white; padding: 1.5rem; border-radius: 30px;">
+        <div style="font-size: 2rem;">📞</div>
+        <div style="font-size: 1.8rem; font-weight: 800;">3114</div>
+        <div style="font-size: 0.85rem;">Numéro national de prévention du suicide – 24h/24, gratuit et confidentiel</div>
+    </div>
 </div>
 
+<!-- SOS Button -->
 <div id="sos-button">
-    <button class="sos-btn" onclick="sosUrgence()"><i class="bi bi-sos"></i> SOS URGENCE</button>
+    <button class="sos-btn" onclick="sosUrgence()"> SOS URGENCE</button>
 </div>
 
-<div class="floating-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'});">
-    <i class="bi bi-arrow-up fs-4"></i>
+<!-- Top button -->
+<div class="floating-top" onclick="window.scrollTo({top:0,behavior:'smooth'});">
+    ↑
 </div>
 
+<!-- CHATBOT IA AGRANDI -->
 <div class="chat-sidebar" id="chat-sidebar">
     <div class="chat-header" onclick="toggleChat()">
-        <div class="d-flex align-items-center gap-2">
-            <div class="ia-avatar"></div>
-            <div><strong>Dr. IA GrowMind</strong><div class="small text-white-50">En ligne 24/7</div></div>
-        </div>
-        <i class="bi bi-chevron-down" id="chat-toggle-icon"></i>
+        <span>🤖 Assistant GrowMind</span>
+        <span id="chat-toggle-icon">▼</span>
     </div>
     <div id="chat-messages" class="chat-messages" style="display: none;">
         <div class="messages-container" id="messages-container">
-            <div class="ia-message"><div class="message-bubble">Bonjour. Je suis votre assistant medical IA. Comment vous sentez-vous aujourd'hui ?</div><div class="message-time">maintenant</div></div>
+            <div class="ia-message"><div class="message-bubble">Bonjour ! Je suis votre assistant. Comment vous sentez-vous ?</div><div class="message-time">maintenant</div></div>
         </div>
         <div class="chat-input">
-            <form id="chat-form" onsubmit="return false;">
-                <input type="text" id="chat-input-field" placeholder="Ecrivez votre message..." autocomplete="off">
-                <button type="submit"><i class="bi bi-send"></i></button>
-            </form>
+            <input type="text" id="chat-input-field" placeholder="Écrivez votre message...">
+            <button onclick="sendMessage()">➤</button>
         </div>
     </div>
 </div>
+<div style="position: fixed; top: 20px; right: 20px; z-index: 1000; background: white; padding: 8px 16px; border-radius: 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+    <a href="{{ path(app.request.get('_route'), app.request.query.all|merge({'_locale': 'fr'})) }}" style="text-decoration: none; margin-right: 10px; font-weight: bold;">🇫🇷 FR</a>
+    <a href="{{ path(app.request.get('_route'), app.request.query.all|merge({'_locale': 'en'})) }}" style="text-decoration: none; font-weight: bold;">🇬🇧 EN</a>
+</div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script>
-    // ========== ANIMATION SCROLL ==========
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
-    }, { threshold: 0.1 });
-    document.querySelectorAll('.scroll-animate').forEach(el => observer.observe(el));
+    // ===== SCROLL REVEAL =====
+    const reveals = document.querySelectorAll('.scroll-reveal');
+    function checkReveal() {
+        for(let i = 0; i < reveals.length; i++) {
+            const windowHeight = window.innerHeight;
+            const revealTop = reveals[i].getBoundingClientRect().top;
+            if(revealTop < windowHeight - 100) reveals[i].classList.add('visible');
+        }
+    }
+    window.addEventListener('scroll', checkReveal);
+    checkReveal();
     
-    // ========== RECHERCHE ==========
+    // ===== SEARCH =====
     document.getElementById('searchForum').addEventListener('input', function() {
-        let search = this.value.toLowerCase().trim();
+        let search = this.value.toLowerCase();
         document.querySelectorAll('.post-card').forEach(card => {
             let text = card.getAttribute('data-search') || '';
             card.style.display = text.includes(search) ? '' : 'none';
         });
     });
     
-    // ========== CARTE DYNAMIQUE ==========
+    // ===== MAP WITH RED ALERT ZONES =====
     var medecins = {{ medecinsData|json_encode|raw }};
     var zonesAlerte = {{ zonesAlerte|json_encode|raw }};
-    
-    console.log('Medecins charges:', medecins.length);
-    
-    // Si aucun medecin, utiliser des donnees par defaut
-    if (medecins.length === 0) {
-        medecins = [
-            { id: 1, nom: 'Dr. Mohamed Ben Ali', latitude: 36.8065, longitude: 10.1815, adresse: 'Tunis Centre' },
-            { id: 2, nom: 'Dr. Sarah Ben Ahmed', latitude: 36.8600, longitude: 10.1950, adresse: 'Ariana' },
-            { id: 3, nom: 'Dr. Sarra Hammami', latitude: 36.8400, longitude: 10.2100, adresse: 'Carthage' },
-            { id: 4, nom: 'Dr. Leila Mansouri', latitude: 36.8200, longitude: 10.2300, adresse: 'La Marsa' }
-        ];
-    }
-    
     var map = L.map('carte-map').setView([36.8065, 10.1815], 11);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap',
-        subdomains: 'abcd',
-        maxZoom: 19
-    }).addTo(map);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap', subdomains: 'abcd', maxZoom: 19 }).addTo(map);
+    medecins.forEach(function(m) { if(m.latitude && m.longitude) L.marker([m.latitude, m.longitude]).addTo(map).bindPopup('<b>Dr. ' + m.nom + '</b><br>' + m.adresse); });
+    zonesAlerte.forEach(function(z) { if(z.latitude && z.longitude) L.circle([z.latitude, z.longitude], { color: '#f44336', fillColor: '#f44336', fillOpacity: 0.2, radius: z.rayon }).addTo(map).bindPopup('⚠️ Zone d\'alerte: ' + z.niveau); });
     
-    // Ajout des medecins
-    medecins.forEach(function(medecin) {
-        if (medecin.latitude && medecin.longitude) {
-            var marker = L.marker([medecin.latitude, medecin.longitude]).addTo(map);
-            marker.bindPopup('<strong>' + medecin.nom + '</strong><br>' + medecin.adresse);
-        }
-    });
-    
-    // Ajout des zones d'alerte
-    zonesAlerte.forEach(function(zone) {
-        if (zone.latitude && zone.longitude) {
-            L.circle([zone.latitude, zone.longitude], {
-                color: '#e74c3c', fillColor: '#e74c3c', fillOpacity: 0.2, radius: zone.rayon
-            }).addTo(map).bindPopup('Zone d\'alerte: ' + zone.niveau);
-        }
-    });
-    
-    // ========== FONCTIONS ==========
-    function calculateDistance(lat1, lon1, lat2, lon2) {
-        var R = 6371;
-        var dLat = (lat2 - lat1) * Math.PI / 180;
-        var dLon = (lon2 - lon1) * Math.PI / 180;
-        var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
-        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        return R * c;
+    // ===== QUIZ =====
+    let quizScores = [0,0,0,0];
+    function repondreQuiz(q, val) {
+        quizScores[q] = val;
+        let total = quizScores.reduce((a,b)=>a+b,0);
+        let level, message, videoUrl = "";
+        if(total <= 2) { level = "low"; message = "État stable. Continuez vos bonnes pratiques !"; videoUrl = "https://www.youtube.com/watch?v=inpok4MKVLM"; }
+        else if(total <= 6) { level = "moderate"; message = "Attention recommandée. Des ajustements peuvent aider."; videoUrl = "https://www.youtube.com/watch?v=1vx8iUvfyCY"; }
+        else { level = "severe"; message = "Nous vous recommandons de consulter un médecin."; videoUrl = ""; }
+        document.getElementById('quiz-result').style.display = 'block';
+        document.getElementById('quiz-result').innerHTML = '<div class="quiz-result ' + level + '"><strong>Score: ' + total + '/12</strong><br>' + message + '</div>';
+        document.getElementById('solution-box').style.display = 'block';
+        document.getElementById('solution-box').innerHTML = '<div class="solution-box"><span>💡 ' + (videoUrl ? 'Regardez cette ressource recommandée' : 'Utilisez le bouton SOS en cas d\'urgence') + '</span>' + (videoUrl ? '<a href="' + videoUrl + '" target="_blank" class="solution-btn">Voir →</a>' : '<button onclick="sosUrgence()" class="solution-btn">SOS →</button>') + '</div>';
+        fetch('/api/quiz/repondre', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ score: total }) });
     }
     
-    function sosUrgence() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                var patientLat = position.coords.latitude, patientLon = position.coords.longitude;
-                var medecinProche = null, distanceMin = Infinity;
-                medecins.forEach(function(medecin) {
-                    var distance = calculateDistance(patientLat, patientLon, medecin.latitude, medecin.longitude);
-                    if (distance < distanceMin) { distanceMin = distance; medecinProche = medecin; }
-                });
-                if (medecinProche && confirm('Medecin le plus proche : ' + medecinProche.nom + ' (' + distanceMin.toFixed(1) + ' km)\nEnvoyer l\'alerte ?')) {
-                    fetch('/api/urgence/sos', {
-                        method: 'POST', headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ medecinId: medecinProche.id, patientLat: patientLat, patientLon: patientLon, distance: distanceMin })
-                    }).then(r => r.json()).then(data => {
-                        if (data.success) { alert('Alerte envoyee au Dr. ' + medecinProche.nom + ' !'); chargerHistorique(); }
-                        else alert('Erreur lors de l\'envoi');
-                    }).catch(() => alert('Erreur de connexion'));
-                } else alert('Aucun medecin disponible.\nAppelez le 3114.');
-            }, () => alert('Impossible de vous localiser.'));
-        } else alert('Geolocalisation non supportee.');
-    }
-    
+    // ===== QR CODE =====
+new QRCode(document.getElementById("qrcode"), { 
+    text: window.location.origin + "/feedback/{{ app.user.id|default(37) }}", 
+    width: 120, 
+    height: 120 
+});
+    // ===== HISTORY with EXPORT & DELETE =====
     function chargerHistorique() {
-        fetch('/api/urgence/historique').then(r => r.json()).then(data => {
-            const container = document.getElementById('historique-list'), loading = document.getElementById('historique-loading');
-            if (data.length === 0) container.innerHTML = '<div class="alert alert-info text-center">Aucune alerte SOS.</div>';
+        fetch('/api/urgence/historique').then(function(r){ return r.json(); }).then(function(data){
+            var container = document.getElementById('history-list');
+            if(data.length===0) container.innerHTML = '<div class="text-center small text-muted">Aucune alerte</div>';
             else {
-                let html = '<div class="list-group">';
-                data.forEach(a => { html += '<div class="list-group-item border-0 mb-2 rounded-3" style="background:#f8fafc;"><div class="d-flex justify-content-between"><div><span class="badge bg-danger me-2">SOS</span><strong>Dr. ' + a.medecinNom + '</strong><div class="small text-muted mt-1">' + a.distance + ' km - ' + a.createdAt + '</div></div><span class="badge bg-success">' + (a.statut === 'envoyee' ? 'Envoyee' : 'Traitee') + '</span></div></div>'; });
-                html += '</div>'; container.innerHTML = html;
+                var html = '';
+                for(var i=0; i<data.length; i++) {
+                    var a = data[i];
+                    html += '<div class="history-item"><div><div class="history-doctor">Dr. ' + a.medecinNom + '</div><div class="history-date">' + a.distance + ' km - ' + a.createdAt + '</div></div><div class="history-actions"><button onclick="exporterPDF(' + a.id + ',\'' + a.medecinNom + '\',\'' + a.distance + '\',\'' + a.createdAt + '\',' + a.latitude + ',' + a.longitude + ')" title="PDF">📄</button><button onclick="supprimerAlerte(' + a.id + ')" title="Supprimer">🗑</button></div></div>';
+                }
+                container.innerHTML = html;
             }
-            loading.style.display = 'none'; container.style.display = 'block';
-        }).catch(() => { document.getElementById('historique-loading').innerHTML = '<div class="alert alert-warning">Erreur de chargement</div>'; });
+        });
     }
+    function supprimerAlerte(id) { if(confirm('Supprimer cette alerte ?')) fetch('/api/urgence/supprimer/'+id,{method:'DELETE'}).then(function(){ chargerHistorique(); }); }
+    function exporterPDF(id, med, dist, date, lat, lon) {
+        var w = window.open();
+        w.document.write('<!DOCTYPE html><html><head><title>GrowMind - Alerte SOS</title><style>body{font-family:Arial;padding:20px}h1{color:#1a4a6e}</style></head><body><h1> GrowMind - Alerte SOS</h1><p><strong>ID:</strong> ' + id + '</p><p><strong>Médecin:</strong> ' + med + '</p><p><strong>Distance:</strong> ' + dist + ' km</p><p><strong>Date:</strong> ' + date + '</p><p><strong>Localisation:</strong> ' + lat + ', ' + lon + '</p><p><strong>Google Maps:</strong> https://maps.google.com/?q=' + lat + ',' + lon + '</p><hr><p>📞 3114 - Prévention suicide</p></body></html>');
+        w.document.close(); w.print();
+    }
+    
+    // ===== SOS =====
+    function calculateDistance(lat1,lon1,lat2,lon2) { var R=6371; var dLat=(lat2-lat1)*Math.PI/180; var dLon=(lon2-lon1)*Math.PI/180; var a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2); return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)); }
+    function sosUrgence() {
+        if(navigator.geolocation) navigator.geolocation.getCurrentPosition(function(pos){
+            var pLat=pos.coords.latitude, pLon=pos.coords.longitude, nearest=null, minDist=Infinity;
+            for(var i=0;i<medecins.length;i++){ var m=medecins[i]; var d=calculateDistance(pLat,pLon,m.latitude,m.longitude); if(d<minDist){ minDist=d; nearest=m; } }
+            if(nearest && confirm('Médecin le plus proche : ' + nearest.nom + ' (' + minDist.toFixed(1) + ' km)\nEnvoyer l\'alerte ?'))
+                fetch('/api/urgence/sos',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({medecinId:nearest.id,patientLat:pLat,patientLon:pLon,distance:minDist})})
+                .then(function(r){ return r.json(); }).then(function(d){ if(d.success){ alert('Alerte envoyée à ' + nearest.nom); chargerHistorique(); } else alert('Erreur'); });
+            else alert('Aucun médecin disponible');
+        },function(){ alert('Géolocalisation impossible'); });
+        else alert('Géolocalisation non supportée');
+    }
+    
+    // ===== CHATBOT =====
+    function toggleChat() { var m=document.getElementById('chat-messages'), i=document.getElementById('chat-toggle-icon'); if(m.style.display==='none'){ m.style.display='flex'; i.innerHTML='▲'; } else { m.style.display='none'; i.innerHTML='▼'; } }
+    function sendMessage() {
+        var input=document.getElementById('chat-input-field'), msg=input.value.trim();
+        if(!msg) return;
+        var container=document.getElementById('messages-container');
+        container.innerHTML+='<div class="user-message"><div class="message-bubble">' + escapeHtml(msg) + '</div><div class="message-time">maintenant</div></div>';
+        input.value=''; container.scrollTop=container.scrollHeight;
+        var typing=document.createElement('div'); typing.className='ia-message'; typing.id='typing-indicator'; typing.innerHTML='<div class="message-bubble">✍️ Écrit...</div>'; container.appendChild(typing); container.scrollTop=container.scrollHeight;
+        fetch('/chat/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg})})
+            .then(function(r){ return r.json(); }).then(function(data){
+                var typingEl=document.getElementById('typing-indicator'); if(typingEl) typingEl.remove();
+                if(data.success) container.innerHTML+='<div class="ia-message"><div class="message-bubble">' + escapeHtml(data.reponse) + '</div><div class="message-time">maintenant</div></div>';
+                container.scrollTop=container.scrollHeight;
+            });
+    }
+    function escapeHtml(t){ var d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
+    
     document.addEventListener('DOMContentLoaded', chargerHistorique);
-    
-    // ========== CHATBOT ==========
-    function toggleChat() {
-        const messages = document.getElementById('chat-messages'), icon = document.getElementById('chat-toggle-icon');
-        if (messages.style.display === 'none') { messages.style.display = 'flex'; icon.classList.remove('bi-chevron-down'); icon.classList.add('bi-chevron-up'); }
-        else { messages.style.display = 'none'; icon.classList.remove('bi-chevron-up'); icon.classList.add('bi-chevron-down'); }
-    }
-    
-    document.getElementById('chat-form').addEventListener('submit', async function(e) {
-        e.preventDefault(); const input = document.getElementById('chat-input-field'), message = input.value.trim();
-        if (!message) return;
-        const container = document.getElementById('messages-container');
-        container.innerHTML += '<div class="user-message"><div class="message-bubble">' + escapeHtml(message) + '</div><div class="message-time">maintenant</div></div>';
-        input.value = ''; container.scrollTop = container.scrollHeight;
-        const typingDiv = document.createElement('div'); typingDiv.className = 'ia-message'; typingDiv.id = 'typing-indicator'; typingDiv.innerHTML = '<div class="message-bubble">Assistant ecrit...</div>'; container.appendChild(typingDiv); container.scrollTop = container.scrollHeight;
-        try {
-            const response = await fetch('/chat/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: message }) });
-            const data = await response.json(); document.getElementById('typing-indicator')?.remove();
-            if (data.success) { container.innerHTML += '<div class="ia-message"><div class="message-bubble">' + escapeHtml(data.reponse) + '</div><div class="message-time">maintenant</div></div>'; container.scrollTop = container.scrollHeight; }
-        } catch(error) { document.getElementById('typing-indicator')?.remove(); }
-    });
-    
-    function escapeHtml(text) { const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
 </script>
 {% endblock %}

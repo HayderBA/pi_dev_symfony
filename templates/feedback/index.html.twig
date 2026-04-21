@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">📝 Feedback consultation</h3>
+                </div>
+                <div class="card-body">
+                    {% for message in app.flashes('success') %}
+                        <div class="alert alert-success">{{ message }}</div>
+                    {% endfor %}
+                    
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Note</label>
+                            <div class="d-flex gap-3">
+                                {% for i in 1..5 %}
+                                    <label style="cursor: pointer;">
+                                        <input type="radio" name="note" value="{{ i }}" required>
+                                        {% for j in 1..i %}⭐{% endfor %}
+                                    </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Votre message</label>
+                            <textarea name="message" class="form-control" rows="4" placeholder="Partagez votre expérience..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Envoyer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

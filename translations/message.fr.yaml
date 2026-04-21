@@ -1,0 +1,32 @@
+forum:
+    title: "Forum des discussions"
+    subtitle: "Un espace bienveillant pour partager, s'écouter et progresser ensemble"
+    search: "Rechercher une discussion..."
+    new: "Nouvelle discussion"
+    back: "Retour à l'accueil"
+    empty: "Aucune discussion pour le moment"
+sos:
+    button: "SOS URGENCE"
+    alert: "Alerte envoyée"
+map:
+    title: "Médecins à proximité"
+    doctors: "médecin(s) disponible(s)"
+quiz:
+    title: "Évaluation bien-être"
+    question1: "Vous sentez-vous nerveux, stressé ?"
+    question2: "Difficultés à dormir ?"
+    question3: "Vous sentez-vous triste ou déprimé ?"
+    question4: "Perte d'intérêt pour vos activités ?"
+    never: "Jamais"
+    sometimes: "Parfois"
+    often: "Souvent"
+    always: "Toujours"
+history:
+    title: "Historique SOS"
+    empty: "Aucune alerte"
+    sent: "Envoyée"
+chat:
+    title: "Assistant GrowMind"
+    placeholder: "Écrivez votre message..."
+resources:
+    title: "Ressources"
