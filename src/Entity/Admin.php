@@ -20,6 +20,10 @@ class Admin
 
     #[ORM\Column(type: 'integer', nullable: false)]
     private ?int $actif = null;
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $face_image = null;
+
+
 
     // ======================
     // GETTERS / SETTERS
@@ -49,6 +53,16 @@ class Admin
     public function setActif(int $actif): self
     {
         $this->actif = $actif;
+        return $this;
+    }
+    public function getFaceImage(): ?string
+    {
+        return $this->face_image;
+    }
+
+    public function setFaceImage(?string $face_image): self
+    {
+        $this->face_image = $face_image;
         return $this;
     }
 }
