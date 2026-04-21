@@ -19,3 +19,5 @@
 ###< symfony/asset-mapper ###
 echo "config/firebase_credentials.json" >> .gitignore
 git add .gitignoreconfig/firebase_credentials.json
+echo ".env" >> .gitignoreconfig/firebase_credentials.json
+src/Controller/UrgenceController.php
