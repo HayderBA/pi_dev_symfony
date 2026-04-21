@@ -6,6 +6,7 @@
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('assets/css/event-experience.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/venue-map.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/voice-assistant.css') }}">
 {% endblock %}
 
 {% block body %}
@@ -52,6 +53,16 @@
                 <span>Partager</span>
             </button>
         </div>
+        <section class="gm-voice-box" data-voice-detail style="margin-top:18px;">
+            <div class="gm-voice-top">
+                <div>
+                    <h3>Commande vocale</h3>
+                    <p>Parlez pour aller a la reservation, copier le lien ou ouvrir l agenda.</p>
+                </div>
+                <button type="button" class="gm-voice-toggle" data-voice-toggle aria-pressed="false" title="Activer la voix">🎤</button>
+            </div>
+            <p class="gm-voice-status" data-voice-status>Cliquez sur le micro puis parlez. Plusieurs commandes intelligentes sont deja actives.</p>
+        </section>
         <div class="event-info-grid">
             <div class="info-item">
                 <span>Date</span>
@@ -599,6 +610,7 @@
 
 <script src="{{ asset('assets/js/venue-map.js') }}"></script>
 <script src="{{ asset('assets/js/event-experience.js') }}"></script>
+<script src="{{ asset('assets/js/voice-assistant.js') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     if (window.GrowMindVenueMaps) {

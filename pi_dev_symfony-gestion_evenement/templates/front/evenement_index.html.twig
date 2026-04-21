@@ -5,6 +5,7 @@
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('assets/css/event-experience.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/voice-assistant.css') }}">
 {% endblock %}
 
 {% block body %}
@@ -57,6 +58,17 @@
                 <a class="clear-filter-btn" href="{{ path('app_evenement_list') }}">Retirer le filtre</a>
             {% endif %}
         </div>
+
+        <section class="gm-voice-box" data-voice-list>
+            <div class="gm-voice-top">
+                <div>
+                    <h3>Commande vocale</h3>
+                    <p>Parlez pour rechercher ou ouvrir un evenement sans taper.</p>
+                </div>
+                <button type="button" class="gm-voice-toggle" data-voice-toggle aria-pressed="false" title="Activer la voix">🎤</button>
+            </div>
+            <p class="gm-voice-status" data-voice-status>Cliquez sur le micro puis parlez. Plusieurs commandes intelligentes sont deja actives.</p>
+        </section>
 
         <div
             id="eventCalendar"
@@ -365,4 +377,5 @@
 
 <script src="{{ asset('assets/js/calendar.js') }}"></script>
 <script src="{{ asset('assets/js/event-experience.js') }}"></script>
+<script src="{{ asset('assets/js/voice-assistant.js') }}"></script>
 {% endblock %}
