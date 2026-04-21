@@ -1,0 +1,140 @@
+{% extends 'wellness/base.html.twig' %}
+
+{% block title %}APIs Sante{% endblock %}
+
+{% block body %}
+    {% form_theme form 'bootstrap_5_layout.html.twig' %}
+
+    <div class="container wellness-page py-4 py-xl-5">
+        <div class="wellness-page-header">
+            <div class="wellness-page-copy">
+                <div class="page-kicker mb-2">APIs sante</div>
+                <h1 class="wellness-title">Calcul IMC et estimation des calories</h1>
+                <p class="wellness-lead">
+                    Cette page utilise directement <code>IMCApiService</code> et <code>CaloriesApiService</code> depuis le backend Symfony puis affiche les resultats dans Twig.
+                </p>
+            </div>
+
+            <div class="wellness-actions">
+                <a class="btn-shell btn-shell-outline" href="{{ path('app_dashboard') }}">
+                    <i class="bi bi-arrow-left"></i>Retour au tableau de bord
+                </a>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-xl-6">
+                <div class="card content-card wellness-form-card h-100">
+                    <div class="card-body">
+                        {{ form_start(form, {'attr': {'class': 'wellness-form'}}) }}
+                            {% if not form.vars.valid %}
+                                <div class="wellness-alert">
+                                    Merci de verifier les champs du formulaire.
+                                </div>
+                            {% endif %}
+
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    {{ form_row(form.poids) }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form_row(form.taille) }}
+                                </div>
+                                <div class="col-12">
+                                    {{ form_row(form.nutritionQuery) }}
+                                </div>
+                            </div>
+
+                            <div class="wellness-form-actions">
+                                <button class="btn-shell btn-shell-primary">
+                                    <i class="bi bi-cpu"></i>Lancer les services
+                                </button>
+                            </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-6">
+                <div class="card content-card h-100">
+                    <div class="card-body p-4 p-xl-5">
+                        <div class="page-kicker mb-2">Resultats</div>
+
+                        {% if imc_result is null and calories_result is null %}
+                            <h2 class="h4 mb-3">Aucun calcul lance</h2>
+                            <p class="text-muted mb-0">
+                                Remplis le formulaire puis lance les services pour voir l IMC calcule et les calories remontees par l API nutrition.
+                            </p>
+                        {% else %}
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <div class="border rounded-4 p-4 h-100 bg-white">
+                                        <div class="page-kicker mb-2">IMC</div>
+                                        <div class="display-6 mb-2">{{ imc_result.imc|number_format(1, '.', ' ') }}</div>
+                                        <div class="text-muted">Categorie: {{ imc_result.categorie|capitalize }}</div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="border rounded-4 p-4 h-100 bg-white">
+                                        <div class="page-kicker mb-2">Calories</div>
+                                        <div class="display-6 mb-2">{{ calories_result.calories }}</div>
+                                        <div class="text-muted">Source: {{ calories_result.source }}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if calories_result.error %}
+                                <div class="alert alert-warning border-0 shadow-sm">
+                                    {{ calories_result.error }} Valeur par defaut utilisee.
+                                </div>
+                            {% endif %}
+
+                            {% if calories_result.source == 'fallback' %}
+                                <div class="border rounded-4 p-4 bg-light mb-4">
+                                    <div class="page-kicker mb-2">Configuration</div>
+                                    <p class="mb-2 text-muted">
+                                        Pour activer la vraie API Ninjas, complete ces variables dans <code>.env.local</code> :
+                                    </p>
+                                    <pre class="mb-0 small">API_NINJAS_KEY=...</pre>
+                                </div>
+                            {% endif %}
+
+                            <div class="border rounded-4 p-4 bg-white">
+                                <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+                                    <h2 class="h5 mb-0">Details nutritionnels</h2>
+                                    <span class="page-kicker">{{ calories_result.items|length }} aliment(s)</span>
+                                </div>
+
+                                {% if calories_result.items is empty %}
+                                    <p class="text-muted mb-0">
+                                        Aucun detail nutritionnel disponible. L application a utilise la recommandation par defaut.
+                                    </p>
+                                {% else %}
+                                    <div class="table-responsive">
+                                        <table class="table align-middle mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Aliment</th>
+                                                    <th class="text-end">Calories</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for item in calories_result.items %}
+                                                    <tr>
+                                                        <td>{{ item.name }}</td>
+                                                        <td class="text-end">{{ item.calories|number_format(1, '.', ' ') }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

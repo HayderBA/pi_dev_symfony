@@ -1,0 +1,22 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\ProgrammeSportifBundle\:
+        resource: '../../*'
+        exclude:
+            - '../../DependencyInjection/'
+            - '../../Entity/'
+            - '../../ProgrammeSportifBundle.php'
+            - '../../Resources/'
+
+    App\ProgrammeSportifBundle\Service\BmiApiClient:
+        arguments:
+            $endpoint: '%env(PROGRAMME_SPORTIF_BMI_API_ENDPOINT)%'
+            $apiKey: '%env(PROGRAMME_SPORTIF_BMI_API_KEY)%'
+
+    App\ProgrammeSportifBundle\Service\CalorieApiClient:
+        arguments:
+            $endpoint: '%env(PROGRAMME_SPORTIF_CALORIE_API_ENDPOINT)%'
+            $apiKey: '%env(PROGRAMME_SPORTIF_CALORIE_API_KEY)%'

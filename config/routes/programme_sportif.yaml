@@ -1,0 +1,5 @@
+programme_sportif_bundle:
+    resource:
+        path: ../../src/ProgrammeSportifBundle/Controller/
+        namespace: App\ProgrammeSportifBundle\Controller
+    type: attribute

@@ -347,6 +347,16 @@
                             <i class="bi bi-graph-up-arrow me-1"></i>Statistiques
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ currentRoute starts with 'app_programme_sportif_' ? 'active' : '' }}" href="{{ path('app_programme_sportif_index') }}">
+                            <i class="bi bi-activity me-1"></i>Programme sportif
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ currentRoute == 'app_api_services' ? 'active' : '' }}" href="{{ path('app_api_services') }}">
+                            <i class="bi bi-cpu me-1"></i>APIs sante
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>

@@ -19,6 +19,13 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+            - '../src/ProgrammeSportifBundle/'
+
+    App\Service\CaloriesApiService:
+        arguments:
+            $endpoint: '%env(CALORIES_API_ENDPOINT)%'
+            $apiKey: '%env(API_NINJAS_KEY)%'
+            $defaultCalories: '%env(int:CALORIES_API_DEFAULT_RECOMMENDATION)%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
