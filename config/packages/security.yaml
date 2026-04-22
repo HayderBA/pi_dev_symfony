@@ -46,6 +46,7 @@ security:
 
   # ✅ access_control est ICI — au même niveau que firewalls, PAS dedans
   access_control:
+    - { path: ^/mental-health, roles: ROLE_PATIENT }
     - { path: ^/mot-de-passe-oublie, roles: PUBLIC_ACCESS }
     - { path: ^/reinitialiser, roles: PUBLIC_ACCESS }
     - { path: ^/login,       roles: PUBLIC_ACCESS }

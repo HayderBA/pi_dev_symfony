@@ -6,6 +6,7 @@
 parameters:
     app.face_api_key: '%env(FACE_API_KEY)%'
     app.face_api_secret: '%env(FACE_API_SECRET)%'
+    app.groq_api_key: '%env(GROQ_API_KEY)%'
 
 services:
     # default configuration for services in *this* file

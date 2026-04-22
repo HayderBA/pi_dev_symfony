@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Doctrine\ORM\EntityManagerInterface;
 
 class SecurityController extends AbstractController
 {
@@ -27,7 +28,7 @@ class SecurityController extends AbstractController
 
     // ✅ Point d'entrée après login réussi (et après 2FA validé par Scheb)
     #[Route('/after-login', name: 'after_login')]
-    public function afterLogin(): Response
+    public function afterLogin(EntityManagerInterface $em): Response
     {
         /** @var User|null $user */
         $user = $this->getUser();
@@ -48,6 +49,30 @@ class SecurityController extends AbstractController
         // Redirection selon rôle
         if ($this->isGranted('ROLE_ADMIN')) {
             return $this->redirectToRoute('face_page');
+        }
+        if ($this->isGranted('ROLE_PATIENT')) {
+            $conn = $em->getConnection();
+            $row  = $conn->fetchAssociative(
+                'SELECT checked_at FROM mental_health_check WHERE patient_id = ? ORDER BY checked_at DESC LIMIT 1',
+                [$user->getId()]
+            );
+ 
+            $needsCheck = true;
+ 
+            if ($row) {
+                $lastChecked = new \DateTime($row['checked_at']);
+                $now         = new \DateTime();
+                $diff        = $now->diff($lastChecked);
+                $hoursDiff   = ($diff->days * 24) + $diff->h;
+ 
+                if ($hoursDiff < 24) {
+                    $needsCheck = false;
+                }
+            }
+ 
+            if ($needsCheck) {
+                return $this->redirectToRoute('mental_health_page');
+            }
         }
 
         return $this->redirectToRoute('app_home');
