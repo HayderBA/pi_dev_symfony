@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
+use App\Service\NtfyService;  // ← AJOUTER CETTE LIGNE
 
 class PaiementController extends AbstractController
 {
@@ -71,9 +72,9 @@ class PaiementController extends AbstractController
         return $this->json(['id' => $checkoutSession->id]);
     }
 
-    // Paiement réussi + Envoi email
+    // Paiement réussi + Envoi email + Notification ntfy
     #[Route('/paiement/success/{id}', name: 'paiement_success')]
-    public function success(Rendezvou $rdv, EntityManagerInterface $em, MailerInterface $mailer): Response
+    public function success(Rendezvou $rdv, EntityManagerInterface $em, MailerInterface $mailer, NtfyService $ntfy): Response  // ← AJOUTER NtfyService $ntfy
     {
         // Marquer le rendez-vous comme payé
         $rdv->setEstPaye(true);
@@ -92,6 +93,14 @@ class PaiementController extends AbstractController
         
         $mailer->send($email);
         // ===================================================
+        
+        // ========== ENVOI NOTIFICATION NTFY ==========
+        $topic = 'cabinet_medical';
+        $title = '✅ Rendez-vous confirmé';
+        $message = "Bonjour " . $rdv->getPrenomPatient() . ",\nVotre rendez-vous du " . $rdv->getDateRdv()->format('d/m/Y') . " à " . $rdv->getHeure()->format('H:i') . " est confirmé.";
+        
+        $ntfy->send($topic, $title, $message);
+        // ============================================
         
         $this->addFlash('success', '✅ Paiement effectué avec succès ! Un email de confirmation vous a été envoyé.');
         

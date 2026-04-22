@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\NtfyService;
 use App\Entity\Rendezvou;
 use App\Form\RendezvouType;
 use App\Service\RendezVousMetierService;
@@ -11,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+
 
 #[Route('/admin/rendezvous')]
 class AdminRendezvouController extends AbstractController
@@ -105,19 +107,37 @@ class AdminRendezvouController extends AbstractController
     }
 
     #[Route('/{id}/confirm', name: 'admin_rendezvous_confirm')]
-    public function confirm(Rendezvou $rdv, EntityManagerInterface $em): Response
+    public function confirm(Rendezvou $rdv, EntityManagerInterface $em, NtfyService $ntfy): Response
     {
         $rdv->setStatut('confirme');
         $em->flush();
+        
+        // ========== ENVOI NOTIFICATION NTFY ==========
+        $topic = 'cabinet_medical';
+        $title = '✅ Rendez-vous confirmé';
+        $message = "Bonjour " . $rdv->getPrenomPatient() . ",\nVotre rendez-vous du " . $rdv->getDateRdv()->format('d/m/Y') . " à " . $rdv->getHeure()->format('H:i') . " a été CONFIRMÉ.";
+        
+        $ntfy->send($topic, $title, $message);
+        // ============================================
+        
         $this->addFlash('success', 'Rendez-vous confirmé');
         return $this->redirectToRoute('admin_rendezvous_index');
     }
 
     #[Route('/{id}/cancel', name: 'admin_rendezvous_cancel')]
-    public function cancel(Rendezvou $rdv, EntityManagerInterface $em): Response
+    public function cancel(Rendezvou $rdv, EntityManagerInterface $em, NtfyService $ntfy): Response
     {
         $rdv->setStatut('annule');
         $em->flush();
+        
+        // ========== ENVOI NOTIFICATION NTFY ==========
+        $topic = 'cabinet_medical';
+        $title = '❌ Rendez-vous annulé';
+        $message = "Bonjour " . $rdv->getPrenomPatient() . ",\nVotre rendez-vous du " . $rdv->getDateRdv()->format('d/m/Y') . " à " . $rdv->getHeure()->format('H:i') . " a été ANNULÉ.";
+        
+        $ntfy->send($topic, $title, $message);
+        // ============================================
+        
         $this->addFlash('success', 'Rendez-vous annulé');
         return $this->redirectToRoute('admin_rendezvous_index');
     }
