@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ cabinet.nomcabinet }}{% endblock %}
+
+{% block body %}
+{% include 'front/_main_nav.html.twig' with { active_page: 'cabinet' } %}
+<main class="main" style="padding-top: 120px;">
+  <section class="section">
+    <div class="container">
+      <div class="mb-4">
+        <a href="{{ path('front_cabinet_index') }}" class="btn btn-outline-secondary btn-sm">Retour aux cabinets</a>
+      </div>
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+              <h2>{{ cabinet.nomcabinet }}</h2>
+              <p class="text-muted">{{ cabinet.description }}</p>
+              <p><strong>Adresse:</strong> {{ cabinet.adresse }}, {{ cabinet.ville }}</p>
+              <p><strong>Email:</strong> {{ cabinet.email }}</p>
+              <p><strong>Telephone:</strong> {{ cabinet.telephone }}</p>
+              <span class="badge {{ cabinet.status == 'actif' ? 'bg-success' : 'bg-secondary' }}">{{ cabinet.status }}</span>
+              <span class="badge bg-info text-dark">{{ psychologues|length }} psy lies</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-7">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="mb-0">Psychologues du cabinet</h3>
+                <a href="{{ path('front_rendezvous_new') }}" class="btn btn-primary btn-sm">Reserver</a>
+              </div>
+              <div class="row g-3">
+                {% for psychologue in psychologues %}
+                  <div class="col-md-6">
+                    <div class="border rounded-4 p-3 h-100">
+                      <h5>{{ psychologue.displayName }}</h5>
+                      <p class="mb-1"><strong>Specialite:</strong> {{ psychologue.specialite }}</p>
+                      <p class="mb-1"><strong>Diplome:</strong> {{ psychologue.diplome }}</p>
+                      <p class="mb-1"><strong>Experience:</strong> {{ psychologue.experience }} ans</p>
+                      <p class="mb-1"><strong>Tarif:</strong> {{ psychologue.tarif }} TND</p>
+                      <p class="mb-1"><strong>Email:</strong> {{ psychologue.email }}</p>
+                      <p class="mb-1"><strong>Telephone:</strong> {{ psychologue.telephone }}</p>
+                      {% if psychologue.user %}
+                        <p class="text-muted small mb-0">Medecin lie depuis users: {{ psychologue.user.fullName }}</p>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% else %}
+                  <div class="col-12"><div class="alert alert-info mb-0">Aucun psychologue associe a ce cabinet.</div></div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}

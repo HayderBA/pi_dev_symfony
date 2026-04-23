@@ -1,0 +1,31 @@
+{% extends 'back/base_back.html.twig' %}
+
+{% block title %}{{ psychologue.displayName }}{% endblock %}
+
+{% block admin_content %}
+  <div class="gm-card">
+    <div class="gm-card-header">
+      <span class="gm-card-title">{{ psychologue.displayName }}</span>
+      <div class="d-flex gap-2">
+        <a href="{{ path('admin_psychologue_edit', {id: psychologue.idPsychologue}) }}" class="btn-gm-outline text-decoration-none">Modifier</a>
+        <a href="{{ path('admin_psychologue_index') }}" class="btn-gm-outline text-decoration-none">Retour</a>
+      </div>
+    </div>
+    <div class="gm-card-body">
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <p><strong>Cabinet:</strong> {{ psychologue.cabinet ? psychologue.cabinet.nomcabinet : '-' }}</p>
+          <p><strong>Specialite:</strong> {{ psychologue.specialite }}</p>
+          <p><strong>Diplome:</strong> {{ psychologue.diplome }}</p>
+          <p><strong>Experience:</strong> {{ psychologue.experience }} ans</p>
+        </div>
+        <div class="col-lg-6">
+          <p><strong>Tarif:</strong> {{ psychologue.tarif }} TND</p>
+          <p><strong>Email:</strong> {{ psychologue.email }}</p>
+          <p><strong>Telephone:</strong> {{ psychologue.telephone }}</p>
+          <p><strong>Medecin source users:</strong> {{ psychologue.user ? psychologue.user.fullName ~ ' (' ~ psychologue.user.email ~ ')' : 'Aucun' }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,13 @@
+<html><body style="font-family:Arial,sans-serif;background:#f6f8fb;padding:24px;color:#1f2937;">
+  <div style="max-width:620px;margin:0 auto;background:#fff;border-radius:16px;padding:28px;">
+    <h1 style="margin:0 0 12px;color:#1d4ed8;">Nouvelle demande cabinet</h1>
+    <p>Une nouvelle demande de rendez-vous vient d'etre creee.</p>
+    <ul>
+      <li>Patient: {{ rdv.prenomPatient }} {{ rdv.nomPatient }}</li>
+      <li>Email: {{ rdv.emailPatient }}</li>
+      <li>Telephone: {{ rdv.telephonePatient }}</li>
+      <li>Psychologue: {{ rdv.psychologue.displayName }}</li>
+      <li>Date: {{ rdv.dateRdv ? rdv.dateRdv|date('d/m/Y') : '-' }} a {{ rdv.heure ? rdv.heure|date('H:i') : '-' }}</li>
+    </ul>
+  </div>
+</body></html>

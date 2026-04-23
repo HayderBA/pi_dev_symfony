@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Discussion - GrowMind{% endblock %}
+
+{% block body %}
+{% include 'front/_main_nav.html.twig' with { active_page: 'forum' } %}
+
+<main class="main">
+  <section class="section" style="padding-top: 120px;">
+    <div class="container">
+      {% for label, messages in app.flashes %}
+        {% for message in messages %}
+          <div class="alert alert-{{ label == 'success' ? 'success' : 'info' }} rounded-4 mb-4">{{ message }}</div>
+        {% endfor %}
+      {% endfor %}
+
+      <div class="text-center mb-5">
+        <h1 class="display-6 fw-bold mb-2">Discussion</h1>
+        <p class="text-secondary">{{ post.nom }} - {{ post.categorie }}</p>
+      </div>
+
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+            <div class="card-body p-4 p-lg-5">
+              <div class="text-secondary mb-3">
+                <i class="bi bi-person-circle me-1"></i> {{ post.nom }}
+                <span class="mx-2">|</span>
+                <i class="bi bi-calendar3 me-1"></i> {{ post.dateCreation|date('d/m/Y H:i') }}
+                <span class="mx-2">|</span>
+                <i class="bi bi-eye me-1"></i> {{ post.vues }} vues
+              </div>
+              <hr>
+              <div class="fs-5 lh-lg">{{ post.contenu|nl2br }}</div>
+            </div>
+            <div class="card-footer bg-white border-0 pb-4 pt-0 d-flex flex-wrap gap-3">
+              <a href="{{ path('app_forum_index') }}" class="btn btn-secondary rounded-pill px-4">
+                <i class="bi bi-arrow-left me-2"></i>Retour
+              </a>
+              <a href="{{ path('app_forum_edit', {'id': post.id}) }}" class="btn btn-warning rounded-pill px-4">
+                <i class="bi bi-pencil me-2"></i>Modifier
+              </a>
+              <form action="{{ path('app_forum_delete', {'id': post.id}) }}" method="POST" onsubmit="return confirm('Supprimer cette discussion ?')">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete_forum_' ~ post.id) }}">
+                <button type="submit" class="btn btn-danger rounded-pill px-4">
+                  <i class="bi bi-trash me-2"></i>Supprimer
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <h3 class="mt-5">Reponses ({{ post.reponses|length }})</h3>
+          {% for reponse in post.reponses %}
+            <div class="card mt-3 border-0 shadow-sm rounded-4">
+              <div class="card-body">
+                <strong>{{ reponse.auteur }}</strong> - {{ reponse.dateCreation|date('d/m/Y H:i') }}
+                <p class="mb-0 mt-2">{{ reponse.contenu|nl2br }}</p>
+              </div>
+            </div>
+          {% else %}
+            <p class="text-muted">Aucune reponse pour le moment. Soyez le premier a repondre.</p>
+          {% endfor %}
+
+          <div class="card mt-4 border-0 shadow-sm rounded-4">
+            <div class="card-body p-4">
+              <h4 class="mb-3">Ajouter une reponse</h4>
+              {{ form_start(form) }}
+                {{ form_widget(form) }}
+                <button type="submit" class="btn btn-primary mt-3 rounded-pill px-4">Publier la reponse</button>
+              {{ form_end(form) }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}

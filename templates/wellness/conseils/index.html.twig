@@ -1,0 +1,50 @@
+{% extends 'wellness/base.html.twig' %}
+
+{% block title %}Conseils{% endblock %}
+
+{% block wellness_content %}
+  <div class="wellness-page-header">
+    <div class="wellness-page-copy">
+      <div class="page-kicker mb-2">Conseils</div>
+      <h1 class="wellness-title">Catalogue des recommandations</h1>
+      <p class="wellness-lead">Gerer les conseils utilises dans le suivi de sante.</p>
+    </div>
+    <div class="wellness-actions">
+      <a href="{{ path('app_conseil_new') }}" class="btn-shell btn-shell-primary">Ajouter un conseil</a>
+    </div>
+  </div>
+
+  <div class="card content-card">
+    <div class="card-body table-responsive">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h2 class="h5 mb-1">Tous les conseils</h2>
+          <p class="text-muted mb-0">Organises par etat, niveau et categorie.</p>
+        </div>
+        <span class="badge rounded-pill text-bg-light">{{ conseils|length }} elements</span>
+      </div>
+      <table class="table wellness-table">
+        <thead><tr><th>Etat</th><th>Niveau</th><th>Categorie</th><th>Conseil</th><th>Actions</th></tr></thead>
+        <tbody>
+        {% for item in conseils %}
+          <tr>
+            <td>{{ item.typeEtat }}</td>
+            <td>{{ item.niveau ?? '-' }}</td>
+            <td>{{ item.categorie ?? '-' }}</td>
+            <td>{{ item.conseil|slice(0, 80) }}</td>
+            <td class="wellness-actions">
+              <a class="btn btn-sm btn-outline-primary" href="{{ path('app_conseil_edit', {id: item.id}) }}">Modifier</a>
+              <form method="post" action="{{ path('app_conseil_delete', {id: item.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete_conseil_' ~ item.id) }}">
+                <button class="btn btn-sm btn-outline-danger">Supprimer</button>
+              </form>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="5">Aucun conseil disponible.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

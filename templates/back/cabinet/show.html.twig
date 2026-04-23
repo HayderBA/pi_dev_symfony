@@ -1,0 +1,46 @@
+{% extends 'back/base_back.html.twig' %}
+
+{% block title %}{{ cabinet.nomcabinet }}{% endblock %}
+
+{% block admin_content %}
+  <div class="gm-card">
+    <div class="gm-card-header">
+      <span class="gm-card-title">{{ cabinet.nomcabinet }}</span>
+      <div class="d-flex gap-2">
+        <a href="{{ path('admin_cabinet_edit', {id: cabinet.idCabinet}) }}" class="btn-gm-outline text-decoration-none">Modifier</a>
+        <a href="{{ path('admin_cabinet_index') }}" class="btn-gm-outline text-decoration-none">Retour</a>
+      </div>
+    </div>
+    <div class="gm-card-body">
+      <div class="row g-4">
+        <div class="col-lg-7">
+          <h5>Informations</h5>
+          <p><strong>Adresse:</strong> {{ cabinet.adresse }}, {{ cabinet.ville }}</p>
+          <p><strong>Telephone:</strong> {{ cabinet.telephone }}</p>
+          <p><strong>Email:</strong> {{ cabinet.email }}</p>
+          <p><strong>Statut:</strong> <span class="badge {{ cabinet.status == 'actif' ? 'bg-success' : 'bg-secondary' }}">{{ cabinet.status }}</span></p>
+          <p><strong>Description:</strong> {{ cabinet.description }}</p>
+        </div>
+        <div class="col-lg-5">
+          <h5>Psychologues lies</h5>
+          <ul class="list-group">
+            {% for psy in cabinet.psychologues %}
+              <li class="list-group-item">
+                <div class="d-flex justify-content-between align-items-center">
+                  <span>{{ psy.displayName }}</span>
+                  <span class="badge bg-primary">{{ psy.specialite }}</span>
+                </div>
+                <div class="small text-muted mt-1">
+                  {{ psy.email }}{% if psy.telephone %} - {{ psy.telephone }}{% endif %}
+                  {% if psy.user %}<br>Lie a users: {{ psy.user.fullName }}{% endif %}
+                </div>
+              </li>
+            {% else %}
+              <li class="list-group-item text-muted">Aucun psychologue lie.</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

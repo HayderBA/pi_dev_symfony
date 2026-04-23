@@ -1,0 +1,89 @@
+{% extends 'back/base_back.html.twig' %}
+
+{% block title %}Gestion des Cabinets{% endblock %}
+
+{% block admin_content %}
+  <div class="page-header">
+    <div class="page-header-content">
+      <h1>Cabinets</h1>
+      <p>Gestion des cabinets de consultation relies a GrowMind.</p>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-3"><div class="stat-card"><div class="stat-value">{{ stats.total }}</div><div class="stat-label">Cabinets</div></div></div>
+    {% for label, count in stats.by_status %}
+      <div class="col-md-3"><div class="stat-card"><div class="stat-value">{{ count }}</div><div class="stat-label text-capitalize">{{ label }}</div></div></div>
+    {% endfor %}
+  </div>
+
+  <div class="gm-card mb-4">
+    <div class="gm-card-header"><span class="gm-card-title">Recherche & filtres</span></div>
+    <div class="gm-card-body">
+      <form method="get" class="row g-3 align-items-end">
+        <div class="col-md-4"><label class="form-label">Mot-cle</label><input type="text" name="q" value="{{ filters.q }}" class="form-control" placeholder="Nom, ville, adresse, email"></div>
+        <div class="col-md-2"><label class="form-label">Statut</label><select name="status" class="form-select"><option value="">Tous</option><option value="actif" {{ filters.status == 'actif' ? 'selected' }}>Actif</option><option value="inactif" {{ filters.status == 'inactif' ? 'selected' }}>Inactif</option></select></div>
+        <div class="col-md-2"><label class="form-label">Ville</label><select name="ville" class="form-select"><option value="">Toutes</option>{% for ville in villes %}<option value="{{ ville }}" {{ filters.ville == ville ? 'selected' }}>{{ ville }}</option>{% endfor %}</select></div>
+        <div class="col-md-2"><label class="form-label">Tri</label><select name="sort" class="form-select"><option value="nom" {{ filters.sort == 'nom' ? 'selected' }}>Nom</option><option value="ville" {{ filters.sort == 'ville' ? 'selected' }}>Ville</option><option value="status" {{ filters.sort == 'status' ? 'selected' }}>Statut</option><option value="id" {{ filters.sort == 'id' ? 'selected' }}>ID</option></select></div>
+        <div class="col-md-2"><label class="form-label">Ordre</label><select name="dir" class="form-select"><option value="asc" {{ filters.dir == 'asc' ? 'selected' }}>Croissant</option><option value="desc" {{ filters.dir == 'desc' ? 'selected' }}>Decroissant</option></select></div>
+        <div class="col-12 d-flex gap-2"><button class="btn btn-primary">Appliquer</button><a href="{{ path('admin_cabinet_index') }}" class="btn btn-outline-secondary">Reinitialiser</a></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="gm-card">
+    <div class="gm-card-header">
+      <span class="gm-card-title">Liste des cabinets</span>
+      <a href="{{ path('admin_cabinet_new') }}" class="btn-gm-primary text-decoration-none">Nouveau cabinet</a>
+    </div>
+    <div class="gm-card-body">
+      {% for message in app.flashes('success') %}<div class="alert alert-success">{{ message }}</div>{% endfor %}
+      {% for message in app.flashes('danger') %}<div class="alert alert-danger">{{ message }}</div>{% endfor %}
+
+      <div class="row g-3">
+        {% for cabinet in cabinets %}
+          <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-header text-white" style="background:linear-gradient(135deg,#1e88e5,#1565c0);">
+                <h5 class="mb-0">{{ cabinet.nomcabinet }}</h5>
+              </div>
+              <div class="card-body">
+                <p class="mb-2"><i class="bi bi-geo-alt me-1 text-primary"></i>{{ cabinet.adresse }}, {{ cabinet.ville }}</p>
+                <p class="mb-2"><i class="bi bi-telephone me-1 text-primary"></i>{{ cabinet.telephone }}</p>
+                <p class="mb-2"><i class="bi bi-envelope me-1 text-primary"></i>{{ cabinet.email }}</p>
+                <p class="mb-3 text-muted">{{ cabinet.description }}</p>
+                <span class="badge {{ cabinet.status == 'actif' ? 'bg-success' : 'bg-secondary' }}">{{ cabinet.status }}</span>
+                <span class="badge bg-info text-dark">{{ cabinet.psychologuesCount }} psy</span>
+              </div>
+              <div class="card-footer bg-white border-0 d-flex gap-2 flex-wrap">
+                <a href="{{ path('admin_cabinet_show', {id: cabinet.idCabinet}) }}" class="btn btn-outline-info btn-sm">Voir</a>
+                <a href="{{ path('admin_cabinet_edit', {id: cabinet.idCabinet}) }}" class="btn btn-outline-warning btn-sm">Modifier</a>
+                <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal{{ cabinet.idCabinet }}">Supprimer</button>
+              </div>
+            </div>
+          </div>
+          <div class="modal fade" id="modal{{ cabinet.idCabinet }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content" style="border-radius: 12px;">
+                <div class="modal-header text-white" style="background: linear-gradient(135deg, #dc2626, #b91c1c);">
+                  <h5 class="modal-title">Confirmer la suppression</h5>
+                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">Supprimer "{{ cabinet.nomcabinet }}" ?</div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                  <form method="post" action="{{ path('admin_cabinet_delete', {id: cabinet.idCabinet}) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ cabinet.idCabinet) }}">
+                    <button class="btn btn-danger">Supprimer</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <div class="col-12"><div class="alert alert-info mb-0">Aucun cabinet trouve.</div></div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

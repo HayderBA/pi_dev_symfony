@@ -1,0 +1,578 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+
+
+  <!-- =======================================================
+  * Template Name: Clinic
+  * Template URL: https://bootstrapmade.com/clinic-bootstrap-template/
+  * Updated: Jul 23 2025 with Bootstrap v5.3.7
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+
+  {% include 'front/_main_nav.html.twig' with { active_page: 'home' } %}
+  {#
+  <header id="header" class="header fixed-top">
+
+    <div class="branding d-flex align-items-cente">
+
+      <div class="container position-relative d-flex align-items-center justify-content-between">
+        <a href="index.html" class="logo d-flex align-items-center">
+          <!-- Uncomment the line below if you also wish to use an image logo -->
+          <!--<img src="{{asset('assets/img/logoGrowmind.png')}}" alt="">-->
+          <h1 class="sitename">GrowMind</h1>
+        </a>
+
+        <nav id="navmenu" class="navmenu">
+          
+        <ul>
+          <li><a href="{{ path('app_home') }}">Accueil</a></li>
+          <li><a href="{{ path('app_doctors') }}">Medecin</a></li>
+          <li><a href="{{ path('app_appointment') }}" >Evenement</a></li>
+
+          <li class="dropdown">
+            <a href="#">
+              <span>Plus</span>
+              <i class="bi bi-chevron-down toggle-dropdown"></i>
+            </a>
+            <ul>
+              <li><a href="#">Cabinet</a></li>
+              <li><a href="{{ path('app_appointment') }}">Rendez-vous</a></li>
+              <li><a href="{{ path('app_wellness_dashboard') }}">Santé & bien-être</a></li>
+              <li><a href="{{ path('app_forum_index') }}">Forum</a></li>
+              <li><a href="http://127.0.0.1:8000/resources">Ressources et bibliotheque</a></li>
+            </ul>
+          </li>
+
+          <li><a href="{{ path('app_contact') }}">Contact</a></li>
+          {% if app.user %}
+            <li><a href="{{ path('app_profile') }}">Profil</a></li>
+          {% else %}
+            <li><a href="{{ path('app_login') }}">Connexion</a></li>
+          {% endif %}
+           <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+        </nav>
+
+      </div>
+
+    </div>
+
+  </header>
+  #}
+
+  <main class="main">
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero section">
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="row align-items-center">
+          <div class="col-lg-6">
+            <div class="hero-content">
+              
+              <h1 data-aos="fade-right" data-aos-delay="300">
+                Prenez soin de votre <span class="highlight">santé mentale</span> au quotidien
+              </h1>
+
+              <p class="hero-description" data-aos="fade-right" data-aos-delay="400">
+                GrowMind vous offre un espace sûr pour améliorer votre bien-être mental,
+                 retrouver l’équilibre et développer une vie plus sereine grâce à des solutions adaptées à vos besoins
+              </p>
+
+              <div class="hero-stats mb-4" data-aos="fade-right" data-aos-delay="500">
+                <div class="stat-item">
+                  <h3><span data-purecounter-start="0" data-purecounter-end="3" data-purecounter-duration="2"
+                      class="purecounter"></span>+</h3>
+                  <p>Experience des annees</p>
+                </div>
+                <div class="stat-item">
+                  <h3><span data-purecounter-start="0" data-purecounter-end="300" data-purecounter-duration="2"
+                      class="purecounter"></span>+</h3>
+                  <p>Patients traités</p>
+                </div>
+                <div class="stat-item">
+                  <h3><span data-purecounter-start="0" data-purecounter-end="15" data-purecounter-duration="2"
+                      class="purecounter"></span>+</h3>
+                  <p>Experts medicale</p>
+                </div>
+              </div>
+
+              <div class="hero-actions d-flex flex-wrap gap-2" data-aos="fade-right" data-aos-delay="600">
+                <a href="{{ path('app_forum_index') }}" class="btn btn-primary">Acceder au forum</a>
+                <a href="{{ path('app_wellness_dashboard') }}" class="btn btn-outline-light">Espace bien-etre</a>
+              </div>
+
+              <div class="emergency-contact" data-aos="fade-right" data-aos-delay="700">
+                <div class="emergency-icon">
+                  <i class="bi bi-telephone-fill"></i>
+                </div>
+                <div class="emergency-info">
+                  <small>Emergency Hotline</small>
+                  <strong>+216 .. ... ...</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <div class="hero-visual" data-aos="fade-left" data-aos-delay="400">
+              <div class="main-image">
+                <img src="{{asset('assets/img/health/staff-10.webp')}}" alt="Modern Healthcare Facility" class="img-fluid">
+              </div>
+              <div class="background-elements">
+                <div class="element element-1"></div>
+                <div class="element element-2"></div>
+                <div class="element element-3"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section><!-- /Hero Section -->
+
+
+    <!-- Featured Departments Section -->
+    <section id="featured-departments" class="featured-departments section">
+
+      <!-- Section Title -->
+<div class="container section-title" data-aos="fade-up">
+  <h2>Fonctionnalités à venir</h2>
+  <p>
+    Découvrez prochainement de nouvelles options dédiées à votre bien-être mental,
+    conçues pour vous accompagner au quotidien et améliorer votre équilibre de vie.
+  </p>
+</div><!-- End Section Title -->
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="row g-5">
+          <div class="col-lg-6" data-aos="zoom-in" data-aos-delay="100">
+            <div class="specialty-card">
+            <div class="specialty-content">
+                <div class="specialty-meta">
+                <span class="specialty-label">Bien-être Mental</span>
+                </div>
+
+                <h3>Coaching en bien-être mental</h3>
+
+                <p>
+                Un accompagnement personnalisé pour améliorer votre bien-être mental,
+                gérer le stress et renforcer votre équilibre émotionnel grâce à des techniques modernes et adaptées.
+                </p>
+                <div class="specialty-visual">
+                <img src="{{ asset('assets/img/health/cs.jpeg') }}" 
+                    alt="Coaching bien-être mental" 
+                    class="img-fluid">
+
+                <div class="visual-overlay">
+                <i class="bi bi-brain"></i>
+                </div>
+            </div>
+                <div class="specialty-features">
+                <span><i class="bi bi-check-circle-fill"></i>Gestion du stress et de l’anxiété</span>
+                <span><i class="bi bi-check-circle-fill"></i>Développement personnel et confiance</span>
+                </div>
+                
+                <a href="#" class="specialty-link">
+                Bientot disponible <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+
+            
+            </div>
+            </div><!-- End Specialty Card -->
+
+          
+          <div class="col-lg-6" data-aos="zoom-in" data-aos-delay="200">
+            <div class="specialty-card">
+                <div class="specialty-content">
+                <div class="specialty-meta">
+                    <span class="specialty-label">Relaxation & Mindfulness</span>
+                </div>
+
+                <h3>Méditation & Relaxation guidée</h3>
+
+                <p>
+                    Des séances guidées pour apaiser l’esprit, réduire le stress et améliorer votre bien-être mental grâce à des techniques de respiration et de pleine conscience.
+                </p>
+                <div class="specialty-visual">
+                <img src="{{ asset('assets/img/health/med.jpeg') }}" 
+                    alt="Méditation et relaxation" 
+                    class="img-fluid">
+
+                <div class="visual-overlay">
+                    <i class="bi bi-flower1"></i>
+                </div>
+                </div>
+                <div class="specialty-features">
+                    <span><i class="bi bi-check-circle-fill"></i>Exercices de respiration</span>
+                    <span><i class="bi bi-check-circle-fill"></i>Méditation anti-stress</span>
+                </div>
+                
+
+                <a href="#" class="specialty-link">
+                    Bientot disponible  <i class="bi bi-arrow-right"></i>
+                </a>
+                </div>
+
+                
+            </div>
+            </div><!-- End Specialty Card -->
+          
+
+        <div class="emergency-banner" data-aos="fade-up" data-aos-delay="400">
+  <div class="row align-items-center">
+    <div class="col-lg-8">
+      <div class="emergency-content">
+        <h3>Assistance disponible 24h/24 et 7j/7</h3>
+        <p>
+          Notre service est disponible à tout moment pour vous accompagner en cas de besoin.
+          Une équipe dédiée est prête à vous offrir une aide immédiate et un soutien adapté.
+        </p>
+      </div>
+    </div>
+    <div class="col-lg-4 text-lg-end">
+      <a href="tel:+15551234567" class="emergency-btn">
+        <i class="bi bi-telephone-fill"></i>
+        Appeler : (555) 123-4567
+      </a>
+    </div>
+  </div>
+</div>
+        </div>
+
+      </div>
+
+    </section><!-- /Featured Departments Section -->
+
+<!-- Featured Services Section -->
+<section id="featured-services" class="featured-services section">
+
+  <div class="specialties-grid" data-aos="fade-up" data-aos-delay="300">
+    <div class="row align-items-center">
+
+      <div class="col-lg-3 col-md-6">
+        <div class="specialty-card">
+          <div class="specialty-image">
+            <img src="{{asset('assets/img/health/maternal-2.webp')}}" alt="Bien-être mental" class="img-fluid" loading="lazy">
+          </div>
+          <div class="specialty-content">
+            <h5>Coaching bien-être</h5>
+            <span>Accompagnement personnalisé pour améliorer votre équilibre mental</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+        <div class="specialty-card">
+          <div class="specialty-image">
+            <img src="{{asset('assets/img/health/vaccination-3.webp')}}" alt="Méditation" class="img-fluid" loading="lazy">
+          </div>
+          <div class="specialty-content">
+            <h5>Méditation guidée</h5>
+            <span>Techniques de relaxation pour réduire le stress et l’anxiété</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+        <div class="specialty-card">
+          <div class="specialty-image">
+            <img src="{{asset('assets/img/health/emergency-1.webp')}}" alt="Soutien mental" class="img-fluid" loading="lazy">
+          </div>
+          <div class="specialty-content">
+            <h5>Soutien mental</h5>
+            <span>Assistance et écoute disponibles pour vous accompagner à tout moment</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+        <div class="specialty-card">
+          <div class="specialty-image">
+            <img src="{{asset('assets/img/health/facilities-6.webp')}}" alt="Suivi du bien-être" class="img-fluid" loading="lazy">
+          </div>
+          <div class="specialty-content">
+            <h5>Suivi du bien-être</h5>
+            <span>Analyse et suivi de votre santé mentale pour une meilleure qualité de vie</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</section><!-- /Featured Services Section -->
+    <!-- Find A Doctor Section -->
+<section id="find-a-doctor" class="find-a-doctor section">
+
+  <!-- Section Title -->
+  <div class="container section-title" data-aos="fade-up">
+    <h2>Trouver un accompagnement</h2>
+    <p>Explorez nos solutions et trouvez le soutien adapté à votre bien-être mental</p>
+  </div><!-- End Section Title -->
+
+  <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+    <div class="row justify-content-center mb-5" data-aos="fade-up" data-aos-delay="200">
+      <div class="col-lg-8 text-center">
+        <div class="search-section">
+          <h3 class="search-title">Trouvez le service qui vous correspond</h3>
+          <p class="search-subtitle">
+            Parcourez nos solutions pour améliorer votre santé mentale et votre bien-être
+          </p>
+
+          <form class="search-form" action="#!" method="#">
+            <div class="search-input-group">
+
+              <div class="input-wrapper">
+                <i class="bi bi-person"></i>
+                <input type="text" class="form-control" name="name" placeholder="Entrez votre besoin">
+              </div>
+
+              <div class="select-wrapper">
+                <i class="bi bi-heart-pulse"></i>
+                <select class="form-select" name="service">
+                  <option value="">Tous les services</option>
+                  <option value="coaching">Coaching bien-être</option>
+                  <option value="meditation">Méditation</option>
+                  <option value="sleep">Sommeil</option>
+                  <option value="support">Soutien</option>
+                </select>
+              </div>
+
+              <button type="submit" class="search-btn">
+                <i class="bi bi-search"></i>
+                Rechercher
+              </button>
+
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE (sans image) -->
+    <div class="doctors-grid" data-aos="fade-up" data-aos-delay="300">
+
+      <div class="doctor-profile" data-aos="zoom-in" data-aos-delay="100">
+
+        <div class="profile-header">
+
+          <!-- ❌ IMAGE SUPPRIMÉE -->
+
+          <div class="doctor-details">
+            <h4>Coaching bien-être</h4>
+            <span class="specialty-tag">Accompagnement personnalisé</span>
+
+            <div class="experience-info">
+              <i class="bi bi-award"></i>
+              <span>+5 ans d’accompagnement</span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="rating-section">
+          <div class="stars">
+            <i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i>
+          </div>
+          <span class="rating-score">4.9</span>
+          <span class="review-count">(194 avis)</span>
+        </div>
+
+        <div class="action-buttons">
+          <a href="#!" class="btn-secondary">Voir détails</a>
+          <a href="{{ path('app_appointment') }}" class="btn-primary">Réserver</a>
+        </div>
+
+      </div><!-- End Profile -->
+
+    </div>
+
+    <div class="text-center mt-5" data-aos="fade-up" data-aos-delay="700">
+      <a href="{{ path('app_doctors') }}" class="btn-view-all">
+        Voir tous les services
+        <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+
+  </div>
+
+</section><!-- /Find A Doctor Section -->
+    <!-- Call To Action Section -->
+    <section id="call-to-action" class="call-to-action section light-background">
+
+        </div>
+
+        <div class="features-section">
+
+          <div class="row g-0">
+
+            <div class="col-lg-4">
+              <div class="feature-block" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-icon">
+                  <i class="bi bi-shield-check"></i>
+                </div>
+                <h3>Advanced Technology</h3>
+                <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
+                  laborum.</p>
+              </div>
+            </div>
+
+            <div class="col-lg-4">
+              <div class="feature-block" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-icon">
+                  <i class="bi bi-clock"></i>
+                </div>
+                <h3>24/7 Availability</h3>
+                <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur
+                  excepteur.</p>
+              </div>
+            </div>
+
+            <div class="col-lg-4">
+              <div class="feature-block" data-aos="fade-up" data-aos-delay="400">
+                <div class="feature-icon">
+                  <i class="bi bi-people"></i>
+                </div>
+                <h3>Expert Team</h3>
+                <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium
+                  totam rem.</p>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </section><!-- /Call To Action Section -->
+
+  </main>
+
+  <footer id="footer" class="footer-16 footer position-relative">
+
+  <div class="container">
+
+    <div class="footer-main" data-aos="fade-up" data-aos-delay="100">
+      <div class="row align-items-start">
+
+        <div class="col-lg-5">
+          <div class="brand-section">
+            <a href="{{ path('app_home') }}" class="logo d-flex align-items-center">
+              <img src="{{asset('assets/img/logoGrowmind.png')}}" width="450px" height="350px" alt="">
+            </a>
+
+           
+
+            <div class="contact-info mt-5">
+              <div class="contact-item">
+                <i class="bi bi-geo-alt"></i>
+                <span>Tunis, Tunisie</span>
+              </div>
+              <div class="contact-item">
+                <i class="bi bi-telephone"></i>
+                <span>+216 00 000 000</span>
+              </div>
+              <div class="contact-item">
+                <i class="bi bi-envelope"></i>
+                <span>contact@growmind.com</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-7">
+          <div class="footer-nav-wrapper">
+            <div class="row">
+
+              <div class="col-6 col-lg-3">
+                <div class="nav-column">
+                  <h6>GrowMind</h6>
+                  <nav class="footer-nav">
+                    <a href="#">À propos</a>
+                    <a href="#">Notre mission</a>
+                    <a href="#">Équipe</a>
+                    <a href="#">Témoignages</a>
+                    <a href="#">Contact</a>
+                  </nav>
+                </div>
+              </div>
+
+              <div class="col-6 col-lg-3">
+                <div class="nav-column">
+                  <h6>Services</h6>
+                  <nav class="footer-nav">
+                    <a href="#">Coaching bien-être</a>
+                    <a href="#">Méditation guidée</a>
+                    <a href="#">Amélioration du sommeil</a>
+                    <a href="#">Suivi du bien-être</a>
+                    <a href="#">Soutien mental</a>
+                  </nav>
+                </div>
+              </div>
+
+              <div class="col-6 col-lg-3">
+                <div class="nav-column">
+                  <h6>Connexion</h6>
+                  <nav class="footer-nav">
+                    <a href="#">Créer un compte</a>
+                    <a href="#">Prendre rendez-vous</a>
+                    <a href="#">Newsletter</a>
+                    <a href="#">Suivre les actualités</a>
+                    <a href="#">Partenariat</a>
+                  </nav>
+                </div>
+              </div>
+               <p class="brand-description">
+              GrowMind vous accompagne dans votre bien-être mental grâce à des solutions innovantes,un accompagnement personnalisé et une approche centrée sur l’humain.
+            </p>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+  <!-- Scroll Top -->
+  <a href="#!" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i
+      class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Preloader -->
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+  <script src="assets/vendor/aos/aos.js"></script>
+  <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
+  <script src="{{ asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/php-email-form/validate.js') }}"></script>
+    <script src="{{ asset('assets/vendor/aos/aos.js') }}"></script>
+    <script src="{{ asset('assets/vendor/glightbox/js/glightbox.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/purecounter/purecounter_vanilla.js') }}"></script>
+    <script src="{{ asset('assets/vendor/swiper/swiper-bundle.min.js') }}"></script>
+    <script src="{{ asset('assets/js/main.js') }}"></script>
+
+  <!-- Main JS File -->
+  <script src="assets/js/main.js"></script>
+
+
+{% endblock %}

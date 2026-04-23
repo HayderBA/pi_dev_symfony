@@ -1,0 +1,380 @@
+{% extends 'back/admin_layout.html.twig' %}
+
+{% block title %}Statistiques Événements - GrowMind{% endblock %}
+
+{% block admin_topbar_title %}Statistiques evenements{% endblock %}
+{% block admin_menu_active %}evenements{% endblock %}
+
+{% block admin_content %}
+<div class="stats-header">
+    <div class="container">
+        <div class="stats-header-content">
+            <div class="stats-breadcrumb">
+                <a href="{{ path('app_home') }}">Accueil</a>
+                <i class="fas fa-chevron-right"></i>
+                <a href="{{ path('app_evenement_admin') }}">Administration</a>
+                <i class="fas fa-chevron-right"></i>
+                <span>Statistiques</span>
+            </div>
+            <div class="stats-title-section">
+                <div class="stats-icon">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <div>
+                    <h1>Statistiques Événements</h1>
+                    <p>Analysez la performance de vos ateliers et séances</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="stats-container">
+    <div class="container">
+        <!-- Cartes statistiques -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-card-icon"><i class="fas fa-calendar-alt"></i></div>
+                <div class="stat-card-info">
+                    <span class="stat-card-value">{{ totalEvents }}</span>
+                    <span class="stat-card-label">Événements totaux</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-icon"><i class="fas fa-ticket-alt"></i></div>
+                <div class="stat-card-info">
+                    <span class="stat-card-value">{{ totalReservations }}</span>
+                    <span class="stat-card-label">Réservations</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-icon"><i class="fas fa-chart-line"></i></div>
+                <div class="stat-card-info">
+                    <span class="stat-card-value">{{ occupancyRate }}%</span>
+                    <span class="stat-card-label">Taux d'occupation</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-card-info">
+                    <span class="stat-card-value">{{ evenements|filter(e => e.status == 'À venir')|length }}</span>
+                    <span class="stat-card-label">À venir</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Graphiques circulaires -->
+        <div class="charts-row">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3><i class="fas fa-chart-pie"></i> Taux d'occupation</h3>
+                    <p>Places réservées vs places disponibles</p>
+                </div>
+                <div class="chart-body">
+                    <canvas id="occupancyChart" width="400" height="400"></canvas>
+                    <div class="chart-legend">
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: linear-gradient(135deg, #2c7a7d, #4a9fa3);"></span>
+                            <span>Réservées ({{ totalReservations }})</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #e2e8f0;"></span>
+                            <span>Disponibles ({{ totalCapacity - totalReservations }})</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3><i class="fas fa-chart-simple"></i> Événements par statut</h3>
+                    <p>Répartition par statut</p>
+                </div>
+                <div class="chart-body">
+                    <canvas id="statusChart" width="400" height="400"></canvas>
+                    <div class="chart-legend">
+                        {% set upcoming = evenements|filter(e => e.status == 'À venir')|length %}
+                        {% set today = evenements|filter(e => e.status == 'Aujourd\'hui')|length %}
+                        {% set past = evenements|filter(e => e.status == 'Passé')|length %}
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #2c7a7d;"></span>
+                            <span>À venir ({{ upcoming }})</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #06d6a0;"></span>
+                            <span>Aujourd'hui ({{ today }})</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #94a3b8;"></span>
+                            <span>Passé ({{ past }})</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-footer">
+            <a href="{{ path('app_evenement_admin') }}" class="btn-back-stats">
+                <i class="fas fa-arrow-left"></i> Retour à la gestion
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --teal: #2c7a7d;
+        --teal-light: #4a9fa3;
+        --teal-dark: #1e5558;
+        --teal-gradient: linear-gradient(135deg, #2c7a7d, #4a9fa3);
+        --blue-green: linear-gradient(135deg, #1e88e5, #2c7a7d, #06d6a0);
+    }
+    
+    .stats-header {
+        background: linear-gradient(135deg, #2c7a7d 0%, #4a9fa3 50%, #6bb5b8 100%);
+        padding: 40px 0;
+        color: white;
+    }
+    .stats-breadcrumb {
+        font-size: 0.85rem;
+        margin-bottom: 20px;
+    }
+    .stats-breadcrumb a {
+        color: rgba(255,255,255,0.7);
+        text-decoration: none;
+    }
+    .stats-breadcrumb i {
+        margin: 0 8px;
+        font-size: 0.7rem;
+    }
+    .stats-title-section {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+    .stats-icon {
+        width: 60px;
+        height: 60px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+    }
+    .stats-title-section h1 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+    .stats-title-section p {
+        opacity: 0.8;
+        margin: 0;
+    }
+    .stats-container {
+        padding: 40px 0 60px;
+        background: #f5f7fc;
+        min-height: calc(100vh - 250px);
+    }
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    .stat-card {
+        background: white;
+        border-radius: 24px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        transition: all 0.3s;
+    }
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 24px rgba(44,122,125,0.15);
+    }
+    .stat-card-icon {
+        width: 55px;
+        height: 55px;
+        background: linear-gradient(135deg, #e6f4f5, #cce8ea);
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #2c7a7d;
+        font-size: 1.5rem;
+    }
+    .stat-card-info {
+        flex: 1;
+    }
+    .stat-card-value {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #2c7a7d;
+        display: block;
+        line-height: 1.2;
+    }
+    .stat-card-label {
+        font-size: 0.75rem;
+        color: #64748b;
+    }
+    .charts-row {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+        margin-bottom: 30px;
+    }
+    .chart-card {
+        background: white;
+        border-radius: 28px;
+        padding: 24px;
+        box-shadow: 0 8px 28px rgba(0,0,0,0.05);
+        transition: all 0.3s;
+    }
+    .chart-card:hover {
+        transform: translateY(-2px);
+    }
+    .chart-header {
+        text-align: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #e6f4f5;
+    }
+    .chart-header h3 {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #2c7a7d;
+        margin-bottom: 5px;
+    }
+    .chart-header h3 i {
+        margin-right: 8px;
+        color: #2c7a7d;
+    }
+    .chart-header p {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        margin: 0;
+    }
+    .chart-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+    canvas {
+        max-width: 100%;
+        height: auto;
+    }
+    .chart-legend {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.8rem;
+        color: #475569;
+    }
+    .legend-color {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+    }
+    .full-width {
+        grid-column: span 2;
+    }
+    .stats-footer {
+        margin-top: 30px;
+        text-align: center;
+    }
+    .btn-back-stats {
+        display: inline-block;
+        background: linear-gradient(135deg, #2c7a7d, #4a9fa3);
+        color: white;
+        padding: 12px 30px;
+        border-radius: 40px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    .btn-back-stats:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(44,122,125,0.3);
+        color: white;
+    }
+    @media (max-width: 992px) {
+        .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        .charts-row { grid-template-columns: 1fr; }
+        .full-width { grid-column: span 1; }
+    }
+    @media (max-width: 768px) {
+        .stats-grid { grid-template-columns: 1fr; }
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Graphique d'occupation (donut)
+    const occupancyCtx = document.getElementById('occupancyChart').getContext('2d');
+    const totalReservations = {{ totalReservations }};
+    const totalAvailable = {{ totalCapacity - totalReservations }};
+    
+    new Chart(occupancyCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Places réservées', 'Places disponibles'],
+            datasets: [{
+                data: [totalReservations, totalAvailable],
+                backgroundColor: ['#2c7a7d', '#e2e8f0'],
+                borderWidth: 0,
+                hoverOffset: 10
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            cutout: '65%',
+            plugins: {
+                legend: { display: false },
+                tooltip: { backgroundColor: '#1e293b', titleColor: '#fff', bodyColor: '#94a3b8' }
+            }
+        }
+    });
+    
+    // Graphique des statuts (donut)
+    const statusCtx = document.getElementById('statusChart').getContext('2d');
+    const upcoming = {{ evenements|filter(e => e.status == 'À venir')|length }};
+    const today = {{ evenements|filter(e => e.status == 'Aujourd\'hui')|length }};
+    const past = {{ evenements|filter(e => e.status == 'Passé')|length }};
+    
+    new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['À venir', 'Aujourd\'hui', 'Passé'],
+            datasets: [{
+                data: [upcoming, today, past],
+                backgroundColor: ['#2c7a7d', '#06d6a0', '#94a3b8'],
+                borderWidth: 0,
+                hoverOffset: 10
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            cutout: '65%',
+            plugins: {
+                legend: { display: false },
+                tooltip: { backgroundColor: '#1e293b' }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+{% include 'front/_main_nav.html.twig' with { active_page: 'doctors' } %}
+
+<main class="main" style="padding-top: 120px;">
+  <div class="page-title text-center">
+    <h1>Doctors</h1>
+    <p>Meet our professional team</p>
+  </div>
+
+  <section class="doctors section">
+    <div class="container">
+      <div class="row gy-4">
+        <div class="col-lg-3 col-md-6">
+          <div class="doctor-card">
+            <img src="{{ asset('assets/img/health/staff-1.webp') }}" class="img-fluid" alt="Dr. Marcus Johnson">
+            <h4>Dr. Marcus Johnson</h4>
+            <span>Cardiologist</span>
+            <a href="#" class="btn btn-primary mt-2">Book</a>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="doctor-card">
+            <img src="{{ asset('assets/img/health/staff-2.webp') }}" class="img-fluid" alt="Dr. Sarah Williams">
+            <h4>Dr. Sarah Williams</h4>
+            <span>Neurologist</span>
+            <a href="#" class="btn btn-primary mt-2">Book</a>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="doctor-card">
+            <img src="{{ asset('assets/img/health/staff-3.webp') }}" class="img-fluid" alt="Dr. Michael Chen">
+            <h4>Dr. Michael Chen</h4>
+            <span>Orthopedic</span>
+            <a href="#" class="btn btn-primary mt-2">Book</a>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="doctor-card">
+            <img src="{{ asset('assets/img/health/staff-4.webp') }}" class="img-fluid" alt="Dr. Emily Rodriguez">
+            <h4>Dr. Emily Rodriguez</h4>
+            <span>Pediatrician</span>
+            <a href="#" class="btn btn-primary mt-2">Book</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="text-center p-4">
+  <p>© Clinic - All rights reserved</p>
+</footer>
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Paiement rendez-vous{% endblock %}
+
+{% block body %}
+{% include 'front/_main_nav.html.twig' with { active_page: 'doctors' } %}
+<main class="main" style="padding-top: 120px;">
+  <section class="section">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-xl-6">
+          <div class="card border-0 shadow-lg">
+            <div class="card-body p-4 p-md-5">
+              <div class="text-center mb-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success-subtle text-success mb-3" style="width:72px;height:72px;">
+                  <i class="bi bi-credit-card fs-2"></i>
+                </div>
+                <h1 class="h2">Paiement en ligne</h1>
+                <p class="text-muted mb-0">Finalisez le reglement de votre consultation comme dans le module original cabinet.</p>
+              </div>
+
+              <div class="rounded-4 border p-4 bg-light-subtle mb-4">
+                <div class="d-flex justify-content-between py-2"><span>Patient</span><strong>{{ rdv.prenomPatient }} {{ rdv.nomPatient }}</strong></div>
+                <div class="d-flex justify-content-between py-2"><span>Psychologue</span><strong>{{ rdv.psychologue.displayName }}</strong></div>
+                <div class="d-flex justify-content-between py-2"><span>Date</span><strong>{{ rdv.dateRdv ? rdv.dateRdv|date('d/m/Y') : '-' }}</strong></div>
+                <div class="d-flex justify-content-between py-2"><span>Heure</span><strong>{{ rdv.heure ? rdv.heure|date('H:i') : '-' }}</strong></div>
+                <div class="d-flex justify-content-between py-2"><span>Type</span><strong>{{ rdv.typeCons }}</strong></div>
+                <div class="d-flex justify-content-between py-2 border-top mt-2 pt-3">
+                  <span class="fw-semibold">Montant</span>
+                  <strong class="text-success fs-4">{{ montant }} TND</strong>
+                </div>
+              </div>
+
+              {% if not stripe_ready %}
+                <div class="alert alert-warning">
+                  Stripe n'est pas encore configure. Ajoute `STRIPE_PUBLIC_KEY` et `STRIPE_SECRET_KEY` dans `.env.local` pour activer le paiement reel.
+                </div>
+              {% endif %}
+
+              <div class="d-grid gap-2">
+                <button id="checkout-button" class="btn btn-success btn-lg" {{ not stripe_ready ? 'disabled' }}>
+                  Payer {{ montant }} TND
+                </button>
+                <a href="{{ path('front_rendezvous_show', {id: rdv.idRdv}) }}" class="btn btn-outline-secondary">Retour au rendez-vous</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  {% if stripe_ready %}
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+      const button = document.getElementById('checkout-button');
+      const stripe = Stripe('{{ stripe_public_key }}');
+
+      button.addEventListener('click', async () => {
+        button.disabled = true;
+        button.textContent = 'Redirection...';
+
+        try {
+          const response = await fetch('{{ path('paiement_create_session', {id: rdv.idRdv}) }}');
+          const payload = await response.json();
+
+          if (!response.ok || !payload.id) {
+            throw new Error(payload.error || 'Session de paiement introuvable.');
+          }
+
+          const result = await stripe.redirectToCheckout({ sessionId: payload.id });
+          if (result.error) {
+            throw new Error(result.error.message);
+          }
+        } catch (error) {
+          button.disabled = false;
+          button.textContent = 'Payer {{ montant }} TND';
+          alert(error.message || 'Erreur de connexion avec Stripe.');
+        }
+      });
+    </script>
+  {% endif %}
+{% endblock %}

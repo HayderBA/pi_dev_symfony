@@ -1,0 +1,46 @@
+{% extends 'back/admin_layout.html.twig' %}
+
+{% block admin_menu_active %}rendezvous{% endblock %}
+{% block admin_html_title %}Détail du rendez-vous{% endblock %}
+{% block admin_topbar_title %}Rendez-vous #{{ rdv.idRdv }}{% endblock %}
+
+{% block admin_content %}
+<div class="page-header-admin">
+    <h1><i class="bi bi-calendar-event me-2"></i>Rendez-vous #{{ rdv.idRdv }}</h1>
+    <p>Fiche détaillée</p>
+</div>
+
+<div class="gm-card admin-crud-card" style="max-width: 720px;">
+    <div class="gm-card-body">
+        <p><strong>Patient :</strong> {{ rdv.prenomPatient }} {{ rdv.nomPatient }}</p>
+        <p><strong>Email :</strong> {{ rdv.emailPatient }}</p>
+        <p><strong>Téléphone :</strong> {{ rdv.telephonePatient }}</p>
+        <p><strong>Psychologue :</strong> {{ rdv.psychologue ? rdv.psychologue.displayName : 'Psychologue' }}</p>
+        <p><strong>Date :</strong> {{ rdv.dateRdv|date('d/m/Y') }}</p>
+        <p><strong>Heure :</strong> {{ rdv.heure|date('H:i') }}</p>
+        <p><strong>Type :</strong> {{ rdv.typeCons }}</p>
+        <p><strong>Statut :</strong>
+            {% if rdv.statut == 'confirme' %}
+                <span class="badge bg-success">Confirmé</span>
+            {% elseif rdv.statut == 'annule' %}
+                <span class="badge bg-danger">Annulé</span>
+            {% else %}
+                <span class="badge bg-warning text-dark">En attente</span>
+            {% endif %}
+        </p>
+        <p><strong>Paiement :</strong>
+            {% if rdv.estPaye %}
+                <span class="badge bg-success">✅ Payé</span>
+            {% else %}
+                <span class="badge bg-danger">❌ Non payé</span>
+            {% endif %}
+        </p>
+        <p><strong>Montant :</strong> {{ rdv.montant ? rdv.montant ~ ' €' : 'Non renseigné' }}</p>
+        <p><strong>Session Stripe :</strong> {{ rdv.stripeSessionId ?: 'Non renseigné' }}</p>
+        <div class="mt-4 d-flex gap-2 flex-wrap">
+            <a href="{{ path('admin_rendezvous_edit', {id: rdv.idRdv}) }}" class="btn-gm-primary"><i class="bi bi-pencil"></i> Modifier</a>
+            <a href="{{ path('admin_rendezvous_index') }}" class="btn-gm-outline">Retour à la liste</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

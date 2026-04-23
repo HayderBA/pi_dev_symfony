@@ -1,0 +1,172 @@
+{{ form_start(form, {'attr': {'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
+{{ form_errors(form) }}
+
+<div class="row g-3">
+    <div class="col-md-6">{{ form_row(form.title) }}</div>
+    <div class="col-md-6">{{ form_row(form.author) }}</div>
+    <div class="col-md-4">{{ form_row(form.type) }}</div>
+    <div class="col-md-4">{{ form_row(form.category) }}</div>
+    <div class="col-md-4">{{ form_row(form.status) }}</div>
+    <div class="col-md-12">{{ form_row(form.description) }}</div>
+    <div class="col-md-12">{{ form_row(form.content) }}</div>
+    <div class="col-md-6">{{ form_row(form.dateCreation) }}</div>
+
+    <div class="col-md-6">
+        <div style="background:var(--blue-light);border-radius:12px;padding:16px 18px;">
+            <label style="font-size:13px;font-weight:600;color:var(--blue-dark);display:block;margin-bottom:8px;">
+                <i class="bi bi-file-earmark-pdf-fill me-1"></i> {{ form_label(form.pdfFile) }}
+            </label>
+            {{ form_widget(form.pdfFile, {'attr': {'id': 'ressource_pdfFile', 'accept': '.pdf,application/pdf'}}) }}
+            {{ form_errors(form.pdfFile) }}
+            <small style="font-size:11px;color:var(--text-muted);margin-top:4px;display:block;">
+                1) Choisissez un PDF · 2) Cliquez sur « Remplir automatiquement » · 3) Vérifiez les champs · 4) Enregistrez. Le fichier part aussi sur Cloudinary à l’enregistrement.
+            </small>
+        </div>
+    </div>
+
+    {# ── IA : juste sous le PDF — étapes claires ─────────────────────────── #}
+    <div class="col-12" id="aiAnalyzerPanel" style="display:none;">
+        <div style="background:linear-gradient(135deg,#0d1b2a,#1e3a5f);border-radius:14px;padding:18px 22px;color:#fff;">
+            <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-3">
+                <div>
+                    <div style="font-size:15px;font-weight:700;margin-bottom:6px;"><i class="bi bi-stars me-1"></i> Remplissage intelligent (PDF)</div>
+                    <div style="font-size:12px;color:rgba(255,255,255,.7);line-height:1.5;">
+                        <strong>Étape A</strong> — PDF sélectionné ci-dessus.<br>
+                        <strong>Étape B</strong> — Cliquez sur le bouton vert pour que l’IA lise le PDF et remplisse titre, description, contenu et catégorie.<br>
+                        <strong>Étape C</strong> — Cliquez sur <em>Enregistrer</em> en bas du formulaire.
+                    </div>
+                </div>
+                <div class="d-flex flex-column align-items-stretch gap-2" style="min-width:220px;">
+                    <button type="button" id="btnAnalyzePdf" style="background:linear-gradient(135deg,#16c784,#0fa36a);border:none;border-radius:10px;color:#fff;font-weight:700;font-size:14px;padding:12px 18px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;">
+                        <span id="aiSpinner" style="display:none;width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;"></span>
+                        <i class="bi bi-magic" id="aiIcon"></i> Remplir automatiquement avec l’IA
+                    </button>
+                    <label style="font-size:11px;color:rgba(255,255,255,.75);cursor:pointer;display:flex;align-items:center;gap:6px;margin:0;">
+                        <input type="checkbox" id="aiAutoAfterUpload" style="accent-color:#16c784;">
+                        Lancer l’analyse tout de suite après le choix du fichier
+                    </label>
+                </div>
+            </div>
+            <div id="aiError" style="display:none;padding:10px 14px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.4);border-radius:8px;font-size:12.5px;color:#fca5a5;"></div>
+            <div id="aiSuccess" style="display:none;padding:10px 14px;background:rgba(22,199,132,.15);border:1px solid rgba(22,199,132,.4);border-radius:8px;font-size:12.5px;color:#6ee7b7;">
+                Champs remplis à partir du PDF — relisez puis cliquez sur <strong>Enregistrer</strong>.
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4 d-flex gap-3 align-items-center flex-wrap">
+    <button type="submit" class="btn-gm-primary"><i class="bi bi-save"></i> {{ button_label|default('Enregistrer') }}</button>
+    <span style="font-size:12px;color:var(--text-muted);">Après l’IA, c’est ce bouton qui enregistre la ressource.</span>
+</div>
+
+{{ form_end(form) }}
+
+<style>
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const pdfInput       = document.getElementById('ressource_pdfFile');
+    const aiPanel        = document.getElementById('aiAnalyzerPanel');
+    const btnAnalyze     = document.getElementById('btnAnalyzePdf');
+    const aiSpinner      = document.getElementById('aiSpinner');
+    const aiIcon         = document.getElementById('aiIcon');
+    const aiError        = document.getElementById('aiError');
+    const aiSuccess      = document.getElementById('aiSuccess');
+    const aiAutoCheckbox = document.getElementById('aiAutoAfterUpload');
+
+    if (!pdfInput || !btnAnalyze) return;
+
+    function isPdfFile(file) {
+        if (!file) return false;
+        var name = (file.name || '').toLowerCase();
+        var type = file.type || '';
+        return name.endsWith('.pdf') || type === 'application/pdf' || type === 'application/x-pdf';
+    }
+
+    async function runAnalyze() {
+        var file = pdfInput.files[0];
+        if (!file || !isPdfFile(file)) return;
+
+        btnAnalyze.disabled = true;
+        aiSpinner.style.display = 'inline-block';
+        if (aiIcon) aiIcon.style.display = 'none';
+        aiError.style.display = 'none';
+        aiSuccess.style.display = 'none';
+
+        try {
+            var formData = new FormData();
+            formData.append('pdf', file);
+
+            var response = await fetch('{{ path('app_ai_analyze_pdf') }}', {
+                method: 'POST',
+                body: formData,
+            });
+
+            var data = await response.json();
+
+            if (!data.success) {
+                aiError.textContent = '⚠️ ' + (data.error || 'Erreur inconnue.');
+                aiError.style.display = 'block';
+            } else {
+                if (data.title)       { setField('ressource_title', data.title); }
+                if (data.description) { setField('ressource_description', data.description); }
+                if (data.content)     { setField('ressource_content', data.content); }
+                if (data.category)    { setSelect('ressource_category', data.category); }
+                aiSuccess.style.display = 'block';
+            }
+        } catch (err) {
+            aiError.textContent = '⚠️ Erreur réseau : ' + err.message;
+            aiError.style.display = 'block';
+        } finally {
+            btnAnalyze.disabled = false;
+            aiSpinner.style.display = 'none';
+            if (aiIcon) aiIcon.style.display = 'inline';
+        }
+    }
+
+    pdfInput.addEventListener('change', function () {
+        var file = this.files[0];
+        if (file && isPdfFile(file)) {
+            aiPanel.style.display = 'block';
+            aiError.style.display = 'none';
+            aiSuccess.style.display = 'none';
+            if (aiAutoCheckbox && aiAutoCheckbox.checked) {
+                setTimeout(function () { runAnalyze(); }, 200);
+            }
+        } else {
+            aiPanel.style.display = 'none';
+        }
+    });
+
+    btnAnalyze.addEventListener('click', function () {
+        runAnalyze();
+    });
+
+    function setField(id, value) {
+        var el = document.getElementById(id);
+        if (el) {
+            el.value = value;
+            el.style.borderColor = '#16c784';
+            el.style.transition = 'border-color 0.3s';
+            setTimeout(function () { el.style.borderColor = ''; }, 3000);
+        }
+    }
+
+    function setSelect(id, value) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        for (var i = 0; i < el.options.length; i++) {
+            var opt = el.options[i];
+            if (opt.value === value || opt.text === value) {
+                el.value = opt.value;
+                el.style.borderColor = '#16c784';
+                setTimeout(function () { el.style.borderColor = ''; }, 3000);
+                return;
+            }
+        }
+    }
+});
+</script>

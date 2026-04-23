@@ -1,0 +1,31 @@
+{% extends 'back/base_back.html.twig' %}
+
+{% block title %}{{ is_edit ? 'Modifier Rendez-vous' : 'Nouveau Rendez-vous' }}{% endblock %}
+
+{% block admin_content %}
+  <div class="gm-card">
+    <div class="gm-card-header">
+      <span class="gm-card-title">{{ is_edit ? 'Modifier le rendez-vous' : 'Creer un rendez-vous' }}</span>
+      <a href="{{ path('admin_rendezvous_index') }}" class="btn-gm-outline text-decoration-none">Retour</a>
+    </div>
+    <div class="gm-card-body">
+      {{ form_start(form) }}
+        <div class="row g-3">
+          <div class="col-md-6">{{ form_row(form.cabinet_id) }}</div>
+          <div class="col-md-6">{{ form_row(form.psychologue_id) }}</div>
+          <div class="col-md-4">{{ form_row(form.dateRdv) }}</div>
+          <div class="col-md-4">{{ form_row(form.heure) }}</div>
+          <div class="col-md-4">{{ form_row(form.typeCons) }}</div>
+          <div class="col-md-6">{{ form_row(form.nomPatient) }}</div>
+          <div class="col-md-6">{{ form_row(form.prenomPatient) }}</div>
+          <div class="col-md-6">{{ form_row(form.emailPatient) }}</div>
+          <div class="col-md-6">{{ form_row(form.telephonePatient) }}</div>
+          {% if form.statut is defined %}
+            <div class="col-md-4">{{ form_row(form.statut) }}</div>
+          {% endif %}
+        </div>
+        <button class="btn btn-primary mt-3">{{ is_edit ? 'Enregistrer' : 'Creer' }}</button>
+      {{ form_end(form) }}
+    </div>
+  </div>
+{% endblock %}

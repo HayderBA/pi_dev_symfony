@@ -1,0 +1,50 @@
+{% extends 'wellness/base.html.twig' %}
+
+{% block title %}Tests{% endblock %}
+
+{% block wellness_content %}
+  <div class="wellness-page-header">
+    <div class="wellness-page-copy">
+      <div class="page-kicker mb-2">Tests</div>
+      <h1 class="wellness-title">Suivi des tests psychologiques</h1>
+      <p class="wellness-lead">Consulter et gerer les resultats de tests relies au bien-etre.</p>
+    </div>
+    <div class="wellness-actions">
+      <a href="{{ path('app_wellness_test_new') }}" class="btn-shell btn-shell-primary">Ajouter un test</a>
+    </div>
+  </div>
+
+  <div class="card content-card">
+    <div class="card-body table-responsive">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h2 class="h5 mb-1">Historique des tests</h2>
+          <p class="text-muted mb-0">Vue d ensemble des scores saisis dans le module de tests.</p>
+        </div>
+        <span class="badge rounded-pill text-bg-light">{{ tests|length }} elements</span>
+      </div>
+      <table class="table wellness-table">
+        <thead><tr><th>Utilisateur</th><th>Type</th><th>Score</th><th>Date</th><th>Actions</th></tr></thead>
+        <tbody>
+        {% for item in tests %}
+          <tr>
+            <td>{{ item.utilisateur.fullName }}</td>
+            <td>{{ item.typeTest }}</td>
+            <td>{{ item.score }}/10</td>
+            <td>{{ item.dateTest ? item.dateTest|date('d/m/Y H:i') : '-' }}</td>
+            <td class="wellness-actions">
+              <a class="btn btn-sm btn-outline-primary" href="{{ path('app_wellness_test_edit', {id: item.id}) }}">Modifier</a>
+              <form method="post" action="{{ path('app_wellness_test_delete', {id: item.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete_test_' ~ item.id) }}">
+                <button class="btn btn-sm btn-outline-danger">Supprimer</button>
+              </form>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="5">Aucun test disponible.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'back/base_back.html.twig' %}
+
+{% block title %}{{ is_edit ? 'Modifier Cabinet' : 'Nouveau Cabinet' }}{% endblock %}
+
+{% block admin_content %}
+  <div class="gm-card">
+    <div class="gm-card-header">
+      <span class="gm-card-title">{{ is_edit ? 'Modifier le cabinet' : 'Creer un cabinet' }}</span>
+      <a href="{{ path('admin_cabinet_index') }}" class="btn-gm-outline text-decoration-none">Retour</a>
+    </div>
+    <div class="gm-card-body">
+      {{ form_start(form) }}
+        <div class="row g-3">
+          <div class="col-md-6">{{ form_row(form.nomcabinet) }}</div>
+          <div class="col-md-6">{{ form_row(form.ville) }}</div>
+          <div class="col-md-6">{{ form_row(form.adresse) }}</div>
+          <div class="col-md-3">{{ form_row(form.telephone) }}</div>
+          <div class="col-md-3">{{ form_row(form.status) }}</div>
+          <div class="col-12">{{ form_row(form.email) }}</div>
+          <div class="col-12">{{ form_row(form.description) }}</div>
+        </div>
+        <button class="btn btn-primary mt-3">{{ is_edit ? 'Enregistrer' : 'Creer' }}</button>
+      {{ form_end(form) }}
+    </div>
+  </div>
+{% endblock %}

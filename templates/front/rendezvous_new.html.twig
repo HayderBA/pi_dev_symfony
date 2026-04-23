@@ -1,0 +1,78 @@
+{% extends 'front/front_layout.html.twig' %}
+
+{% block front_html_title %}Prendre rendez-vous{% endblock %}
+{% block front_heading %}Prendre rendez-vous{% endblock %}
+{% block front_subheading %}Remplissez le formulaire pour réserver votre créneau.{% endblock %}
+
+{% block front_content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="front-panel-card">
+            <div class="card-header-theme text-center py-3">
+                <h2 class="h5 mb-0"><i class="bi bi-calendar-plus me-2"></i>Nouvelle demande</h2>
+            </div>
+            <div class="card-body p-4">
+                <div class="alert alert-info py-2 small">
+                    Choisissez d'abord le cabinet, puis le psychologue correspondant.
+                </div>
+                {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
+                {{ form_errors(form) }}
+                {% for child in form %}
+                    {{ form_row(child) }}
+                {% endfor %}
+
+                <div class="d-flex flex-wrap justify-content-between gap-2 mt-4">
+                    <a href="{{ path('front_rendezvous_index') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i> Retour
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-check-circle me-1"></i> Confirmer le rendez-vous
+                    </button>
+                </div>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+  (function () {
+    const cabinetEl = document.getElementById('rendezvous_cabinet_id');
+    const psychologueEl = document.getElementById('rendezvous_psychologue_id');
+    if (!cabinetEl || !psychologueEl) return;
+
+    const byCabinet = {{ psychologues_by_cabinet|json_encode|raw }};
+    const options = Array.from(psychologueEl.options).map((opt) => ({
+      value: opt.value,
+      text: opt.text,
+      isPlaceholder: opt.value === ''
+    }));
+
+    function renderPsychologues() {
+      const cabinetId = cabinetEl.value;
+      const allowed = (byCabinet[cabinetId] || []).map(String);
+      const current = psychologueEl.value;
+      psychologueEl.innerHTML = '';
+
+      options.forEach((opt) => {
+        if (opt.isPlaceholder || allowed.includes(opt.value)) {
+          const o = document.createElement('option');
+          o.value = opt.value;
+          o.text = opt.text;
+          psychologueEl.appendChild(o);
+        }
+      });
+
+      if (allowed.includes(current)) {
+        psychologueEl.value = current;
+      } else {
+        psychologueEl.value = '';
+      }
+      psychologueEl.disabled = cabinetId === '';
+    }
+
+    cabinetEl.addEventListener('change', renderPsychologues);
+    renderPsychologues();
+  })();
+</script>
+{% endblock %}

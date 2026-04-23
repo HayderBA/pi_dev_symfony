@@ -1,0 +1,70 @@
+<div class="gm-location-shell">
+    <div class="gm-location-header">
+        <div>
+            <div class="gm-location-kicker">
+                <i class="fas fa-map-marked-alt"></i>
+                Localisation intelligente
+            </div>
+            <h4>Choisissez parmi 10 adresses reelles en Tunisie</h4>
+            <p>La carte reelle s affiche directement avec l emplacement choisi.</p>
+        </div>
+        <div class="gm-location-badge">Tunis • Ariana • Sousse</div>
+    </div>
+
+    <div class="gm-location-toolbar">
+        <input
+            type="search"
+            id="gmVenueSearch"
+            class="gm-location-search"
+            placeholder="Rechercher parmi les 10 lieux..."
+        >
+        <select id="gmVenueSelect" class="gm-location-select">
+            <option value="">Choisir un lieu recommande</option>
+        </select>
+        <button type="button" id="gmVenueReset" class="gm-location-reset">Reinitialiser</button>
+    </div>
+
+    <div class="gm-location-map-shell">
+        <iframe
+            id="gmVenuePickerFrame"
+            class="gm-location-frame"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps?q={{ form.localisation.vars.value|default('Tunisie')|url_encode }}&output=embed"
+            title="Carte de localisation"
+        ></iframe>
+    </div>
+
+    <div id="gmVenueStatus" class="gm-location-status is-muted">Choisissez un lieu pour afficher la carte reelle.</div>
+    <p class="gm-location-caption">Astuce: choisissez un lieu dans la liste et la carte affiche directement son emplacement avec le repere.</p>
+
+    <div class="gm-location-input-wrap">
+        {{ form_label(form.localisation, 'Lieu *', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.localisation, {
+            'attr': {
+                'class': 'gm-location-field',
+                'placeholder': 'Adresse exacte de l evenement'
+            }
+        }) }}
+        {{ form_errors(form.localisation) }}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!window.GrowMindVenueMaps) {
+                return;
+            }
+
+            window.GrowMindVenueMaps.initPicker({
+                frameId: 'gmVenuePickerFrame',
+                selectId: 'gmVenueSelect',
+                searchId: 'gmVenueSearch',
+                inputId: '{{ form.localisation.vars.id }}',
+                statusId: 'gmVenueStatus',
+                resetId: 'gmVenueReset',
+                selectedAddress: {{ form.localisation.vars.value|default('')|json_encode|raw }},
+                venues: {{ venueCatalogJson|raw }},
+            });
+        });
+    </script>
+</div>

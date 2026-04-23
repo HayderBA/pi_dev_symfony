@@ -1,0 +1,650 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Evenements - GrowMind{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('assets/css/event-experience.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/voice-assistant.css') }}">
+{% endblock %}
+
+{% block body %}
+{% include 'front/_main_nav.html.twig' with { active_page: 'events' } %}
+<section class="hero-events" style="padding-top: 115px;">
+    <div class="hero-bg-gradient"></div>
+    <div class="container hero-content">
+        <div class="hero-badge">
+            <i class="fas fa-spa"></i> GrowMind Events
+        </div>
+        <h1 class="hero-title">
+            Explorez nos experiences<br>
+            <span class="hero-title-gradient">bien-etre et developpement</span>
+        </h1>
+        <p class="hero-subtitle">
+            Un agenda clair, des badges utiles et une reservation plus intelligente.
+        </p>
+        <div class="hero-search">
+            <div class="search-card">
+                <i class="fas fa-search search-icon"></i>
+                <form id="eventSearchForm" method="get" style="flex:1;display:flex;gap:10px;align-items:center;">
+                    <input type="text" name="search" class="search-input" placeholder="Rechercher un evenement..." value="{{ search }}">
+                    {% if selectedDate %}
+                        <input type="hidden" name="date" value="{{ selectedDate }}">
+                    {% endif %}
+                </form>
+                <button class="search-btn" type="submit" form="eventSearchForm">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="events-container">
+    <div class="container">
+        <div class="events-header">
+            <div class="section-tag">
+                <span class="tag-dot"></span>
+                Nos evenements
+            </div>
+            <h2 class="section-title">Calendrier et reservations</h2>
+            <p class="section-subtitle">
+                {% if selectedDate %}
+                    Evenements filtres pour le {{ selectedDate|date('d/m/Y') }}
+                {% else %}
+                    Cliquez sur un jour du calendrier pour filtrer les evenements
+                {% endif %}
+            </p>
+            {% if selectedDate %}
+                <a class="clear-filter-btn" href="{{ path('app_evenement_list') }}">Retirer le filtre</a>
+            {% endif %}
+        </div>
+
+        <section class="gm-voice-box" data-voice-list>
+            <div class="gm-voice-top">
+                <div>
+                    <h3>Commande vocale</h3>
+                    <p>Parlez pour rechercher ou ouvrir un evenement sans taper.</p>
+                </div>
+                <button type="button" class="gm-voice-toggle" data-voice-toggle aria-pressed="false" title="Activer la voix">🎤</button>
+            </div>
+            <p class="gm-voice-status" data-voice-status>Cliquez sur le micro puis parlez. Plusieurs commandes intelligentes sont deja actives.</p>
+        </section>
+
+        <section class="gm-marketing-lab" data-marketing-lab>
+            <div class="gm-lab-head">
+                <div>
+                    <span class="gm-lab-kicker">Promo Lab</span>
+                    <h3>Offres sponsorisees et campagnes bien-etre</h3>
+                    <p>Une experience plus digitale pour faire monter les evenements yoga, sport doux et therapies avec des activations visuelles et des offres intelligentes.</p>
+                </div>
+                <button type="button" class="gm-lab-reset" data-campaign-reset>Tout afficher</button>
+            </div>
+
+            <div class="gm-campaign-grid">
+                {% for campaign in marketingCampaigns %}
+                    <article class="gm-campaign-card gm-campaign-{{ campaign.accent }} {{ loop.first ? 'is-featured' : '' }}" data-campaign-card data-campaign-key="{{ campaign.key }}">
+                        <div class="gm-campaign-icon"><i class="{{ campaign.icon }}"></i></div>
+                        <div class="gm-campaign-copy">
+                            <span class="gm-campaign-tag">{{ campaign.subtitle }}</span>
+                            <h4>{{ campaign.title }}</h4>
+                            <p>{{ campaign.description }}</p>
+                        </div>
+                        <button type="button" class="gm-campaign-cta" data-campaign-filter="{{ campaign.key }}">{{ campaign.cta }}</button>
+                    </article>
+                {% endfor %}
+            </div>
+
+            <div class="gm-video-wall">
+                {% for video in videoAds %}
+                    <article class="gm-video-ad">
+                        <div class="gm-video-shell">
+                            <iframe
+                                src="{{ video.embedUrl }}"
+                                title="{{ video.title }}"
+                                loading="lazy"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen
+                            ></iframe>
+                        </div>
+                        <div class="gm-video-copy">
+                            <span class="gm-video-tag">{{ video.tag }}</span>
+                            <h4>{{ video.title }}</h4>
+                            <p>{{ video.description }}</p>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        </section>
+
+        <div
+            id="eventCalendar"
+            class="calendar-shell"
+            data-events='{{ calendarEventsJson|raw }}'
+            data-selected-date="{{ selectedDate }}"
+            data-filter-url="{{ path('app_evenement_list') }}"
+        ></div>
+
+        <section class="gm-memory-grid">
+            <article class="gm-memory-card">
+                <div class="gm-memory-top">
+                    <div>
+                        <h3>Vos favoris</h3>
+                        <p>Gardez sous la main les evenements que vous voulez comparer ou reserver plus tard.</p>
+                    </div>
+                    <span class="gm-memory-badge">Pratique et moderne</span>
+                </div>
+                <div id="gmFavoritesGrid" class="gm-mini-grid"></div>
+            </article>
+
+            <article class="gm-memory-card">
+                <div class="gm-memory-top">
+                    <div>
+                        <h3>Recemment consultes</h3>
+                        <p>Retrouvez vite les pages evenement deja ouvertes pendant votre navigation.</p>
+                    </div>
+                    <span class="gm-memory-badge">Memoire locale</span>
+                </div>
+                <div id="gmRecentGrid" class="gm-mini-grid"></div>
+            </article>
+        </section>
+
+        <div class="events-grid">
+            {% for evenement in evenements %}
+                {% set marketing = eventMarketingMeta[evenement.id] ?? null %}
+                <article
+                    class="event-card"
+                    data-event-card
+                    data-event-id="{{ evenement.id }}"
+                    data-event-title="{{ evenement.titre }}"
+                    data-event-date="{{ evenement.date|date('d/m/Y') }}"
+                    data-event-location="{{ evenement.localisation }}"
+                    data-event-price="{{ evenement.dynamicPrice|number_format(2, ',', ' ') }} EUR"
+                    data-event-url="{{ path('app_evenement_show', {'id': evenement.id}) }}"
+                    data-event-description="{{ evenement.description ? evenement.description|slice(0, 120) : 'Evenement GrowMind a venir.' }}"
+                    data-campaigns="{{ marketing ? marketing.campaigns|join(',') : '' }}"
+                    data-theme="{{ marketing ? marketing.theme : 'wellness' }}"
+                >
+                    <button type="button" class="gm-favorite-btn" data-favorite-toggle data-event-id="{{ evenement.id }}">
+                        <span data-favorite-icon>♡</span>
+                        <span data-favorite-text>Favori</span>
+                    </button>
+                    <div class="event-card-header">
+                        <div class="event-icon">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <div class="event-status {{ evenement.status == 'A venir' ? 'status-upcoming' : (evenement.status == 'Aujourd hui' ? 'status-today' : 'status-past') }}">
+                            {{ evenement.status }}
+                        </div>
+                        {% if evenement.popularityBadge %}
+                            <div class="popularity-badge {{ evenement.popularityBadge starts with '⚡' ? 'badge-warning' : 'badge-hot' }}">
+                                {{ evenement.popularityBadge }}
+                            </div>
+                        {% endif %}
+                        {% if marketing %}
+                            <div class="gm-sponsored-ribbon">Sponsorise par {{ marketing.sponsor }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="event-content">
+                        <h3 class="event-title">{{ evenement.titre }}</h3>
+                        <p class="event-description">{{ evenement.description ? evenement.description|slice(0, 120) ~ '...' : 'Evenement GrowMind a venir.' }}</p>
+
+                        <div class="event-meta">
+                            <span><i class="fas fa-calendar-alt"></i> {{ evenement.date|date('d/m/Y') }}</span>
+                            <span><i class="fas fa-map-marker-alt"></i> {{ evenement.localisation }}</span>
+                            <span><i class="fas fa-users"></i> {{ evenement.currentReservationsCount }}/{{ evenement.maxCapacity }}</span>
+                        </div>
+
+                        <div class="event-pricing">
+                            <div>
+                                <span class="price-label">Prix de base</span>
+                                <div class="event-price">{{ evenement.dynamicPrice|number_format(2, ',', ' ') }} EUR</div>
+                            </div>
+                            {% if evenement.isDynamicPriceActive %}
+                                <div class="dynamic-badge">Prix dynamique actif</div>
+                            {% endif %}
+                        </div>
+
+                        {% if marketing %}
+                            <div class="gm-marketing-hook">
+                                <span class="gm-hook-pill">{{ marketing.offer }}</span>
+                                <p>{{ marketing.hook }}</p>
+                            </div>
+                        {% endif %}
+
+                        <div class="capacity-bar">
+                            <div class="capacity-fill" style="width: {{ evenement.occupancyRate }}%"></div>
+                        </div>
+
+                        <a href="{{ path('app_evenement_show', {'id': evenement.id}) }}" class="event-btn">
+                            Voir et reserver
+                        </a>
+                    </div>
+                </article>
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-calendar-times"></i>
+                    <h3>Aucun evenement trouve</h3>
+                    <p>Essayez un autre jour ou une autre recherche.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --gm-blue: #1E5BA8;
+        --gm-green: #6BBF59;
+        --gm-mint: #eff7ea;
+        --gm-gold: #D4AF37;
+        --gm-soft-blue: #d9ecff;
+    }
+
+    .hero-events {
+        background: linear-gradient(135deg, var(--gm-blue), #2782b8, var(--gm-green));
+        color: #fff;
+        padding: 90px 0 70px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-content { position: relative; z-index: 1; text-align: center; }
+    .hero-badge {
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+        padding: 10px 18px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.14);
+        margin-bottom: 20px;
+    }
+    .hero-title { font-size: 3rem; font-weight: 800; margin-bottom: 12px; }
+    .hero-title-gradient { color: #d9ffcf; }
+    .hero-subtitle { max-width: 720px; margin: 0 auto 28px; opacity: 0.92; }
+    .search-card {
+        background: #fff;
+        border-radius: 999px;
+        padding: 8px 10px 8px 18px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        max-width: 640px;
+        margin: 0 auto;
+    }
+    .search-input { width: 100%; border: none; outline: none; padding: 12px 0; }
+    .search-icon { color: var(--gm-blue); }
+    .search-btn {
+        width: 48px;
+        height: 48px;
+        border: none;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--gm-green), var(--gm-blue));
+        color: #fff;
+    }
+
+    .events-container { background: var(--gm-mint); padding: 60px 0 90px; }
+    .events-header { text-align: center; margin-bottom: 32px; }
+    .section-tag { color: var(--gm-blue); font-weight: 700; margin-bottom: 10px; }
+    .section-title { color: #183153; font-size: 2.2rem; font-weight: 800; }
+    .section-subtitle { color: #4c5c69; }
+    .clear-filter-btn {
+        display: inline-block;
+        margin-top: 12px;
+        text-decoration: none;
+        color: var(--gm-blue);
+        font-weight: 700;
+    }
+
+    .calendar-shell {
+        background: #fff;
+        border-radius: 28px;
+        padding: 24px;
+        box-shadow: 0 12px 30px rgba(30, 91, 168, 0.08);
+        margin-bottom: 32px;
+        border: 1px solid rgba(30, 91, 168, 0.06);
+    }
+
+    .gm-marketing-lab {
+        margin: 26px 0 32px;
+        background: radial-gradient(circle at top right, rgba(255, 208, 140, 0.28), transparent 32%), linear-gradient(135deg, #0f2f4d, #1f5ba8, #3ba36d);
+        color: #fff;
+        border-radius: 30px;
+        padding: 28px;
+        box-shadow: 0 18px 34px rgba(15, 47, 77, 0.18);
+        overflow: hidden;
+        position: relative;
+    }
+    .gm-marketing-lab::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.08) 45%, transparent 70%);
+        transform: translateX(-100%);
+        animation: gmLabShine 9s linear infinite;
+        pointer-events: none;
+    }
+    .gm-lab-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 18px;
+        margin-bottom: 22px;
+        position: relative;
+        z-index: 1;
+    }
+    .gm-lab-kicker {
+        display: inline-block;
+        font-size: 12px;
+        letter-spacing: .16em;
+        text-transform: uppercase;
+        opacity: .78;
+        margin-bottom: 8px;
+    }
+    .gm-lab-head h3 {
+        margin: 0 0 8px;
+        font-size: 2rem;
+        font-weight: 800;
+    }
+    .gm-lab-head p {
+        max-width: 760px;
+        margin: 0;
+        color: rgba(255,255,255,.86);
+    }
+    .gm-lab-reset {
+        border: 1px solid rgba(255,255,255,.28);
+        background: rgba(255,255,255,.12);
+        color: #fff;
+        border-radius: 999px;
+        padding: 12px 18px;
+        font-weight: 700;
+    }
+    .gm-campaign-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+        position: relative;
+        z-index: 1;
+    }
+    .gm-campaign-card {
+        border-radius: 24px;
+        padding: 18px;
+        backdrop-filter: blur(16px);
+        background: rgba(255,255,255,.12);
+        border: 1px solid rgba(255,255,255,.16);
+        display: grid;
+        gap: 14px;
+        transform: translateY(0);
+        transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    }
+    .gm-campaign-card.is-featured,
+    .gm-campaign-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 18px 28px rgba(0,0,0,.16);
+        border-color: rgba(255,255,255,.32);
+    }
+    .gm-campaign-icon {
+        width: 54px;
+        height: 54px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        background: rgba(255,255,255,.18);
+    }
+    .gm-campaign-tag {
+        display: inline-block;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .12em;
+        opacity: .76;
+        margin-bottom: 6px;
+    }
+    .gm-campaign-card h4 {
+        margin: 0 0 8px;
+        font-size: 1.2rem;
+        font-weight: 800;
+    }
+    .gm-campaign-card p {
+        margin: 0;
+        color: rgba(255,255,255,.86);
+        min-height: 88px;
+    }
+    .gm-campaign-cta {
+        border: none;
+        border-radius: 16px;
+        padding: 12px 16px;
+        font-weight: 800;
+        background: #fff;
+        color: #15385a;
+    }
+    .gm-video-wall {
+        margin-top: 22px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 16px;
+        position: relative;
+        z-index: 1;
+    }
+    .gm-video-ad {
+        background: rgba(7, 20, 33, 0.28);
+        border: 1px solid rgba(255,255,255,.12);
+        border-radius: 24px;
+        overflow: hidden;
+    }
+    .gm-video-shell {
+        aspect-ratio: 16 / 9;
+        background: #081423;
+    }
+    .gm-video-shell iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+    .gm-video-copy {
+        padding: 16px 18px 18px;
+    }
+    .gm-video-tag {
+        display: inline-flex;
+        padding: 7px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        background: rgba(255,255,255,.12);
+        margin-bottom: 10px;
+    }
+    .gm-video-copy h4 {
+        margin: 0 0 8px;
+        font-weight: 800;
+    }
+    .gm-video-copy p {
+        margin: 0;
+        color: rgba(255,255,255,.82);
+    }
+
+    .events-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 24px;
+    }
+
+    .event-card {
+        background: #fff;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 12px 24px rgba(30, 91, 168, 0.08);
+        position: relative;
+        transition: transform .25s ease, box-shadow .25s ease, opacity .25s ease, filter .25s ease;
+    }
+    .event-card.is-dimmed {
+        opacity: .42;
+        filter: grayscale(.15);
+    }
+    .event-card.is-highlighted {
+        transform: translateY(-6px);
+        box-shadow: 0 22px 36px rgba(30, 91, 168, 0.18);
+    }
+
+    .event-card-header {
+        padding: 24px;
+        background: linear-gradient(135deg, #f3fbff, #edf8ea);
+        position: relative;
+        min-height: 110px;
+    }
+
+    .event-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, var(--gm-blue), var(--gm-green));
+        color: #fff;
+        font-size: 1.8rem;
+    }
+
+    .event-status {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: #fff;
+        padding: 8px 14px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .status-upcoming { color: var(--gm-blue); }
+    .status-today { color: #0f8f5f; }
+    .status-past { color: #8a8a8a; }
+
+    .popularity-badge {
+        position: absolute;
+        left: 24px;
+        bottom: 18px;
+        padding: 7px 14px;
+        border-radius: 999px;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .badge-hot { background: linear-gradient(135deg, #ff7b2f, #d9480f); }
+    .badge-warning { background: linear-gradient(135deg, #f59f00, #e8590c); }
+    .gm-sponsored-ribbon {
+        position: absolute;
+        right: 18px;
+        bottom: 16px;
+        background: rgba(24, 49, 83, 0.92);
+        color: #fff;
+        border-radius: 999px;
+        padding: 7px 12px;
+        font-size: 11px;
+        font-weight: 700;
+        max-width: calc(100% - 48px);
+    }
+
+    .event-content { padding: 24px; }
+    .event-title { font-size: 1.25rem; font-weight: 800; color: #183153; margin-bottom: 10px; }
+    .event-description { color: #586473; min-height: 50px; }
+    .event-meta {
+        display: grid;
+        gap: 8px;
+        margin: 18px 0;
+        color: #4c5c69;
+        font-size: 14px;
+    }
+    .event-meta i { color: var(--gm-blue); margin-right: 6px; }
+    .event-pricing {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+    }
+    .price-label { display: block; color: #6c7a89; font-size: 12px; }
+    .event-price { color: var(--gm-blue); font-size: 1.45rem; font-weight: 800; }
+    .dynamic-badge {
+        background: #fff4d7;
+        color: #b26a00;
+        padding: 7px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+    .gm-marketing-hook {
+        margin: 16px 0 12px;
+        background: linear-gradient(135deg, #f6fbff, #eff8ea);
+        border: 1px solid #dde8f2;
+        border-radius: 18px;
+        padding: 14px 15px;
+    }
+    .gm-hook-pill {
+        display: inline-flex;
+        margin-bottom: 8px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        background: #183153;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .03em;
+    }
+    .gm-marketing-hook p {
+        margin: 0;
+        color: #415466;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+    .capacity-bar {
+        height: 8px;
+        background: #dde7ef;
+        border-radius: 999px;
+        overflow: hidden;
+        margin-bottom: 18px;
+    }
+    .capacity-fill {
+        height: 100%;
+        background: linear-gradient(135deg, var(--gm-green), var(--gm-blue));
+        border-radius: 999px;
+    }
+    .event-btn {
+        display: inline-flex;
+        justify-content: center;
+        width: 100%;
+        text-decoration: none;
+        padding: 14px 20px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--gm-blue), var(--gm-green));
+        color: #fff;
+        font-weight: 700;
+    }
+
+    .empty-state {
+        grid-column: 1 / -1;
+        background: #fff;
+        border-radius: 24px;
+        padding: 50px;
+        text-align: center;
+    }
+
+    @keyframes gmLabShine {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(140%); }
+    }
+
+    @media (max-width: 768px) {
+        .hero-title { font-size: 2.2rem; }
+        .search-card { border-radius: 24px; }
+        .event-pricing { flex-direction: column; align-items: flex-start; }
+        .gm-lab-head { flex-direction: column; }
+    }
+</style>
+
+<script src="{{ asset('assets/js/calendar.js') }}"></script>
+<script src="{{ asset('assets/js/event-experience.js') }}"></script>
+<script src="{{ asset('assets/js/voice-assistant.js') }}"></script>
+{% endblock %}

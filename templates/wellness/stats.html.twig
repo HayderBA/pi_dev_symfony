@@ -1,0 +1,144 @@
+{% extends 'wellness/base.html.twig' %}
+
+{% block title %}Statistiques{% endblock %}
+
+{% block wellness_content %}
+  <div class="wellness-page-header">
+    <div class="wellness-page-copy">
+      <div class="page-kicker mb-2">Statistiques</div>
+      <h1 class="wellness-title">Statistiques de sante</h1>
+      <p class="wellness-lead">Evolution du stress dans le temps basee sur les donnees de suivi SanteBienEtre.</p>
+    </div>
+    <div class="wellness-actions">
+      <a href="{{ path('app_wellness_dashboard') }}" class="btn-shell btn-shell-outline">Dashboard</a>
+      <a href="{{ path('app_sante_bien_etre_index') }}" class="btn-shell btn-shell-primary">Suivi</a>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-12">
+      <div class="card content-card">
+        <div class="card-body p-4">
+          <h2 class="h4 mb-1">Evolution du stress</h2>
+          <p class="text-muted mb-3">Graphique base sur les dates de suivi et les niveaux de stress.</p>
+
+          {% if dates is not empty %}
+            <div style="height: 380px;">
+              <canvas id="stressEvolutionChart"></canvas>
+            </div>
+          {% else %}
+            <div class="alert" style="background:#F5F7F6; border-radius:10px;">
+              Aucune donnee SanteBienEtre disponible pour le moment.
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="card content-card">
+        <div class="card-body p-4">
+          <h2 class="h4 mb-3">Donnees de suivi</h2>
+
+          {% if stats_rows is not empty %}
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead style="background:#F5F7F6;">
+                  <tr>
+                    <th>Date</th>
+                    <th>Niveau de stress</th>
+                    <th>Qualite du sommeil</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for row in stats_rows %}
+                  <tr>
+                    <td>{{ row.date }}</td>
+                    <td>
+                      <span style="background: rgba(76,175,142,0.15); color:#2F7D6D; padding:4px 10px; border-radius:8px;">
+                        {{ row.stress_level }}
+                      </span>
+                    </td>
+                    <td>{{ row.sleep_quality }}</td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <div class="alert" style="background:#F5F7F6; border-radius:10px;">
+              Aucun enregistrement disponible a afficher.
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  {% if dates is not empty %}
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const chartElement = document.getElementById('stressEvolutionChart');
+
+        if (!chartElement || typeof Chart === 'undefined') {
+          return;
+        }
+
+        new Chart(chartElement, {
+          type: 'line',
+          data: {
+            labels: {{ dates|json_encode|raw }},
+            datasets: [
+              {
+                label: 'Niveau de stress',
+                data: {{ stress_levels|json_encode|raw }},
+                borderColor: '#EF4444',
+                backgroundColor: 'rgba(239,68,68,0.15)',
+                fill: true,
+                tension: 0.35,
+                pointRadius: 4,
+                pointHoverRadius: 6
+              },
+              {
+                label: 'Qualite du sommeil',
+                data: {{ sleep_qualities|json_encode|raw }},
+                borderColor: '#4CAF8E',
+                backgroundColor: 'rgba(76,175,142,0.15)',
+                fill: false,
+                tension: 0.35,
+                pointRadius: 4,
+                pointHoverRadius: 6
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+              mode: 'index',
+              intersect: false
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                suggestedMax: 10,
+                ticks: {
+                  stepSize: 1
+                }
+              }
+            },
+            plugins: {
+              legend: {
+                display: true
+              }
+            }
+          }
+        });
+      });
+    </script>
+  {% endif %}
+{% endblock %}

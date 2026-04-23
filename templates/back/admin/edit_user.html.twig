@@ -1,0 +1,35 @@
+{% extends 'back/base_back.html.twig' %}
+
+{% block title %}Modifier Utilisateur{% endblock %}
+
+{% block admin_content %}
+  <div class="page-header">
+    <div class="page-header-content">
+      <h1>Modifier {{ managed_user.fullName }}</h1>
+      <p>Mise a jour des informations du compte utilisateur.</p>
+    </div>
+  </div>
+
+  <div class="gm-card">
+    <div class="gm-card-body">
+      {{ form_start(form) }}
+        <div class="row g-3">
+          <div class="col-md-6">{{ form_row(form.name) }}</div>
+          <div class="col-md-6">{{ form_row(form.secondName) }}</div>
+          <div class="col-md-6">{{ form_row(form.email) }}</div>
+          <div class="col-md-6">{{ form_row(form.role) }}</div>
+          <div class="col-md-4">{{ form_row(form.age) }}</div>
+          <div class="col-md-4">{{ form_row(form.gender) }}</div>
+          <div class="col-md-4">{{ form_row(form.phoneNumber) }}</div>
+          <div class="col-md-6">{{ form_row(form.birthDate) }}</div>
+          <div class="col-md-6">{{ form_row(form.adresse) }}</div>
+          <div class="col-md-12">{{ form_row(form.plainPassword) }}</div>
+        </div>
+        <div class="d-flex gap-2 mt-3">
+          <button class="btn-gm-primary">Mettre a jour</button>
+          <a href="{{ path('app_admin_dashboard') }}" class="btn-gm-outline text-decoration-none">Retour</a>
+        </div>
+      {{ form_end(form) }}
+    </div>
+  </div>
+{% endblock %}

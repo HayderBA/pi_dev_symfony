@@ -1,0 +1,15 @@
+<html><body style="font-family:Arial,sans-serif;background:#f6f8fb;padding:24px;color:#1f2937;">
+  <div style="max-width:620px;margin:0 auto;background:#fff;border-radius:16px;padding:28px;">
+    <h1 style="margin:0 0 12px;color:#0f766e;">Demande de rendez-vous recue</h1>
+    <p>Bonjour {{ rdv.prenomPatient }} {{ rdv.nomPatient }},</p>
+    <p>Votre demande de rendez-vous a bien ete enregistree dans GrowMind.</p>
+    <ul>
+      <li>Psychologue: {{ rdv.psychologue.displayName }}</li>
+      <li>Cabinet: {{ rdv.psychologue.cabinet ? rdv.psychologue.cabinet.nomcabinet : '-' }}</li>
+      <li>Date: {{ rdv.dateRdv ? rdv.dateRdv|date('d/m/Y') : '-' }}</li>
+      <li>Heure: {{ rdv.heure ? rdv.heure|date('H:i') : '-' }}</li>
+      <li>Type: {{ rdv.typeCons }}</li>
+    </ul>
+    <p>Vous recevrez une mise a jour apres validation.</p>
+  </div>
+</body></html>

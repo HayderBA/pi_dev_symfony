@@ -1,0 +1,277 @@
+{% extends 'back/base_back.html.twig' %}
+
+{% block title %}Back Bien-etre{% endblock %}
+
+{% block admin_content %}
+  <div class="page-header">
+    <div class="page-header-content">
+      <h1>Tableau de bord bien-etre</h1>
+      <p>Vue d ensemble des indicateurs sante, sommeil et activite utilisateur dans le back GrowMind.</p>
+      <div class="header-time" id="headerTime"></div>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-md-6 col-xl-3">
+      <div class="gm-card h-100">
+        <div class="gm-card-body">
+          <span class="tag tag-patient mb-3 d-inline-flex">Utilisateurs</span>
+          <div class="stat-value">{{ total_users }}</div>
+          <div class="stat-label">Nombre total d utilisateurs enregistres</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+      <div class="gm-card h-100">
+        <div class="gm-card-body">
+          <span class="tag tag-active mb-3 d-inline-flex">Suivis sante</span>
+          <div class="stat-value">{{ total_sante_bien_etre_records }}</div>
+          <div class="stat-label">Total des enregistrements sante et bien-etre</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+      <div class="gm-card h-100">
+        <div class="gm-card-body">
+          <span class="tag tag-pending mb-3 d-inline-flex">Stress moyen</span>
+          <div class="stat-value">
+            {% if average_stress_level is not null %}
+              {{ average_stress_level|number_format(2, '.', ' ') }}
+            {% else %}
+              --
+            {% endif %}
+          </div>
+          <div class="stat-label">Niveau moyen calcule sur les suivis</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+      <div class="gm-card h-100">
+        <div class="gm-card-body">
+          <span class="tag tag-doctor mb-3 d-inline-flex">Sommeil moyen</span>
+          <div class="stat-value">
+            {% if average_sleep_duration is not null %}
+              {{ average_sleep_duration|number_format(2, '.', ' ') }} min
+            {% else %}
+              --
+            {% endif %}
+          </div>
+          <div class="stat-label">Duree moyenne issue du suivi sommeil</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="gm-card mb-4">
+    <div class="gm-card-header">
+      <span class="gm-card-title">Acces rapides bien-etre</span>
+    </div>
+    <div class="gm-card-body">
+      <div class="d-flex flex-wrap gap-2">
+        <a class="btn-gm-primary" href="{{ path('app_wellness_dashboard') }}">Front bien-etre</a>
+        <a class="btn-gm-outline" href="{{ path('app_sante_bien_etre_index') }}">Suivi</a>
+        <a class="btn-gm-outline" href="{{ path('app_sleep_tracking_index') }}">Sommeil</a>
+        <a class="btn-gm-outline" href="{{ path('app_humeur_index') }}">Humeurs</a>
+        <a class="btn-gm-outline" href="{{ path('app_conseil_index') }}">Conseils</a>
+        <a class="btn-gm-outline" href="{{ path('app_wellness_test_index') }}">Tests</a>
+        <a class="btn-gm-outline" href="{{ path('app_programme_sportif_index') }}">Programme sportif</a>
+        <a class="btn-gm-outline" href="{{ path('app_wellness_api_services') }}">APIs sante</a>
+        <a class="btn-gm-outline" href="{{ path('app_wellness_stats') }}">Statistiques</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-12">
+      <div class="gm-card">
+        <div class="gm-card-header">
+          <span class="gm-card-title">Evolution du stress</span>
+        </div>
+        <div class="gm-card-body">
+          {% if stress_evolution_labels is not empty %}
+            <div style="height: 360px;">
+              <canvas id="stressEvolutionChart"></canvas>
+            </div>
+          {% else %}
+            <div class="alert alert-light border mb-0">Aucune donnee d evolution du stress disponible.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-7">
+      <div class="gm-card h-100">
+        <div class="gm-card-header">
+          <span class="gm-card-title">Suivi du sommeil</span>
+        </div>
+        <div class="gm-card-body">
+          {% if sleep_tracking_labels is not empty %}
+            <div style="height: 320px;">
+              <canvas id="sleepTrackingChart"></canvas>
+            </div>
+          {% else %}
+            <div class="alert alert-light border mb-0">Aucune donnee de sommeil disponible.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="gm-card h-100">
+        <div class="gm-card-header">
+          <span class="gm-card-title">Enregistrements par utilisateur</span>
+        </div>
+        <div class="gm-card-body">
+          {% if records_per_user_labels is not empty %}
+            <div style="height: 320px;">
+              <canvas id="recordsPerUserChart"></canvas>
+            </div>
+          {% else %}
+            <div class="alert alert-light border mb-0">Aucune donnee utilisateur disponible.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <div class="gm-card">
+        <div class="gm-card-header">
+          <span class="gm-card-title">Derniers suivis</span>
+        </div>
+        <div class="gm-card-body">
+          <table class="gm-table">
+            <thead>
+              <tr>
+                <th>Utilisateur</th>
+                <th>Humeur</th>
+                <th>Stress</th>
+                <th>Sommeil</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for item in records %}
+              <tr>
+                <td>{{ item.user.fullName }}</td>
+                <td>{{ item.humeur }}</td>
+                <td>{{ item.niveauStress }}/10</td>
+                <td>{{ item.qualiteSommeil }}/10</td>
+                <td>{{ item.dateSuivi|date('d/m/Y') }}</td>
+              </tr>
+            {% else %}
+              <tr><td colspan="5">Aucune donnee.</td></tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="gm-card">
+        <div class="gm-card-header">
+          <span class="gm-card-title">Derniers tests</span>
+        </div>
+        <div class="gm-card-body">
+          <table class="gm-table">
+            <thead>
+              <tr>
+                <th>Utilisateur</th>
+                <th>Type</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for item in tests %}
+              <tr>
+                <td>{{ item.utilisateur.fullName }}</td>
+                <td>{{ item.typeTest }}</td>
+                <td>{{ item.score }}/10</td>
+              </tr>
+            {% else %}
+              <tr><td colspan="3">Aucun test.</td></tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (typeof Chart === 'undefined') {
+        return;
+      }
+
+      const stressEvolutionElement = document.getElementById('stressEvolutionChart');
+      const sleepTrackingElement = document.getElementById('sleepTrackingChart');
+      const recordsPerUserElement = document.getElementById('recordsPerUserChart');
+
+      if (stressEvolutionElement) {
+        new Chart(stressEvolutionElement, {
+          type: 'line',
+          data: {
+            labels: {{ stress_evolution_labels|json_encode|raw }},
+            datasets: [{
+              label: 'Stress moyen',
+              data: {{ stress_evolution_values|json_encode|raw }},
+              borderColor: '#EF4444',
+              backgroundColor: 'rgba(239,68,68,0.15)',
+              fill: true,
+              tension: 0.35
+            }]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+      }
+
+      if (sleepTrackingElement) {
+        new Chart(sleepTrackingElement, {
+          type: 'line',
+          data: {
+            labels: {{ sleep_tracking_labels|json_encode|raw }},
+            datasets: [
+              {
+                label: 'Duree',
+                data: {{ sleep_duration_values|json_encode|raw }},
+                borderColor: '#4CAF8E',
+                backgroundColor: 'rgba(76,175,142,0.15)',
+                yAxisID: 'yDuration'
+              },
+              {
+                label: 'Qualite',
+                data: {{ sleep_quality_values|json_encode|raw }},
+                borderColor: '#2F7D6D',
+                backgroundColor: 'rgba(47,125,109,0.15)',
+                yAxisID: 'yQuality'
+              }
+            ]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+      }
+
+      if (recordsPerUserElement) {
+        new Chart(recordsPerUserElement, {
+          type: 'bar',
+          data: {
+            labels: {{ records_per_user_labels|json_encode|raw }},
+            datasets: [{
+              label: 'Enregistrements',
+              data: {{ records_per_user_values|json_encode|raw }},
+              backgroundColor: 'rgba(76,175,142,0.6)',
+              borderColor: '#4CAF8E'
+            }]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+      }
+    });
+  </script>
+{% endblock %}

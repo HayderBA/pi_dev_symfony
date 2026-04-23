@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+{% include 'front/_main_nav.html.twig' with { active_page: 'events' } %}
+
+<main class="main" style="padding-top: 120px;">
+  <div class="page-title text-center">
+    <h1>Appointment</h1>
+    <p>Book your appointment easily</p>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 mx-auto">
+          <h2 class="text-center mb-4">Schedule Your Appointment</h2>
+
+          <form class="row g-3">
+            <div class="col-md-6">
+              <input type="text" class="form-control" placeholder="Full Name">
+            </div>
+
+            <div class="col-md-6">
+              <input type="email" class="form-control" placeholder="Email">
+            </div>
+
+            <div class="col-md-6">
+              <input type="tel" class="form-control" placeholder="Phone">
+            </div>
+
+            <div class="col-md-6">
+              <select class="form-select">
+                <option>Select Department</option>
+                <option>Cardiology</option>
+                <option>Neurology</option>
+                <option>Pediatrics</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <input type="date" class="form-control">
+            </div>
+
+            <div class="col-md-6">
+              <select class="form-select">
+                <option>Select Doctor</option>
+                <option>Dr. Sarah</option>
+                <option>Dr. Michael</option>
+              </select>
+            </div>
+
+            <div class="col-12">
+              <textarea class="form-control" rows="4" placeholder="Message"></textarea>
+            </div>
+
+            <div class="col-12 text-center">
+              <button class="btn btn-primary">Book Appointment</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="text-center p-4">
+  <p>© Clinic - All rights reserved</p>
+</footer>
+{% endblock %}

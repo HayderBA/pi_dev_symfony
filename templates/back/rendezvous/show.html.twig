@@ -1,0 +1,45 @@
+{% extends 'back/base_back.html.twig' %}
+
+{% block title %}Rendez-vous #{{ rdv.idRdv }}{% endblock %}
+
+{% block admin_content %}
+  <div class="gm-card">
+    <div class="gm-card-header">
+      <span class="gm-card-title">Rendez-vous #{{ rdv.idRdv }}</span>
+      <div class="d-flex gap-2">
+        <a href="{{ path('admin_rendezvous_edit', {id: rdv.idRdv}) }}" class="btn-gm-outline text-decoration-none">Modifier</a>
+        <a href="{{ path('admin_rendezvous_index') }}" class="btn-gm-outline text-decoration-none">Retour</a>
+      </div>
+    </div>
+    <div class="gm-card-body">
+      {% for message in app.flashes('success') %}<div class="alert alert-success">{{ message }}</div>{% endfor %}
+      {% for message in app.flashes('error') %}<div class="alert alert-danger">{{ message }}</div>{% endfor %}
+      <div class="row g-4">
+        <div class="col-md-6">
+          <h5>Patient</h5>
+          <p><strong>Nom complet:</strong> {{ rdv.prenomPatient }} {{ rdv.nomPatient }}</p>
+          <p><strong>Email:</strong> {{ rdv.emailPatient }}</p>
+          <p><strong>Telephone:</strong> {{ rdv.telephonePatient }}</p>
+          <p><strong>Rappel envoye:</strong> {{ rdv.rappelEnvoye ? 'Oui' : 'Non' }}</p>
+          <p><strong>Date rappel:</strong> {{ rdv.dateRappel ? rdv.dateRappel|date('d/m/Y H:i') : '-' }}</p>
+        </div>
+        <div class="col-md-6">
+          <h5>Consultation</h5>
+          <p><strong>Psychologue:</strong> {{ rdv.psychologue.displayName }}</p>
+          <p><strong>Cabinet:</strong> {{ rdv.psychologue.cabinet ? rdv.psychologue.cabinet.nomcabinet : '-' }}</p>
+          <p><strong>Date:</strong> {{ rdv.dateRdv ? rdv.dateRdv|date('d/m/Y') : '-' }} a {{ rdv.heure ? rdv.heure|date('H:i') : '-' }}</p>
+          <p><strong>Type:</strong> {{ rdv.typeCons }}</p>
+          <p><strong>Statut:</strong> {{ rdv.statut }}</p>
+          <p><strong>Tarif:</strong> {{ rdv.tarifConsultation ?: rdv.psychologue.tarif }} TND</p>
+          <p><strong>Paiement:</strong> {{ rdv.estPaye ? 'Paye' : 'Non paye' }}</p>
+          <p><strong>Session Stripe:</strong> {{ rdv.stripeSessionId ?: '-' }}</p>
+        </div>
+      </div>
+      <div class="d-flex gap-2 flex-wrap mt-3">
+        <a href="{{ path('admin_rendezvous_confirm', {id: rdv.idRdv}) }}" class="btn-gm-primary text-decoration-none">Confirmer</a>
+        <a href="{{ path('admin_rendezvous_cancel', {id: rdv.idRdv}) }}" class="btn-gm-outline text-decoration-none">Annuler</a>
+        <a href="{{ path('admin_rendezvous_reminder', {id: rdv.idRdv}) }}" class="btn-gm-outline text-decoration-none">Envoyer rappel</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}

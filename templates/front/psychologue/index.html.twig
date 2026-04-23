@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Medecins & Psychologues{% endblock %}
+
+{% block body %}
+{% include 'front/_main_nav.html.twig' with { active_page: 'cabinet' } %}
+<main class="main" style="padding-top: 120px;">
+  <section class="section">
+    <div class="container">
+      <div class="section-title text-center mb-5">
+        <h1>Psychologues et medecins</h1>
+        <p>Cette liste reprend les psychologues de cabinet, avec les medecins relies depuis la gestion users quand ils existent.</p>
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-md-4"><div class="card border-0 shadow-sm text-center p-3"><div class="small text-muted">Psychologues</div><div class="fs-3 fw-bold text-primary">{{ stats.total }}</div></div></div>
+        <div class="col-md-4"><div class="card border-0 shadow-sm text-center p-3"><div class="small text-muted">Lies a users</div><div class="fs-3 fw-bold text-success">{{ stats.linked_users }}</div></div></div>
+        <div class="col-md-4"><div class="card border-0 shadow-sm text-center p-3"><div class="small text-muted">Tarif moyen</div><div class="fs-3 fw-bold text-dark">{{ stats.avg_tarif }} TND</div></div></div>
+      </div>
+
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+          <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-8"><label class="form-label">Recherche</label><input type="text" name="q" value="{{ filters.q }}" class="form-control" placeholder="Nom, prenom, specialite, cabinet"></div>
+            <div class="col-md-4"><label class="form-label">Cabinet</label><select name="cabinet" class="form-select"><option value="">Tous</option>{% for cabinet in cabinets %}<option value="{{ cabinet.idCabinet }}" {{ filters.cabinet == cabinet.idCabinet ? 'selected' }}>{{ cabinet.nomcabinet }}</option>{% endfor %}</select></div>
+            <div class="col-12 d-flex gap-2"><button class="btn btn-primary">Filtrer</button><a href="{{ path('front_psychologue_index') }}" class="btn btn-outline-secondary">Reinitialiser</a></div>
+          </form>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        {% for psychologue in psychologues %}
+          <div class="col-lg-4 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <h4 class="mb-0">{{ psychologue.displayName }}</h4>
+                  <span class="badge bg-primary">{{ psychologue.tarif }} TND</span>
+                </div>
+                <p class="text-muted mb-2">{{ psychologue.specialite }}</p>
+                <p class="mb-1"><strong>Cabinet:</strong> {{ psychologue.cabinet ? psychologue.cabinet.nomcabinet : '-' }}</p>
+                <p class="mb-1"><strong>Diplome:</strong> {{ psychologue.diplome }}</p>
+                <p class="mb-1"><strong>Experience:</strong> {{ psychologue.experience }} ans</p>
+                <p class="mb-3"><strong>Contact:</strong> {{ psychologue.email }} / {{ psychologue.telephone }}</p>
+                {% if psychologue.user %}
+                  <div class="alert alert-light border small">Source users: {{ psychologue.user.fullName }}</div>
+                {% endif %}
+                <div class="d-flex gap-2 flex-wrap">
+                  <a href="{{ path('front_rendezvous_new') }}" class="btn btn-primary btn-sm">Prendre rendez-vous</a>
+                  {% if psychologue.cabinet %}
+                    <a href="{{ path('front_cabinet_show', {id: psychologue.cabinet.idCabinet}) }}" class="btn btn-outline-primary btn-sm">Voir cabinet</a>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <div class="col-12"><div class="alert alert-info">Aucun psychologue disponible.</div></div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}

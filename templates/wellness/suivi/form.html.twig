@@ -1,0 +1,37 @@
+{% extends 'wellness/base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block wellness_content %}
+  <div class="wellness-page-header">
+    <div class="wellness-page-copy">
+      <div class="page-kicker mb-2">Sante</div>
+      <h1 class="wellness-title">{{ title }}</h1>
+      <p class="wellness-lead">Mets a jour le suivi personnel dans la meme presentation que le projet sante et bien-etre d origine.</p>
+    </div>
+    <div class="wellness-actions">
+      <a href="{{ path('app_sante_bien_etre_index') }}" class="btn-shell btn-shell-outline">Retour a la liste</a>
+    </div>
+  </div>
+
+  <div class="card content-card wellness-form-card">
+    <div class="card-body p-4">
+      {{ form_start(form) }}
+        <div class="row g-3">
+          <div class="col-md-6">{{ form_row(form.user) }}</div>
+          <div class="col-md-6">{{ form_row(form.humeur) }}</div>
+          <div class="col-md-6">{{ form_row(form.niveauStress) }}</div>
+          <div class="col-md-6">{{ form_row(form.qualiteSommeil) }}</div>
+          <div class="col-md-6">{{ form_row(form.nutrition) }}</div>
+          <div class="col-md-6">{{ form_row(form.activitePhysique) }}</div>
+          <div class="col-md-6">{{ form_row(form.developpementPersonnel) }}</div>
+          <div class="col-md-6">{{ form_row(form.dateSuivi) }}</div>
+          <div class="col-12">{{ form_row(form.recommandations) }}</div>
+        </div>
+        <div class="wellness-form-actions">
+          <button class="btn-shell btn-shell-primary">Enregistrer</button>
+        </div>
+      {{ form_end(form) }}
+    </div>
+  </div>
+{% endblock %}

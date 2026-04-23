@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmation de reservation</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #1E5BA8, #6BBF59); color: white; padding: 30px; text-align: center; border-radius: 20px 20px 0 0; }
+        .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 20px 20px; }
+        .qr-code { text-align: center; margin: 20px 0; padding: 20px; background: white; border-radius: 15px; }
+        .qr-code img { max-width: 200px; border-radius: 10px; }
+        .seat-info { background: #EFF7E6; padding: 15px; border-radius: 10px; text-align: center; margin: 20px 0; }
+        .seat-number { font-size: 28px; font-weight: bold; color: #1E5BA8; }
+        .impact-box { background: #eef6ff; padding: 18px; border-radius: 14px; margin: 20px 0; border: 1px solid #d6e6f7; }
+        .impact-pill { display: inline-block; padding: 6px 10px; border-radius: 999px; background: #1E5BA8; color: #fff; font-size: 12px; font-weight: bold; margin-bottom: 10px; }
+        .footer { text-align: center; margin-top: 30px; font-size: 12px; color: #999; }
+        .btn { display: inline-block; background: #6BBF59; color: white; padding: 10px 20px; text-decoration: none; border-radius: 25px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Reservation confirmee</h1>
+        </div>
+        <div class="content">
+            <h2>Bonjour {{ reservation.nom }},</h2>
+            <p>Votre reservation pour <strong>{{ reservation.evenement.titre }}</strong> a bien ete enregistree.</p>
+
+            <div class="seat-info">
+                <p><strong>Votre siege attribue</strong></p>
+                <div class="seat-number">Siege {{ reservation.seatNumber }}</div>
+                <p style="margin-top: 10px; font-size: 14px;">Presentez ce QR code a l entree.</p>
+            </div>
+
+            <div class="qr-code">
+                <img src="{{ reservation.qrCode }}" alt="QR Code d entree">
+            </div>
+
+            <div style="margin: 20px 0;">
+                <p><strong>Date :</strong> {{ reservation.evenement.date|date('d/m/Y H:i') }}</p>
+                <p><strong>Lieu :</strong> {{ reservation.evenement.localisation }}</p>
+                <p><strong>Billet :</strong> {{ reservation.ticketAmount|number_format(2, ',', ' ') }} TND</p>
+                <p><strong>Montant total :</strong> {{ reservation.montantTotal|number_format(2, ',', ' ') }} TND</p>
+            </div>
+
+            {% if reservation.solidarityAmount > 0 %}
+                <div class="impact-box">
+                    <span class="impact-pill">Billet solidaire</span>
+                    <p><strong>Association soutenue :</strong> {{ reservation.solidarityAssociation }}</p>
+                    <p><strong>Contribution :</strong> {{ reservation.solidarityAmount|number_format(2, ',', ' ') }} TND</p>
+                    <p><strong>Code recu :</strong> {{ reservation.solidarityReceiptCode }}</p>
+                    <p>Merci. Votre reservation contribue aussi a un impact local utile dans l ecosystème associatif de Tunis.</p>
+                </div>
+            {% endif %}
+
+            <p style="text-align: center; margin-top: 30px;">
+                <a href="{{ url('app_evenement_show', {'id': reservation.evenement.id}) }}" class="btn">Voir l evenement</a>
+            </p>
+        </div>
+        <div class="footer">
+            <p>GrowMind - Bien-etre et developpement personnel</p>
+            <p>Cet email sert aussi de billet d entree. Gardez-le sur votre telephone.</p>
+        </div>
+    </div>
+</body>
+</html>

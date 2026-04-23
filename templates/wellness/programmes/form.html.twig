@@ -1,0 +1,80 @@
+{% extends 'wellness/base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block wellness_content %}
+  <div class="container wellness-page px-0">
+    <div class="wellness-page-header">
+      <div class="wellness-page-copy">
+        <div class="page-kicker mb-2">Programme sportif</div>
+        <h1 class="wellness-title">Generer un plan personnalise</h1>
+        <p class="wellness-lead">
+          Le moteur croise le profil utilisateur, l IMC, l estimation calorique et les regles metier pour produire un programme adapte.
+        </p>
+      </div>
+
+      <div class="wellness-actions">
+        <a class="btn-shell btn-shell-outline" href="{{ path('app_programme_sportif_index') }}">
+          Voir l historique
+        </a>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-xl-8">
+        <div class="card content-card wellness-form-card">
+          <div class="card-body">
+            {{ form_start(form) }}
+              <div class="row g-3">
+                <div class="col-md-6">{{ form_row(form.user) }}</div>
+                <div class="col-md-3">{{ form_row(form.age) }}</div>
+                <div class="col-md-3">{{ form_row(form.genre) }}</div>
+                <div class="col-md-3">{{ form_row(form.tailleCm) }}</div>
+                <div class="col-md-3">{{ form_row(form.poidsKg) }}</div>
+                <div class="col-md-3">{{ form_row(form.niveauStress) }}</div>
+                <div class="col-md-3">{{ form_row(form.qualiteSommeil) }}</div>
+                <div class="col-md-4">{{ form_row(form.dureeSommeilHeures) }}</div>
+                <div class="col-md-4">{{ form_row(form.niveauActivite) }}</div>
+                <div class="col-md-4">{{ form_row(form.objectif) }}</div>
+                <div class="col-md-6">{{ form_row(form.activiteCible) }}</div>
+              </div>
+              <div class="wellness-form-actions">
+                <button class="btn-shell btn-shell-primary">Generer le programme</button>
+              </div>
+            {{ form_end(form) }}
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xl-4">
+        <div class="card content-card h-100">
+          <div class="card-body p-4">
+            <div class="page-kicker mb-2">Recents</div>
+            <h2 class="h5 mb-3">Derniers programmes generes</h2>
+
+            {% if recent_programmes is empty %}
+              <p class="text-muted mb-0">Aucun historique disponible pour le moment.</p>
+            {% else %}
+              <div class="d-grid gap-3">
+                {% for programme in recent_programmes %}
+                  <a class="text-decoration-none text-reset border rounded-4 p-3" href="{{ path('app_programme_sportif_show', {id: programme.id}) }}">
+                    <div class="d-flex justify-content-between gap-3">
+                      <div>
+                        <strong class="d-block">Utilisateur {{ programme.user.id }}</strong>
+                        <span class="text-muted small">{{ programme.typeProgramme }}</span>
+                      </div>
+                      <span class="text-muted small">{{ programme.createdAt|date('d/m') }}</span>
+                    </div>
+                    <div class="small text-muted mt-2">
+                      IMC {{ programme.imc|number_format(1, '.', ' ') }} - {{ programme.intensite }}
+                    </div>
+                  </a>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

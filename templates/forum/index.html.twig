@@ -1,0 +1,796 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Forum - GrowMind{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    .forum-shell {
+      background: linear-gradient(135deg, #e8f4f8 0%, #d1e8f0 100%);
+      min-height: 100vh;
+      padding-top: 130px;
+      padding-bottom: 70px;
+    }
+
+    .forum-hero,
+    .forum-sidebar-card,
+    .forum-post-card,
+    .forum-stat-card,
+    .forum-action-bar {
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid rgba(26, 74, 110, 0.08);
+      box-shadow: 0 14px 40px rgba(15, 35, 55, 0.08);
+    }
+
+    .forum-hero,
+    .forum-sidebar-card,
+    .forum-post-card,
+    .forum-stat-card,
+    .forum-action-bar {
+      border-radius: 28px;
+    }
+
+    .forum-hero {
+      padding: 2rem;
+      background: linear-gradient(135deg, #1a4a6e, #2c8c6e);
+      color: #fff;
+    }
+
+    .forum-hero p {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .forum-stat-card {
+      padding: 1.25rem 1.5rem;
+      text-align: center;
+    }
+
+    .stats-container {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid rgba(26, 74, 110, 0.08);
+      box-shadow: 0 14px 40px rgba(15, 35, 55, 0.08);
+      padding: 1.2rem 2.2rem;
+      border-radius: 28px;
+      text-align: center;
+      min-width: 150px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 22px 48px rgba(15, 35, 55, 0.12);
+    }
+
+    .stat-number {
+      display: block;
+      font-size: 2rem;
+      font-weight: 800;
+      color: #1a4a6e;
+    }
+
+    .stat-label {
+      color: #5f7084;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+    }
+
+    .forum-stat-number {
+      display: block;
+      font-size: 2rem;
+      font-weight: 800;
+      color: #1a4a6e;
+    }
+
+    .forum-stat-label {
+      color: #5f7084;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .forum-action-bar {
+      padding: 1rem;
+    }
+
+    .forum-post-card {
+      padding: 1.5rem;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .forum-post-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 22px 48px rgba(15, 35, 55, 0.12);
+    }
+
+    .forum-avatar {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, #8bb4d4, #5a9bc0);
+    }
+
+    .forum-avatar.forum-avatar-medecin {
+      background: linear-gradient(135deg, #2c8c6e, #1a6e54);
+    }
+
+    .forum-badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 0.35rem 0.8rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .forum-badge-primary {
+      background: #e8f0fe;
+      color: #1a4a6e;
+    }
+
+    .forum-badge-soft {
+      background: #eef7f2;
+      color: #2c8c6e;
+    }
+
+    .forum-sidebar-card {
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .forum-sidebar-card h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #1a4a6e;
+      margin-bottom: 1rem;
+    }
+
+    .forum-quiz-option {
+      display: inline-flex;
+      padding: 0.45rem 0.95rem;
+      border-radius: 999px;
+      background: #f1f5f9;
+      color: #1f2d3d;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin: 0 0.4rem 0.45rem 0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .forum-quiz-option:hover {
+      background: #1a4a6e;
+      color: #fff;
+    }
+
+    .forum-quiz-result {
+      border-radius: 18px;
+      padding: 0.95rem 1rem;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .forum-quiz-result.low {
+      background: #e8f5e9;
+      border-left: 4px solid #43a047;
+    }
+
+    .forum-quiz-result.moderate {
+      background: #fff3e0;
+      border-left: 4px solid #fb8c00;
+    }
+
+    .forum-quiz-result.severe {
+      background: #ffebee;
+      border-left: 4px solid #e53935;
+    }
+
+    .forum-resource-item {
+      padding: 0.9rem 0;
+      border-bottom: 1px solid #ecf1f5;
+    }
+
+    .forum-resource-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .forum-history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.85rem 0;
+      border-bottom: 1px solid #ecf1f5;
+    }
+
+    .forum-history-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .forum-sos-button {
+      position: fixed;
+      left: 24px;
+      bottom: 24px;
+      z-index: 1050;
+      border: none;
+      border-radius: 999px;
+      padding: 0.95rem 1.6rem;
+      font-weight: 800;
+      color: #fff;
+      background: linear-gradient(135deg, #d32f2f, #8b1e2d);
+      box-shadow: 0 18px 35px rgba(211, 47, 47, 0.35);
+    }
+
+    .forum-top-button {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 1040;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: none;
+      color: #fff;
+      background: #1a4a6e;
+      box-shadow: 0 16px 30px rgba(26, 74, 110, 0.25);
+    }
+
+    .forum-chat {
+      position: fixed;
+      right: 24px;
+      bottom: 92px;
+      width: 360px;
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(15, 35, 55, 0.22);
+      overflow: hidden;
+      z-index: 1045;
+    }
+
+    .forum-chat-header {
+      background: linear-gradient(135deg, #1a4a6e, #2c8c6e);
+      color: #fff;
+      padding: 1rem 1.1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .forum-chat-messages {
+      display: none;
+      flex-direction: column;
+      height: 400px;
+    }
+
+    .forum-chat-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+      background: #f8fafc;
+    }
+
+    .forum-message {
+      margin-bottom: 1rem;
+    }
+
+    .forum-message-bubble {
+      display: inline-block;
+      max-width: 85%;
+      padding: 0.8rem 1rem;
+      border-radius: 20px;
+      background: #fff;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .forum-message-user {
+      text-align: right;
+    }
+
+    .forum-message-user .forum-message-bubble {
+      background: linear-gradient(135deg, #1a4a6e, #2c8c6e);
+      color: #fff;
+    }
+
+    .forum-chat-input {
+      display: flex;
+      gap: 0.75rem;
+      padding: 1rem;
+      border-top: 1px solid #e8edf3;
+      background: #fff;
+    }
+
+    .forum-chat-input input {
+      flex: 1;
+      border-radius: 999px;
+      border: 1px solid #d7e0e8;
+      padding: 0.75rem 1rem;
+    }
+
+    .forum-chat-input button {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: none;
+      color: #fff;
+      background: #1a4a6e;
+    }
+
+    #forum-map {
+      height: 280px;
+      border-radius: 20px;
+    }
+
+    @media (max-width: 991px) {
+      .forum-chat {
+        width: calc(100vw - 32px);
+        right: 16px;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block body %}
+{% include 'front/_main_nav.html.twig' with { active_page: 'forum' } %}
+{% set feedbackLink = absolute_url(path('feedback_form', {'userId': feedbackUserId})) %}
+
+<main class="forum-shell">
+  <div class="container">
+    {% for label, messages in app.flashes %}
+      {% for message in messages %}
+        <div class="alert alert-{{ label == 'success' ? 'success' : 'info' }} rounded-4 mb-4">{{ message }}</div>
+      {% endfor %}
+    {% endfor %}
+
+    <div class="forum-hero mb-4">
+      <div class="row g-4 align-items-center">
+        <div class="col-lg-8">
+          <span class="badge text-bg-light text-success mb-3">Espace communautaire</span>
+          <h1 class="display-6 fw-bold mb-3">Forum des discussions GrowMind</h1>
+          <p class="mb-4">Un espace bienveillant pour partager, s ecouter et progresser ensemble avec quiz bien-etre, analyse, QR feedback, historique SOS, ressources et aide rapide.</p>
+          <div class="d-flex flex-wrap gap-2">
+            <a href="{{ path('app_forum_new') }}" class="btn btn-light text-success fw-semibold">Nouvelle discussion</a>
+            <a href="{{ path('app_forum_admin') }}" class="btn btn-outline-light">Gestion back-office</a>
+            <a href="{{ path('app_analyse_index') }}" class="btn btn-outline-light">Analyse</a>
+            <a href="{{ path('app_urgence_index') }}" class="btn btn-outline-light">Historique SOS</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-container">
+      <div class="stat-card">
+        <span class="stat-number">{{ posts|length }}</span>
+        <span class="stat-label">Discussions</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ urgentPosts }}</span>
+        <span class="stat-label">Urgentes</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">24/7</span>
+        <span class="stat-label">Soutien</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ medecinsData|length }}</span>
+        <span class="stat-label">Medecins</span>
+      </div>
+    </div>
+
+    <div class="forum-action-bar mb-4">
+      <form method="get" action="{{ path('app_forum_index') }}" class="row g-3 align-items-center">
+        <div class="col-lg-5">
+          <input type="text" id="searchForum" name="q" value="{{ searchQuery }}" class="form-control rounded-pill px-4" placeholder="Rechercher une discussion...">
+        </div>
+        <div class="col-lg-3">
+          <select name="categorie" class="form-select rounded-pill px-4">
+            <option value="">Toutes les categories</option>
+            {% for categorie in categories %}
+              <option value="{{ categorie }}" {% if currentCategorie == categorie %}selected{% endif %}>{{ categorie }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-lg-4 d-flex flex-wrap gap-2">
+          <button class="btn btn-dark rounded-pill px-4">Filtrer</button>
+          <a href="{{ path('app_forum_index') }}" class="btn btn-outline-secondary rounded-pill px-4">Reinitialiser</a>
+        </div>
+      </form>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-xl-8">
+        {% for post in posts %}
+          <article class="forum-post-card mb-4 post-card-js" data-search="{{ (post.nom ~ ' ' ~ post.categorie ~ ' ' ~ post.contenu)|lower }}">
+            <div class="d-flex gap-3">
+              <div class="forum-avatar {{ post.role|lower == 'medecin' ? 'forum-avatar-medecin' : '' }}">
+                {{ post.nom|first|upper }}
+              </div>
+              <div class="flex-grow-1">
+                <div class="d-flex justify-content-between flex-wrap gap-2 mb-2">
+                  <div class="d-flex flex-wrap gap-2">
+                    <span class="forum-badge forum-badge-primary">{{ post.categorie }}</span>
+                    <span class="forum-badge forum-badge-soft">{{ post.role|capitalize }}</span>
+                  </div>
+                  <div class="small text-secondary">{{ post.dateCreation|date('d/m/Y H:i') }}</div>
+                </div>
+
+                <h3 class="h4 mb-2"><a class="text-decoration-none text-dark" href="{{ path('app_forum_show', {'id': post.id}) }}">{{ post.nom }}</a></h3>
+                <div class="small text-secondary mb-3">
+                  {{ post.vues }} vues · {{ post.reponses|length }} reponses
+                </div>
+                <p class="mb-4">{{ post.excerpt(180) }}</p>
+
+                <div class="d-flex flex-wrap gap-2">
+                  <a href="{{ path('app_forum_show', {'id': post.id}) }}" class="btn btn-success rounded-pill px-4">Voir</a>
+                  <a href="{{ path('app_forum_edit', {'id': post.id}) }}" class="btn btn-outline-primary rounded-pill px-4">Modifier</a>
+                </div>
+              </div>
+            </div>
+          </article>
+        {% else %}
+          <div class="alert alert-info rounded-4">Aucune discussion disponible pour le moment.</div>
+        {% endfor %}
+      </div>
+
+      <div class="col-xl-4">
+        <div class="forum-sidebar-card">
+          <h3>Carte des medecins</h3>
+          <div id="forum-map"></div>
+          <div class="small text-secondary mt-3">{{ medecinsData|length }} medecin(s) disponible(s) · {{ urgentPosts }} sujet(s) urgent(s)</div>
+        </div>
+
+        <div class="forum-sidebar-card">
+          <h3>Evaluation bien-etre</h3>
+          <div class="mb-3">
+            <div class="small fw-semibold mb-2">1. Vous sentez-vous nerveux ou stressé ?</div>
+            <span class="forum-quiz-option" onclick="repondreQuiz(0,0)">Jamais</span>
+            <span class="forum-quiz-option" onclick="repondreQuiz(0,1)">Parfois</span>
+            <span class="forum-quiz-option" onclick="repondreQuiz(0,2)">Souvent</span>
+            <span class="forum-quiz-option" onclick="repondreQuiz(0,3)">Toujours</span>
+          </div>
+          <div class="mb-3">
+            <div class="small fw-semibold mb-2">2. Avez-vous des difficultes a dormir ?</div>
+            <span class="forum-quiz-option" onclick="repondreQuiz(1,0)">Jamais</span>
+            <span class="forum-quiz-option" onclick="repondreQuiz(1,1)">Parfois</span>
+            <span class="forum-quiz-option" onclick="repondreQuiz(1,2)">Souvent</span>
+            <span class="forum-quiz-option" onclick="repondreQuiz(1,3)">Toujours</span>
+          </div>
+          <div class="mb-3">
+            <div class="small fw-semibold mb-2">3. Vous sentez-vous triste ou deprime ?</div>
+            <span class="forum-quiz-option" onclick="repondreQuiz(2,0)">Jamais</span>
+            <span class="forum-quiz-option" onclick="repondreQuiz(2,1)">Parfois</span>
+            <span class="forum-quiz-option" onclick="repondreQuiz(2,2)">Souvent</span>
+            <span class="forum-quiz-option" onclick="repondreQuiz(2,3)">Toujours</span>
+          </div>
+          <div class="mb-0">
+            <div class="small fw-semibold mb-2">4. Perte d interet pour vos activites ?</div>
+            <span class="forum-quiz-option" onclick="repondreQuiz(3,0)">Jamais</span>
+            <span class="forum-quiz-option" onclick="repondreQuiz(3,1)">Parfois</span>
+            <span class="forum-quiz-option" onclick="repondreQuiz(3,2)">Souvent</span>
+            <span class="forum-quiz-option" onclick="repondreQuiz(3,3)">Toujours</span>
+          </div>
+          <div id="quiz-result" style="display:none;"></div>
+          <div id="solution-box" style="display:none;"></div>
+        </div>
+
+        <div class="forum-sidebar-card text-center">
+          <h3>QR feedback consultation</h3>
+          <div id="qrcode" class="d-flex justify-content-center my-3">
+            <a href="{{ feedbackLink }}" title="Ouvrir le feedback" target="_blank" rel="noopener" class="d-inline-block">
+              {{ feedbackQrCode|raw }}
+            </a>
+          </div>
+          <div class="small text-secondary">Scannez pour evaluer votre seance</div>
+        </div>
+
+        <div class="forum-sidebar-card">
+          <h3>Historique SOS</h3>
+          <div id="history-list">
+            <div class="text-secondary small">Chargement...</div>
+          </div>
+        </div>
+
+        <div class="forum-sidebar-card">
+          <h3>Ressources video</h3>
+          {% for resource in forumResources %}
+            <div class="forum-resource-item">
+              <div class="fw-semibold">{{ resource.title }}</div>
+              <div class="small text-secondary mb-2">{{ resource.description }}</div>
+              <a href="{{ resource.url }}" target="_blank" rel="noopener" class="small text-decoration-none">Ouvrir la ressource →</a>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="forum-sidebar-card">
+          <h3>Services forum complets</h3>
+          <div class="d-grid gap-2">
+            <a href="{{ path('app_carte_medecins') }}" class="btn btn-outline-primary rounded-pill">Carte des medecins</a>
+            <a href="{{ path('app_chat_index') }}" class="btn btn-outline-primary rounded-pill">Chat assistant</a>
+            <a href="{{ path('feedback_form', {'userId': feedbackUserId}) }}" class="btn btn-outline-primary rounded-pill">Feedback consultation</a>
+            <a href="{{ path('app_analyse_index') }}" class="btn btn-outline-primary rounded-pill">Analyse</a>
+            <a href="{{ path('app_urgence_index') }}" class="btn btn-outline-danger rounded-pill">Historique SOS</a>
+          </div>
+          <div class="small text-secondary mt-3">
+            SOS -> Telegram + SMS + email + notifications.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-4 p-4 rounded-5 text-white" style="background: linear-gradient(135deg, #1a4a6e, #2c8c6e);">
+      <div class="fs-2 fw-bold">3114</div>
+      <div>Numero national de prevention du suicide - 24h/24, gratuit et confidentiel</div>
+    </div>
+  </div>
+</main>
+
+<button type="button" class="forum-sos-button" onclick="sosUrgence()">SOS URGENCE</button>
+<button type="button" class="forum-top-button" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<div class="forum-chat" id="chat-sidebar">
+  <div class="forum-chat-header" onclick="toggleChat()">
+    <span>Assistant GrowMind</span>
+    <span id="chat-toggle-icon">▼</span>
+  </div>
+  <div id="chat-messages" class="forum-chat-messages">
+    <div class="forum-chat-scroll" id="messages-container">
+      <div class="forum-message">
+        <div class="forum-message-bubble">Bonjour ! Je suis votre assistant. Comment vous sentez-vous aujourd hui ?</div>
+      </div>
+    </div>
+    <div class="forum-chat-input">
+      <input type="text" id="chat-input-field" placeholder="Ecrivez votre message...">
+      <button type="button" onclick="sendMessage()">➤</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  const medecins = {{ medecinsData|json_encode|raw }};
+  const zonesAlerte = {{ zonesAlerte|json_encode|raw }};
+  const quizScores = [0, 0, 0, 0];
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const mapEl = document.getElementById('forum-map');
+    if (mapEl) {
+      const map = L.map('forum-map').setView([36.8065, 10.1815], 11);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap',
+        subdomains: 'abcd',
+        maxZoom: 19
+      }).addTo(map);
+
+      medecins.forEach((medecin) => {
+        if (medecin.latitude && medecin.longitude) {
+          L.marker([medecin.latitude, medecin.longitude]).addTo(map)
+            .bindPopup(`<strong>${medecin.nom}</strong><br>${medecin.adresse}`);
+        }
+      });
+
+      zonesAlerte.forEach((zone) => {
+        L.circle([zone.latitude, zone.longitude], {
+          color: '#f44336',
+          fillColor: '#f44336',
+          fillOpacity: 0.16,
+          radius: zone.rayon
+        }).addTo(map).bindPopup(`Zone d alerte: ${zone.niveau}`);
+      });
+    }
+
+    const searchInput = document.getElementById('searchForum');
+    if (searchInput) {
+      searchInput.addEventListener('input', function () {
+        const search = this.value.toLowerCase().trim();
+        document.querySelectorAll('.post-card-js').forEach((card) => {
+          const text = card.getAttribute('data-search') || '';
+          card.style.display = !search || text.includes(search) ? '' : 'none';
+        });
+      });
+    }
+
+    chargerHistorique();
+  });
+
+  function repondreQuiz(question, value) {
+    quizScores[question] = value;
+    const total = quizScores.reduce((sum, item) => sum + item, 0);
+    let level = 'low';
+    let message = 'Etat stable. Continuez vos bonnes pratiques.';
+    let button = '<a href="https://www.youtube.com/watch?v=inpok4MKVLM" target="_blank" rel="noopener" class="btn btn-sm btn-success rounded-pill">Voir la ressource</a>';
+
+    if (total > 2 && total <= 6) {
+      level = 'moderate';
+      message = 'Attention recommandee. Des ajustements peuvent aider.';
+      button = '<a href="https://www.youtube.com/watch?v=1vx8iUvfyCY" target="_blank" rel="noopener" class="btn btn-sm btn-warning rounded-pill">Respiration anti-stress</a>';
+    } else if (total > 6) {
+      level = 'severe';
+      message = 'Nous vous recommandons de consulter un medecin ou d utiliser le bouton SOS.';
+      button = '<button type="button" class="btn btn-sm btn-danger rounded-pill" onclick="sosUrgence()">Lancer SOS</button>';
+    }
+
+    const result = document.getElementById('quiz-result');
+    result.style.display = 'block';
+    result.innerHTML = `<div class="forum-quiz-result ${level}"><strong>Score: ${total}/12</strong><br>${message}</div>`;
+
+    const solution = document.getElementById('solution-box');
+    solution.style.display = 'block';
+    solution.innerHTML = `<div class="d-flex justify-content-between align-items-center gap-3 mt-3 border rounded-4 p-3 bg-light"><span class="small fw-semibold">Recommendation immediate</span>${button}</div>`;
+
+    fetch('{{ path('api_quiz_repondre') }}', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ score: total })
+    });
+  }
+
+  function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
+  function sosUrgence() {
+    if (!navigator.geolocation) {
+      alert('Geolocalisation non supportee.');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition((position) => {
+      const patientLat = position.coords.latitude;
+      const patientLon = position.coords.longitude;
+      let nearest = null;
+      let minDistance = Infinity;
+
+      medecins.forEach((medecin) => {
+        const distance = calculateDistance(patientLat, patientLon, medecin.latitude, medecin.longitude);
+        if (distance < minDistance) {
+          minDistance = distance;
+          nearest = medecin;
+        }
+      });
+
+      if (!nearest) {
+        alert('Aucun medecin disponible.');
+        return;
+      }
+
+      if (!confirm(`Medecin le plus proche : ${nearest.nom} (${minDistance.toFixed(1)} km)\nEnvoyer l alerte ?`)) {
+        return;
+      }
+
+      fetch('{{ path('api_urgence_sos') }}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          medecinId: nearest.id,
+          patientLat,
+          patientLon,
+          distance: minDistance
+        })
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            const statuses = data.statuses || {};
+            const lines = [
+              `Alerte creee pour ${nearest.nom}.`,
+              `Telegram: ${statuses.telegram ? 'OK' : 'echec'}`,
+              `SMS: ${statuses.sms ? 'OK' : 'echec'}`,
+              `Email: ${statuses.email ? 'OK' : 'echec'}`,
+              `FCM: ${statuses.firebase ? 'OK' : 'echec'}`
+            ];
+            if (data.emailTarget) {
+              lines.push(`Email cible: ${data.emailTarget}`);
+            }
+            lines.push(`Historique enregistre: ${window.location.origin}/urgence`);
+            alert(lines.join('\n'));
+            chargerHistorique();
+          } else {
+            alert(data.error || 'Erreur lors de l envoi de l alerte.');
+          }
+        });
+    }, () => alert('Geolocalisation impossible.'));
+  }
+
+  function chargerHistorique() {
+    fetch('{{ path('api_urgence_historique') }}')
+      .then((response) => response.json())
+      .then((data) => {
+        const container = document.getElementById('history-list');
+        if (!Array.isArray(data) || data.length === 0) {
+          container.innerHTML = '<div class="small text-secondary">Aucune alerte.</div>';
+          return;
+        }
+
+        container.innerHTML = data.map((item) => `
+          <div class="forum-history-item">
+            <div>
+              <div class="fw-semibold">Dr. ${item.medecinNom}</div>
+              <div class="small text-secondary">${item.distance} km · ${item.createdAt}</div>
+            </div>
+            <div class="d-flex gap-2">
+              <a class="btn btn-sm btn-outline-primary rounded-pill" target="_blank" href="https://www.google.com/maps?q=${item.latitude},${item.longitude}">Map</a>
+              <button class="btn btn-sm btn-outline-danger rounded-pill" type="button" onclick="supprimerAlerte(${item.id})">Suppr.</button>
+            </div>
+          </div>
+        `).join('');
+      });
+  }
+
+  function supprimerAlerte(id) {
+    if (!confirm('Supprimer cette alerte ?')) {
+      return;
+    }
+
+    fetch(`/api/urgence/supprimer/${id}`, { method: 'DELETE' })
+      .then(() => chargerHistorique());
+  }
+
+  function toggleChat() {
+    const messages = document.getElementById('chat-messages');
+    const icon = document.getElementById('chat-toggle-icon');
+    const isClosed = messages.style.display === '' || messages.style.display === 'none';
+    messages.style.display = isClosed ? 'flex' : 'none';
+    icon.textContent = isClosed ? '▲' : '▼';
+  }
+
+  function escapeHtml(value) {
+    const div = document.createElement('div');
+    div.textContent = value;
+    return div.innerHTML;
+  }
+
+  function sendMessage() {
+    const input = document.getElementById('chat-input-field');
+    const message = input.value.trim();
+    if (!message) {
+      return;
+    }
+
+    const container = document.getElementById('messages-container');
+    container.innerHTML += `<div class="forum-message forum-message-user"><div class="forum-message-bubble">${escapeHtml(message)}</div></div>`;
+    input.value = '';
+    container.scrollTop = container.scrollHeight;
+
+    fetch('{{ path('chat_send') }}', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message })
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          container.innerHTML += `<div class="forum-message"><div class="forum-message-bubble">${escapeHtml(data.reponse)}</div></div>`;
+          if (data.isUrgent) {
+            container.innerHTML += `<div class="forum-message"><div class="forum-message-bubble">Votre message semble urgent. Vous pouvez utiliser le bouton SOS si besoin.</div></div>`;
+          }
+          container.scrollTop = container.scrollHeight;
+        }
+      });
+  }
+</script>
+{% endblock %}

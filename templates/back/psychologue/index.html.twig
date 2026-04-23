@@ -1,0 +1,86 @@
+{% extends 'back/base_back.html.twig' %}
+
+{% block title %}Gestion des Psychologues{% endblock %}
+
+{% block admin_content %}
+  <div class="page-header">
+    <div class="page-header-content">
+      <h1>Psychologues</h1>
+      <p>Psychologues de cabinet relies aux medecins existants dans users.</p>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-4"><div class="stat-card"><div class="stat-value">{{ stats.total }}</div><div class="stat-label">Psychologues</div></div></div>
+    <div class="col-md-4"><div class="stat-card"><div class="stat-value">{{ stats.linked_users }}</div><div class="stat-label">Lies a users</div></div></div>
+    <div class="col-md-4"><div class="stat-card"><div class="stat-value">{{ stats.avg_tarif }}</div><div class="stat-label">Tarif moyen TND</div></div></div>
+  </div>
+
+  <div class="gm-card mb-4">
+    <div class="gm-card-header"><span class="gm-card-title">Filtres</span></div>
+    <div class="gm-card-body">
+      <form method="get" class="row g-3 align-items-end">
+        <div class="col-md-8"><label class="form-label">Recherche</label><input type="text" name="q" value="{{ filters.q }}" class="form-control" placeholder="Nom, prenom, specialite, cabinet"></div>
+        <div class="col-md-4"><label class="form-label">Cabinet</label><select name="cabinet" class="form-select"><option value="">Tous</option>{% for cabinet in cabinets %}<option value="{{ cabinet.idCabinet }}" {{ filters.cabinet == cabinet.idCabinet ? 'selected' }}>{{ cabinet.nomcabinet }}</option>{% endfor %}</select></div>
+        <div class="col-12 d-flex gap-2"><button class="btn btn-primary">Appliquer</button><a href="{{ path('admin_psychologue_index') }}" class="btn btn-outline-secondary">Reinitialiser</a></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="gm-card">
+    <div class="gm-card-header">
+      <span class="gm-card-title">Liste des psychologues</span>
+      <a href="{{ path('admin_psychologue_new') }}" class="btn-gm-primary text-decoration-none">Nouveau psychologue</a>
+    </div>
+    <div class="gm-card-body">
+      {% for message in app.flashes('success') %}<div class="alert alert-success">{{ message }}</div>{% endfor %}
+      <div class="row g-3">
+        {% for psychologue in psychologues %}
+          <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-header text-white" style="background:linear-gradient(135deg,#1e88e5,#1565c0);">
+                <h5 class="mb-0">{{ psychologue.displayName }}</h5>
+              </div>
+              <div class="card-body">
+                <p class="mb-2"><strong>Cabinet:</strong> {{ psychologue.cabinet ? psychologue.cabinet.nomcabinet : '-' }}</p>
+                <p class="mb-2"><strong>Specialite:</strong> {{ psychologue.specialite }}</p>
+                <p class="mb-2"><strong>Diplome:</strong> {{ psychologue.diplome }}</p>
+                <p class="mb-2"><strong>Experience:</strong> {{ psychologue.experience }} ans</p>
+                <p class="mb-2"><strong>Contact:</strong> {{ psychologue.email }} - {{ psychologue.telephone }}</p>
+                <span class="badge bg-primary">{{ psychologue.tarif }} TND</span>
+                {% if psychologue.user %}
+                  <div class="alert alert-light border small mt-3 mb-0">Medecin lie depuis users: {{ psychologue.user.fullName }}</div>
+                {% endif %}
+              </div>
+              <div class="card-footer bg-white border-0 d-flex gap-2 flex-wrap">
+                <a href="{{ path('admin_psychologue_show', {id: psychologue.idPsychologue}) }}" class="btn btn-outline-info btn-sm">Voir</a>
+                <a href="{{ path('admin_psychologue_edit', {id: psychologue.idPsychologue}) }}" class="btn btn-outline-warning btn-sm">Modifier</a>
+                <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal{{ psychologue.idPsychologue }}">Supprimer</button>
+              </div>
+            </div>
+          </div>
+          <div class="modal fade" id="modal{{ psychologue.idPsychologue }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content" style="border-radius: 12px;">
+                <div class="modal-header text-white" style="background: linear-gradient(135deg, #dc2626, #b91c1c);">
+                  <h5 class="modal-title">Confirmer la suppression</h5>
+                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">Supprimer "{{ psychologue.displayName }}" ?</div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                  <form method="post" action="{{ path('admin_psychologue_delete', {id: psychologue.idPsychologue}) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ psychologue.idPsychologue) }}">
+                    <button class="btn btn-danger">Supprimer</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <div class="col-12"><div class="alert alert-info mb-0">Aucun psychologue trouve.</div></div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

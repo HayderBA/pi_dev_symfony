@@ -1,0 +1,313 @@
+{% extends 'back/base_back.html.twig' %}
+
+{% block title %}Admin Dashboard - GrowMind{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block admin_content %}
+  <div class="page-header">
+    <div class="page-header-content">
+      <h1>Welcome back, {{ app.user ? app.user.name : 'Super Admin' }} 👋</h1>
+      <p>Here's what's happening across GrowMind today.</p>
+      <div class="header-time" id="headerTime"></div>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-xl-3">
+      <div class="stat-card">
+        <div class="stat-icon blue"><i class="bi bi-people-fill"></i></div>
+        <div class="stat-value">{{ stats.totaluser|default(user_stats.total|default(0)) }}</div>
+        <div class="stat-label">Total Utilisateurs</div>
+      </div>
+    </div>
+    <div class="col-6 col-xl-3">
+      <div class="stat-card">
+        <div class="stat-icon green"><i class="bi bi-person-badge-fill"></i></div>
+        <div class="stat-value">{{ stats.totalDoctors|default(user_stats.doctors|default(0)) }}</div>
+        <div class="stat-label">Médecins actifs</div>
+      </div>
+    </div>
+    <div class="col-6 col-xl-3">
+      <div class="stat-card">
+        <div class="stat-icon purple"><i class="bi bi-person-heart"></i></div>
+        <div class="stat-value">{{ stats.totalPatients|default(user_stats.patients|default(0)) }}</div>
+        <div class="stat-label">Patients inscrits</div>
+      </div>
+    </div>
+    <div class="col-6 col-xl-3">
+      <div class="stat-card">
+        <div class="stat-icon orange"><i class="bi bi-shield-fill"></i></div>
+        <div class="stat-value">{{ stats.totalAdmins|default(user_stats.admins|default(0)) }}</div>
+        <div class="stat-label">Administrateurs</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-lg-8">
+      <div class="gm-card h-100">
+        <div class="gm-card-body">
+          <div class="chart-wrap"><canvas id="usersChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="gm-card h-100">
+        <div class="gm-card-header"><span class="gm-card-title">Répartition</span></div>
+        <div class="gm-card-body">
+          {% set total = (stats.totaluser|default(user_stats.total|default(0))) > 0 ? (stats.totaluser|default(user_stats.total|default(0))) : 1 %}
+          <div class="mb-3 pb-3 border-bottom">
+            <div class="d-flex justify-content-between mb-1">
+              <span style="font-size:13px;font-weight:500">Médecins</span>
+              <span style="font-size:13px;font-weight:700;color:var(--blue)">{{ stats.totalDoctors|default(user_stats.doctors|default(0)) }}</span>
+            </div>
+            <div style="height:6px;background:var(--body-bg);border-radius:10px;overflow:hidden">
+              <div style="height:100%;width:{{ (((stats.totalDoctors|default(user_stats.doctors|default(0))) / total) * 100)|round }}%;background:linear-gradient(90deg,var(--blue),#6366f1);border-radius:10px"></div>
+            </div>
+          </div>
+          <div class="mb-3 pb-3 border-bottom">
+            <div class="d-flex justify-content-between mb-1">
+              <span style="font-size:13px;font-weight:500">Patients</span>
+              <span style="font-size:13px;font-weight:700;color:#9333ea">{{ stats.totalPatients|default(user_stats.patients|default(0)) }}</span>
+            </div>
+            <div style="height:6px;background:var(--body-bg);border-radius:10px;overflow:hidden">
+              <div style="height:100%;width:{{ (((stats.totalPatients|default(user_stats.patients|default(0))) / total) * 100)|round }}%;background:linear-gradient(90deg,#9333ea,#e879f9);border-radius:10px"></div>
+            </div>
+          </div>
+          <div class="mb-3 pb-3 border-bottom">
+            <div class="d-flex justify-content-between mb-1">
+              <span style="font-size:13px;font-weight:500">Actifs</span>
+              <span style="font-size:13px;font-weight:700;color:var(--green)">{{ stats.activeuser|default((user_stats.total|default(0)) - (user_stats.blocked|default(0))) }}</span>
+            </div>
+            <div style="height:6px;background:var(--body-bg);border-radius:10px;overflow:hidden">
+              <div style="height:100%;width:{{ (((stats.activeuser|default((user_stats.total|default(0)) - (user_stats.blocked|default(0)))) / total) * 100)|round }}%;background:linear-gradient(90deg,var(--green),var(--blue));border-radius:10px"></div>
+            </div>
+          </div>
+          <div>
+            <div class="d-flex justify-content-between mb-1">
+              <span style="font-size:13px;font-weight:500">Bloqués</span>
+              <span style="font-size:13px;font-weight:700;color:#dc2626">{{ stats.blockeduser|default(user_stats.blocked|default(0)) }}</span>
+            </div>
+            <div style="height:6px;background:var(--body-bg);border-radius:10px;overflow:hidden">
+              <div style="height:100%;width:{{ (((stats.blockeduser|default(user_stats.blocked|default(0))) / total) * 100)|round }}%;background:linear-gradient(90deg,#dc2626,#f87171);border-radius:10px"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-12">
+      <div class="gm-card">
+        <div class="gm-card-header">
+          <span class="gm-card-title">User Management</span>
+          <div class="d-flex gap-2 align-items-center">
+            <input id="searchInput" type="text" placeholder="Filter users..." style="padding:7px 14px;border-radius:9px;border:1px solid var(--border);font-size:12.5px;outline:none;font-family:'DM Sans',sans-serif;background:var(--body-bg);">
+            <select id="roleFilter" style="padding:7px 14px;border-radius:9px;border:1px solid var(--border);font-size:12.5px;outline:none;font-family:'DM Sans',sans-serif;background:var(--body-bg);">
+              <option value="">Tous les rôles</option>
+              <option value="doctor">Médecins</option>
+              <option value="patient">Patients</option>
+              <option value="admin">Admins</option>
+            </select>
+            <a href="{{ path('admin_add_users') }}" class="btn-gm-primary text-decoration-none">
+              <i class="bi bi-plus-lg"></i> Ajouter
+            </a>
+          </div>
+        </div>
+        <div class="gm-card-body p-0" style="padding:0!important">
+          <div style="overflow-x:auto">
+            <table class="gm-table">
+              <thead>
+                <tr>
+                  <th>Utilisateur</th>
+                  <th>Rôle</th>
+                  <th>Email</th>
+                  <th>Date de naissance</th>
+                  <th>Statut</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for user in users|default(managed_users|default([])) %}
+                  {% set role = user.role|lower %}
+                  {% set bgColors = {'doctor':'linear-gradient(135deg,#16c784,#1e88e5)','patient':'linear-gradient(135deg,#9333ea,#e879f9)','admin':'linear-gradient(135deg,#ea580c,#f97316)'} %}
+                  <tr class="user-row" data-role="{{ role }}">
+                    <td>
+                      <div class="user-cell">
+                        <div class="avatar-xs" style="background:{{ bgColors[role]|default('linear-gradient(135deg,#64748b,#94a3b8)') }}">{{ user.initials }}</div>
+                        <div>
+                          <div style="font-weight:600;font-size:13.5px">{{ user.fullName }}</div>
+                          <div style="font-size:11px;color:var(--text-muted)">ID #{{ user.id }}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td><span class="tag tag-{{ role }}">{{ user.role|capitalize }}</span></td>
+                    <td style="color:var(--text-muted);font-size:13px">{{ user.email }}</td>
+                    <td style="color:var(--text-muted);font-size:13px">{{ user.birthDate ?: 'N/A' }}</td>
+                    <td>
+                      <span class="tag {{ user.isBlocked ? 'tag-inactive' : 'tag-active' }}">
+                        {{ user.isBlocked ? 'Bloqué' : 'Actif' }}
+                      </span>
+                    </td>
+                    <td>
+                      <div class="d-flex gap-1">
+                        <a href="{{ path('admin_edit_user', {id: user.id}) }}" class="btn-icon-sm" title="Modifier">
+                          <i class="bi bi-pencil"></i>
+                        </a>
+                        <form method="post" action="{{ path('admin_toggle_block', {id: user.id}) }}">
+                          <input type="hidden" name="_token" value="{{ csrf_token('toggle_user_' ~ user.id) }}">
+                          <button class="btn-icon-sm" title="{{ user.isBlocked ? 'Débloquer' : 'Bloquer' }}">
+                            <i class="bi bi-{{ user.isBlocked ? 'unlock' : 'lock' }}-fill" style="color:{{ user.isBlocked ? '#15803d' : '#f97316' }}"></i>
+                          </button>
+                        </form>
+                        <form method="post" action="{{ path('admin_rm_users', {id: user.id}) }}" onsubmit="return confirm('Supprimer {{ user.fullName }} ?');">
+                          <input type="hidden" name="_token" value="{{ csrf_token('delete_user_' ~ user.id) }}">
+                          <button class="btn-icon-sm" title="Supprimer" style="color:#ef4444">
+                            <i class="bi bi-trash-fill"></i>
+                          </button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                {% else %}
+                  <tr>
+                    <td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted)">
+                      <i class="bi bi-people" style="font-size:32px;display:block;margin-bottom:8px;opacity:.4"></i>
+                      Aucun utilisateur disponible.
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          {% if (users|default(managed_users|default([]))|length) > 0 %}
+            <div class="d-flex align-items-center justify-content-between px-4 py-3 border-top flex-wrap gap-2">
+              <span style="font-size:12.5px;color:var(--text-muted)">
+                {{ users|default(managed_users|default([]))|length }} utilisateurs ·
+                <strong style="color:var(--green)">{{ stats.activeuser|default((user_stats.total|default(0)) - (user_stats.blocked|default(0))) }}</strong> actifs ·
+                <strong style="color:#dc2626">{{ stats.blockeduser|default(user_stats.blocked|default(0)) }}</strong> bloqués
+              </span>
+              <div class="d-flex gap-2">
+                <span class="tag tag-doctor">{{ stats.totalDoctors|default(user_stats.doctors|default(0)) }} Médecins</span>
+                <span class="tag tag-patient">{{ stats.totalPatients|default(user_stats.patients|default(0)) }} Patients</span>
+                <span class="tag tag-admin">{{ stats.totalAdmins|default(user_stats.admins|default(0)) }} Admins</span>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-12">
+      <div class="gm-card">
+        <div class="gm-card-header">
+          <span class="gm-card-title">
+            <i class="bi bi-calendar3 me-2" style="color:var(--blue)"></i>Calendrier des Ressources & Evaluations
+          </span>
+        </div>
+        <div class="gm-card-body">
+          <div id="adminCalendar"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+  <script>
+    const chartData = {{ chartData|default({})|json_encode|raw }};
+    const ctx = document.getElementById('usersChart');
+    if (ctx && chartData && window.Chart) {
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Médecins', 'Patients', 'Admins', 'Actifs', 'Bloqués'],
+          datasets: [{
+            label: 'Utilisateurs',
+            data: [
+              chartData.doctors || 0,
+              chartData.patients || 0,
+              chartData.admins || 0,
+              chartData.active || 0,
+              chartData.blocked || 0
+            ],
+            backgroundColor: ['#1e88e5', '#9333ea', '#ea580c', '#16c784', '#ef4444'],
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+      });
+    }
+
+    const searchInput = document.getElementById('searchInput');
+    const roleFilter = document.getElementById('roleFilter');
+    const rows = document.querySelectorAll('.user-row');
+
+    function filterUsers() {
+      const search = (searchInput ? searchInput.value : '').toLowerCase();
+      const role = (roleFilter ? roleFilter.value : '').toLowerCase();
+
+      rows.forEach((row) => {
+        const text = row.innerText.toLowerCase();
+        const userRole = (row.dataset.role || '').toLowerCase();
+        const matchName = text.includes(search);
+        const matchRole = !role || userRole === role;
+        row.style.display = (matchName && matchRole) ? '' : 'none';
+      });
+    }
+
+    if (searchInput) searchInput.addEventListener('input', filterUsers);
+    if (roleFilter) roleFilter.addEventListener('change', filterUsers);
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const calendarEl = document.getElementById('adminCalendar');
+      if (!calendarEl || typeof FullCalendar === 'undefined') {
+        return;
+      }
+
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        locale: 'fr',
+        height: 500,
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,listMonth'
+        },
+        buttonText: {
+          today: "Aujourd'hui",
+          month: 'Mois',
+          week: 'Semaine',
+          list: 'Liste'
+        },
+        events: '{{ path('app_admin_calendar_events') }}',
+        eventClick: function (info) {
+          if (info.event.url) {
+            info.jsEvent.preventDefault();
+            window.location.href = info.event.url;
+          }
+        },
+        eventDidMount: function (info) {
+          info.el.title = info.event.title;
+        }
+      });
+
+      calendar.render();
+    });
+  </script>
+{% endblock %}

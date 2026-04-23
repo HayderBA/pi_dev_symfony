@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle discussion{% endblock %}
+
+{% block body %}
+{% include 'front/_main_nav.html.twig' with { active_page: 'forum' } %}
+
+<main class="main">
+  <section class="section" style="padding-top: 120px;">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h1 class="display-6 fw-bold">Nouvelle discussion</h1>
+        <p class="text-secondary">Partagez votre experience en toute bienveillance.</p>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card-body p-4 p-lg-5">
+              {% include 'forum/_form.html.twig' with {'button_label': 'Publier'} %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}

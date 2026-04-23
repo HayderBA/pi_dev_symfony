@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GrowMind – Doctor Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --green: #16c784;
+      --green-light: #e8faf3;
+      --green-dark: #0fa36a;
+      --blue: #1e88e5;
+      --blue-light: #e3f2fd;
+      --blue-dark: #1565c0;
+      --sidebar-bg: #0d1b2a;
+      --sidebar-text: #94a3b8;
+      --body-bg: #f0f4f8;
+      --card-bg: #ffffff;
+      --text-primary: #1a2332;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --shadow: 0 4px 24px rgba(0,0,0,0.07);
+      --radius: 16px;
+      --sidebar-width: 260px;
+      --topbar-h: 68px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--body-bg); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; }
+
+    .sidebar { position: fixed; top: 0; left: 0; width: var(--sidebar-width); height: 100vh; background: var(--sidebar-bg); display: flex; flex-direction: column; z-index: 1000; transition: transform .3s ease; }
+    .sidebar-brand { display: flex; align-items: center; gap: 10px; padding: 24px 24px 20px; border-bottom: 1px solid rgba(255,255,255,.06); }
+    .brand-icon { width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, var(--green), var(--blue)); display: flex; align-items: center; justify-content: center; font-size: 18px; color: #fff; flex-shrink: 0; }
+    .brand-name { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 700; color: #fff; line-height: 1; }
+    .brand-tag { font-size: 10px; color: var(--green); letter-spacing: .5px; font-weight: 500; }
+    .sidebar-nav { flex: 1; padding: 20px 16px; overflow-y: auto; }
+    .nav-label { font-size: 10px; font-weight: 600; letter-spacing: 1.2px; color: rgba(255,255,255,.25); text-transform: uppercase; padding: 16px 10px 8px; display: block; }
+    .sidebar-nav .nav-link { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 10px; color: var(--sidebar-text); font-size: 14px; font-weight: 500; transition: all .2s; margin-bottom: 2px; text-decoration: none; }
+    .sidebar-nav .nav-link i { font-size: 17px; flex-shrink: 0; }
+    .sidebar-nav .nav-link:hover { background: rgba(255,255,255,.06); color: #fff; }
+    .sidebar-nav .nav-link.active { background: linear-gradient(135deg, rgba(22,199,132,.2), rgba(30,136,229,.15)); color: #fff; border: 1px solid rgba(22,199,132,.25); }
+    .sidebar-nav .nav-link.active i { color: var(--green); }
+    .nav-badge { margin-left: auto; background: var(--green); color: #fff; font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 20px; }
+    .sidebar-footer { padding: 16px; border-top: 1px solid rgba(255,255,255,.06); }
+    .sidebar-footer .nav-link { display: flex; align-items: center; gap: 10px; color: var(--sidebar-text); font-size: 13px; padding: 10px 14px; border-radius: 10px; text-decoration: none; transition: all .2s; }
+    .sidebar-footer .nav-link:hover { background: rgba(255,255,255,.06); color: #fff; }
+
+    .main-wrap { margin-left: var(--sidebar-width); min-height: 100vh; transition: margin .3s ease; }
+
+    .topbar { position: sticky; top: 0; z-index: 900; height: var(--topbar-h); background: rgba(255,255,255,.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 28px; gap: 16px; }
+    .topbar-title { font-size: 17px; font-weight: 600; flex: 1; }
+    .topbar-search { position: relative; width: 280px; }
+    .topbar-search input { width: 100%; padding: 9px 16px 9px 40px; background: var(--body-bg); border: 1px solid var(--border); border-radius: 10px; font-size: 13.5px; font-family: 'DM Sans', sans-serif; outline: none; transition: border-color .2s; }
+    .topbar-search input:focus { border-color: var(--green); }
+    .topbar-search i { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+    .topbar-actions { display: flex; align-items: center; gap: 8px; }
+    .icon-btn { width: 38px; height: 38px; border-radius: 10px; background: var(--body-bg); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--text-muted); cursor: pointer; font-size: 16px; transition: all .2s; text-decoration: none; position: relative; }
+    .icon-btn:hover { background: var(--green-light); color: var(--green); border-color: var(--green); }
+    .notif-dot { position: absolute; top: 7px; right: 7px; width: 7px; height: 7px; border-radius: 50%; background: #ef4444; border: 1px solid #fff; }
+    .avatar-sm { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--blue), var(--blue-dark)); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; flex-shrink: 0; }
+    .role-badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; background: linear-gradient(135deg, var(--blue-light), #e0e7ff); color: var(--blue-dark); }
+
+    .page-content { padding: 28px; }
+
+    /* Doctor profile hero */
+    .doctor-hero {
+      background: linear-gradient(135deg, #1565c0 0%, #1e88e5 50%, #16c784 100%);
+      border-radius: var(--radius); padding: 28px 32px; margin-bottom: 24px;
+      position: relative; overflow: hidden; color: #fff;
+    }
+    .doctor-hero::before { content: ''; position: absolute; top: -60px; right: -60px; width: 220px; height: 220px; border-radius: 50%; background: rgba(255,255,255,.08); }
+    .doctor-hero::after { content: ''; position: absolute; bottom: -30px; right: 120px; width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,.05); }
+    .hero-content { position: relative; z-index: 1; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .doc-avatar { width: 72px; height: 72px; border-radius: 18px; background: rgba(255,255,255,.2); border: 3px solid rgba(255,255,255,.4); display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-size: 26px; font-weight: 700; flex-shrink: 0; }
+    .hero-info { flex: 1; }
+    .hero-info h2 { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; margin-bottom: 3px; }
+    .hero-info p { font-size: 13.5px; opacity: .8; margin-bottom: 10px; }
+    .hero-meta { display: flex; gap: 20px; flex-wrap: wrap; }
+    .hero-meta span { display: flex; align-items: center; gap: 5px; font-size: 12.5px; opacity: .85; }
+    .hero-stats { display: flex; gap: 16px; flex-wrap: wrap; }
+    .hero-stat { background: rgba(255,255,255,.15); border-radius: 12px; padding: 12px 18px; text-align: center; backdrop-filter: blur(4px); }
+    .hero-stat .val { font-size: 22px; font-weight: 700; display: block; }
+    .hero-stat .lbl { font-size: 11px; opacity: .8; }
+
+    .gm-card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; }
+    .gm-card-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px 0; }
+    .gm-card-title { font-size: 15px; font-weight: 600; }
+    .gm-card-body { padding: 20px 24px 24px; }
+
+    /* Appointment timeline */
+    .appt-list { display: flex; flex-direction: column; gap: 12px; }
+    .appt-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 16px; border-radius: 12px;
+      border: 1.5px solid var(--border); transition: all .2s; cursor: pointer;
+      background: var(--card-bg);
+    }
+    .appt-item:hover { border-color: var(--green); background: var(--green-light); transform: translateX(3px); }
+    .appt-time { text-align: center; min-width: 52px; }
+    .appt-time .time { font-size: 14px; font-weight: 700; color: var(--blue); }
+    .appt-time .ampm { font-size: 10px; color: var(--text-muted); font-weight: 500; }
+    .appt-divider { width: 2px; height: 40px; background: var(--border); border-radius: 2px; flex-shrink: 0; }
+    .appt-divider.confirmed { background: linear-gradient(var(--green), var(--blue)); }
+    .appt-divider.pending { background: #f97316; }
+    .appt-info { flex: 1; }
+    .appt-info .name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+    .appt-info .detail { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+    .appt-actions { display: flex; gap: 6px; }
+    .appt-status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .tag { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+    .tag-video { background: #e0f2fe; color: #0369a1; }
+    .tag-inperson { background: #dcfce7; color: #15803d; }
+
+    /* Patient cards */
+    .patient-card {
+      border: 1.5px solid var(--border); border-radius: 12px; padding: 16px;
+      transition: all .2s; cursor: pointer;
+    }
+    .patient-card:hover { border-color: var(--blue); box-shadow: 0 4px 20px rgba(30,136,229,.12); }
+    .patient-avatar { width: 46px; height: 46px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .patient-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+    .patient-detail { font-size: 12px; color: var(--text-muted); }
+    .mood-pill { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; margin-top: 8px; }
+    .mood-good { background: var(--green-light); color: var(--green-dark); }
+    .mood-mid  { background: #fff7ed; color: #c2410c; }
+    .mood-low  { background: #fef2f2; color: #dc2626; }
+    .progress-sm { height: 4px; border-radius: 10px; background: var(--body-bg); overflow: hidden; margin-top: 8px; }
+    .progress-sm-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--green), var(--blue)); }
+
+    /* Notes section */
+    .note-card {
+      border: 1.5px solid var(--border); border-radius: 12px; padding: 16px;
+      transition: border-color .2s; position: relative;
+    }
+    .note-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; border-radius: 12px 0 0 12px; }
+    .note-card.green::before { background: var(--green); }
+    .note-card.blue::before { background: var(--blue); }
+    .note-card.orange::before { background: #f97316; }
+    .note-date { font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; }
+    .note-patient { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .note-text { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+    /* Feedback form */
+    .gm-input {
+      width: 100%; padding: 10px 14px; border: 1.5px solid var(--border);
+      border-radius: 10px; font-size: 13.5px; font-family: 'DM Sans', sans-serif;
+      outline: none; transition: border-color .2s; background: var(--body-bg);
+    }
+    .gm-input:focus { border-color: var(--green); background: #fff; }
+    .gm-label { font-size: 12.5px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; display: block; }
+
+    .btn-gm-primary { background: linear-gradient(135deg, var(--green), var(--green-dark)); color: #fff; border: none; border-radius: 10px; font-size: 13.5px; font-weight: 600; padding: 9px 20px; cursor: pointer; transition: all .2s; display: inline-flex; align-items: center; gap: 6px; font-family: 'DM Sans', sans-serif; }
+    .btn-gm-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(22,199,132,.35); }
+    .btn-gm-outline { background: transparent; border: 1.5px solid var(--border); color: var(--text-muted); border-radius: 10px; font-size: 13px; font-weight: 500; padding: 8px 16px; cursor: pointer; transition: all .2s; font-family: 'DM Sans', sans-serif; }
+    .btn-gm-outline:hover { border-color: var(--green); color: var(--green); }
+    .btn-icon-sm { width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--border); background: var(--body-bg); display: inline-flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 13px; cursor: pointer; transition: all .2s; }
+    .btn-icon-sm:hover { background: var(--green-light); color: var(--green); border-color: var(--green); }
+
+    /* Rating stars */
+    .stars { display: flex; gap: 3px; }
+    .stars i { color: #f59e0b; font-size: 14px; }
+
+    /* Schedule indicator */
+    .sched-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+    .sidebar-toggle { display: none; background: none; border: none; font-size: 22px; color: var(--text-primary); cursor: pointer; }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+    @media (max-width: 991px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main-wrap { margin-left: 0; }
+      .sidebar-toggle { display: block; }
+      .topbar-search { width: 200px; }
+      .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 999; }
+      .sidebar-overlay.open { display: block; }
+    }
+    @media (max-width: 575px) { .page-content { padding: 16px; } .topbar-search { display: none; } }
+  </style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon"><i class="bi bi-heart-pulse-fill"></i></div>
+    <div>
+      <div class="brand-name">GrowMind</div>
+      <div class="brand-tag">Mental Health Platform</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <span class="nav-label">My Workspace</span>
+    <a href="#" class="nav-link active"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
+    <a href="#" class="nav-link"><i class="bi bi-calendar2-check-fill"></i> Appointments <span class="nav-badge">8</span></a>
+    <a href="#" class="nav-link"><i class="bi bi-people-fill"></i> My Patients</a>
+    <a href="#" class="nav-link"><i class="bi bi-journal-medical"></i> Clinical Notes</a>
+    <a href="#" class="nav-link"><i class="bi bi-chat-dots-fill"></i> Messages</a>
+    <span class="nav-label">Profile</span>
+    <a href="#" class="nav-link"><i class="bi bi-person-badge-fill"></i> My Profile</a>
+    <a href="#" class="nav-link"><i class="bi bi-clock-history"></i> Session History</a>
+    <a href="#" class="nav-link"><i class="bi bi-gear-fill"></i> Settings</a>
+    <span class="nav-label">Switch View</span>
+    <a href="admin.html" class="nav-link"><i class="bi bi-shield-fill"></i> Admin View</a>
+    <a href="patient.html" class="nav-link"><i class="bi bi-person-heart"></i> Patient View</a>
+  </nav>
+  <div class="sidebar-footer">
+    <a href="#" class="nav-link"><i class="bi bi-box-arrow-left"></i> Sign Out</a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main-wrap">
+  <header class="topbar">
+    <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="bi bi-list"></i></button>
+    <span class="topbar-title">Doctor Dashboard</span>
+    <div class="topbar-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Search patients, notes…"/>
+    </div>
+    <div class="topbar-actions">
+      <div class="icon-btn"><i class="bi bi-bell"></i><span class="notif-dot"></span></div>
+      <div class="icon-btn"><i class="bi bi-chat-dots"></i></div>
+      <span class="role-badge">Doctor</span>
+      <div class="dropdown">
+        <div class="avatar-sm" data-bs-toggle="dropdown">LM</div>
+        <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="border-radius:12px;margin-top:8px;">
+          <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>My Profile</a></li>
+          <li><a class="dropdown-item" href="#"><i class="bi bi-calendar2 me-2"></i>My Schedule</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-left me-2"></i>Sign Out</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-content">
+
+    <!-- Doctor Hero -->
+    <div class="doctor-hero">
+      <div class="hero-content">
+        <div class="doc-avatar">LM</div>
+        <div class="hero-info">
+          <h2>Dr. Layla Mansour</h2>
+          <p>Psychiatrist & Cognitive Behavioral Therapist · 8 years experience</p>
+          <div class="hero-meta">
+            <span><i class="bi bi-geo-alt-fill"></i> Tunis Medical Center</span>
+            <span><i class="bi bi-star-fill" style="color:#f59e0b"></i> 4.9 Rating</span>
+            <span><i class="bi bi-patch-check-fill"></i> Board Certified</span>
+          </div>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><span class="val">8</span><span class="lbl">Today</span></div>
+          <div class="hero-stat"><span class="val">142</span><span class="lbl">Patients</span></div>
+          <div class="hero-stat"><span class="val">1,240</span><span class="lbl">Sessions</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Today's Appointments + Patient List -->
+    <div class="row g-3 mb-3">
+
+      <!-- Today's Appointments -->
+      <div class="col-lg-6">
+        <div class="gm-card h-100">
+          <div class="gm-card-header">
+            <span class="gm-card-title"><i class="bi bi-calendar2-check me-2" style="color:var(--green)"></i>Today's Appointments</span>
+            <span style="font-size:12px;color:var(--text-muted);font-weight:600;">Apr 7, 2026</span>
+          </div>
+          <div class="gm-card-body">
+            <div class="appt-list">
+              <div class="appt-item">
+                <div class="appt-time"><div class="time">09:00</div><div class="ampm">AM</div></div>
+                <div class="appt-divider confirmed"></div>
+                <div class="appt-info">
+                  <div class="name">Adam Khalil</div>
+                  <div class="detail"><span class="tag tag-video">Video Call</span><span>45 min</span></div>
+                </div>
+                <div class="appt-actions">
+                  <button class="btn-icon-sm" title="Join"><i class="bi bi-camera-video-fill" style="color:var(--blue)"></i></button>
+                  <button class="btn-icon-sm" title="Notes"><i class="bi bi-journal"></i></button>
+                </div>
+              </div>
+              <div class="appt-item">
+                <div class="appt-time"><div class="time">10:30</div><div class="ampm">AM</div></div>
+                <div class="appt-divider confirmed"></div>
+                <div class="appt-info">
+                  <div class="name">Sara El-Amin</div>
+                  <div class="detail"><span class="tag tag-inperson">In-Person</span><span>60 min</span></div>
+                </div>
+                <div class="appt-actions">
+                  <button class="btn-icon-sm" title="View"><i class="bi bi-person"></i></button>
+                  <button class="btn-icon-sm" title="Notes"><i class="bi bi-journal"></i></button>
+                </div>
+              </div>
+              <div class="appt-item">
+                <div class="appt-time"><div class="time">12:00</div><div class="ampm">PM</div></div>
+                <div class="appt-divider pending"></div>
+                <div class="appt-info">
+                  <div class="name">Hamid Okafor</div>
+                  <div class="detail"><span class="tag tag-video">Video Call</span><span>30 min</span><span style="color:#f97316;font-weight:600">Pending</span></div>
+                </div>
+                <div class="appt-actions">
+                  <button class="btn-icon-sm" title="Confirm" style="color:var(--green);border-color:var(--green)"><i class="bi bi-check-lg"></i></button>
+                  <button class="btn-icon-sm" title="Decline" style="color:#ef4444"><i class="bi bi-x-lg"></i></button>
+                </div>
+              </div>
+              <div class="appt-item">
+                <div class="appt-time"><div class="time">02:00</div><div class="ampm">PM</div></div>
+                <div class="appt-divider confirmed"></div>
+                <div class="appt-info">
+                  <div class="name">Lena Dubois</div>
+                  <div class="detail"><span class="tag tag-inperson">In-Person</span><span>45 min</span></div>
+                </div>
+                <div class="appt-actions">
+                  <button class="btn-icon-sm"><i class="bi bi-person"></i></button>
+                  <button class="btn-icon-sm"><i class="bi bi-journal"></i></button>
+                </div>
+              </div>
+              <div class="appt-item">
+                <div class="appt-time"><div class="time">03:30</div><div class="ampm">PM</div></div>
+                <div class="appt-divider confirmed"></div>
+                <div class="appt-info">
+                  <div class="name">Omar Sissoko</div>
+                  <div class="detail"><span class="tag tag-video">Video Call</span><span>60 min</span></div>
+                </div>
+                <div class="appt-actions">
+                  <button class="btn-icon-sm"><i class="bi bi-camera-video-fill" style="color:var(--blue)"></i></button>
+                  <button class="btn-icon-sm"><i class="bi bi-journal"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Patient List -->
+      <div class="col-lg-6">
+        <div class="gm-card h-100">
+          <div class="gm-card-header">
+            <span class="gm-card-title"><i class="bi bi-people-fill me-2" style="color:var(--blue)"></i>My Patients</span>
+            <button class="btn-gm-primary" style="padding:7px 14px;font-size:12.5px;"><i class="bi bi-plus-lg"></i> Add</button>
+          </div>
+          <div class="gm-card-body">
+            <input type="text" class="gm-input mb-3" placeholder="Search patients…" style="padding:9px 14px;font-size:13px;">
+            <div class="row g-2">
+
+              <div class="col-12">
+                <div class="patient-card">
+                  <div class="d-flex align-items-start gap-12" style="gap:12px">
+                    <div class="patient-avatar" style="background:linear-gradient(135deg,#9333ea,#e879f9)">AK</div>
+                    <div class="flex-grow-1">
+                      <div class="patient-name">Adam Khalil</div>
+                      <div class="patient-detail">Anxiety & Depression · Session #12</div>
+                      <div class="d-flex align-items-center justify-content-between">
+                        <span class="mood-pill mood-mid"><i class="bi bi-emoji-neutral-fill"></i> Moderate</span>
+                        <span style="font-size:11px;color:var(--text-muted)">Next: Today 9AM</span>
+                      </div>
+                      <div class="progress-sm"><div class="progress-sm-fill" style="width:65%"></div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="patient-card">
+                  <div class="d-flex align-items-start gap-12" style="gap:12px">
+                    <div class="patient-avatar" style="background:linear-gradient(135deg,#16c784,#0fa36a)">SE</div>
+                    <div class="flex-grow-1">
+                      <div class="patient-name">Sara El-Amin</div>
+                      <div class="patient-detail">PTSD Recovery · Session #28</div>
+                      <div class="d-flex align-items-center justify-content-between">
+                        <span class="mood-pill mood-good"><i class="bi bi-emoji-smile-fill"></i> Improving</span>
+                        <span style="font-size:11px;color:var(--text-muted)">Next: Today 10:30AM</span>
+                      </div>
+                      <div class="progress-sm"><div class="progress-sm-fill" style="width:82%"></div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="patient-card">
+                  <div class="d-flex align-items-start gap-12" style="gap:12px">
+                    <div class="patient-avatar" style="background:linear-gradient(135deg,#0891b2,#06b6d4)">HO</div>
+                    <div class="flex-grow-1">
+                      <div class="patient-name">Hamid Okafor</div>
+                      <div class="patient-detail">Stress Management · Session #5</div>
+                      <div class="d-flex align-items-center justify-content-between">
+                        <span class="mood-pill mood-low"><i class="bi bi-emoji-frown-fill"></i> Struggling</span>
+                        <span style="font-size:11px;color:var(--text-muted)">Next: Today 12PM</span>
+                      </div>
+                      <div class="progress-sm"><div class="progress-sm-fill" style="width:30%"></div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notes + Feedback Form -->
+    <div class="row g-3">
+      <div class="col-lg-7">
+        <div class="gm-card">
+          <div class="gm-card-header">
+            <span class="gm-card-title"><i class="bi bi-journal-medical me-2" style="color:var(--green)"></i>Recent Clinical Notes</span>
+            <button class="btn-gm-primary" style="padding:7px 14px;font-size:12.5px;"><i class="bi bi-plus-lg"></i> New Note</button>
+          </div>
+          <div class="gm-card-body">
+            <div class="d-flex flex-column gap-3">
+              <div class="note-card green">
+                <div class="note-date">
+                  <span><i class="bi bi-calendar3 me-1"></i>Apr 6, 2026 · 3:45 PM</span>
+                  <div class="d-flex gap-1"><button class="btn-icon-sm"><i class="bi bi-pencil"></i></button><button class="btn-icon-sm"><i class="bi bi-trash" style="color:#ef4444"></i></button></div>
+                </div>
+                <div class="note-patient">Adam Khalil – Session #12</div>
+                <div class="note-text">Patient reports reduced anxiety episodes this week (2 vs 5 last week). Sleep improving with CBT exercises. Continue current treatment plan. Recommend journaling exercise for next session.</div>
+                <div class="d-flex gap-2 mt-2">
+                  <span class="tag" style="background:var(--green-light);color:var(--green-dark);font-size:11px">CBT</span>
+                  <span class="tag" style="background:var(--blue-light);color:var(--blue-dark);font-size:11px">Progress</span>
+                </div>
+              </div>
+              <div class="note-card blue">
+                <div class="note-date">
+                  <span><i class="bi bi-calendar3 me-1"></i>Apr 5, 2026 · 11:00 AM</span>
+                  <div class="d-flex gap-1"><button class="btn-icon-sm"><i class="bi bi-pencil"></i></button><button class="btn-icon-sm"><i class="bi bi-trash" style="color:#ef4444"></i></button></div>
+                </div>
+                <div class="note-patient">Sara El-Amin – Session #28</div>
+                <div class="note-text">Outstanding progress. PTSD symptoms significantly reduced. Patient successfully completed trauma exposure exercises. Transitioning to maintenance phase – bi-weekly sessions starting next month.</div>
+                <div class="d-flex gap-2 mt-2">
+                  <span class="tag" style="background:var(--green-light);color:var(--green-dark);font-size:11px">EMDR</span>
+                  <span class="tag" style="background:#f3e8ff;color:#7c3aed;font-size:11px">Milestone</span>
+                </div>
+              </div>
+              <div class="note-card orange">
+                <div class="note-date">
+                  <span><i class="bi bi-calendar3 me-1"></i>Apr 4, 2026 · 2:00 PM</span>
+                  <div class="d-flex gap-1"><button class="btn-icon-sm"><i class="bi bi-pencil"></i></button><button class="btn-icon-sm"><i class="bi bi-trash" style="color:#ef4444"></i></button></div>
+                </div>
+                <div class="note-patient">Hamid Okafor – Session #5</div>
+                <div class="note-text">Patient experiencing significant work-related stress. Introduced mindfulness breathing techniques. Homework: 10-min daily meditation. Consider involving family support network. Review in next session.</div>
+                <div class="d-flex gap-2 mt-2">
+                  <span class="tag" style="background:#fff7ed;color:#c2410c;font-size:11px">Urgent Review</span>
+                  <span class="tag" style="background:var(--blue-light);color:var(--blue-dark);font-size:11px">Mindfulness</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feedback / Add Note Form -->
+      <div class="col-lg-5">
+        <div class="gm-card mb-3">
+          <div class="gm-card-header">
+            <span class="gm-card-title"><i class="bi bi-pencil-square me-2" style="color:var(--blue)"></i>Add Session Note</span>
+          </div>
+          <div class="gm-card-body">
+            <div class="mb-3">
+              <label class="gm-label">Patient</label>
+              <select class="gm-input">
+                <option>Select patient…</option>
+                <option>Adam Khalil</option>
+                <option>Sara El-Amin</option>
+                <option>Hamid Okafor</option>
+                <option>Lena Dubois</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="gm-label">Session Type</label>
+              <div class="d-flex gap-2">
+                <label style="flex:1;display:flex;align-items:center;gap:6px;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;cursor:pointer;font-size:13px;font-weight:500;">
+                  <input type="radio" name="stype" style="accent-color:var(--green)"> Individual
+                </label>
+                <label style="flex:1;display:flex;align-items:center;gap:6px;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;cursor:pointer;font-size:13px;font-weight:500;">
+                  <input type="radio" name="stype" style="accent-color:var(--green)"> Group
+                </label>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="gm-label">Mood Assessment (1–10)</label>
+              <input type="range" min="1" max="10" value="7" style="width:100%;accent-color:var(--green);" id="moodRange" oninput="document.getElementById('moodVal').textContent=this.value">
+              <div style="font-size:12px;color:var(--text-muted);text-align:right;margin-top:2px;">Score: <strong id="moodVal">7</strong></div>
+            </div>
+            <div class="mb-3">
+              <label class="gm-label">Session Notes</label>
+              <textarea class="gm-input" rows="4" placeholder="Describe session progress, observations, and next steps…" style="resize:vertical;"></textarea>
+            </div>
+            <div class="mb-3">
+              <label class="gm-label">Tags</label>
+              <input type="text" class="gm-input" placeholder="e.g. CBT, Progress, Milestone…">
+            </div>
+            <button class="btn-gm-primary w-100" style="justify-content:center;"><i class="bi bi-save2-fill"></i> Save Note</button>
+          </div>
+        </div>
+
+        <!-- Rating summary -->
+        <div class="gm-card">
+          <div class="gm-card-header">
+            <span class="gm-card-title"><i class="bi bi-star-fill me-2" style="color:#f59e0b"></i>Patient Feedback</span>
+          </div>
+          <div class="gm-card-body">
+            <div class="d-flex align-items-center gap-16 mb-3" style="gap:16px">
+              <div style="text-align:center">
+                <div style="font-size:40px;font-weight:700;font-family:'Fraunces',serif;color:var(--text-primary)">4.9</div>
+                <div class="stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i></div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:4px">142 reviews</div>
+              </div>
+              <div style="flex:1">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                  <span style="font-size:11.5px;font-weight:600;min-width:12px">5</span>
+                  <i class="bi bi-star-fill" style="color:#f59e0b;font-size:10px"></i>
+                  <div style="flex:1;height:5px;background:var(--body-bg);border-radius:10px;overflow:hidden"><div style="height:100%;width:78%;background:var(--green);border-radius:10px"></div></div>
+                  <span style="font-size:11px;color:var(--text-muted)">78%</span>
+                </div>
+                <div class="d-flex align-items-center gap-2 mb-2">
+                  <span style="font-size:11.5px;font-weight:600;min-width:12px">4</span>
+                  <i class="bi bi-star-fill" style="color:#f59e0b;font-size:10px"></i>
+                  <div style="flex:1;height:5px;background:var(--body-bg);border-radius:10px;overflow:hidden"><div style="height:100%;width:15%;background:var(--blue);border-radius:10px"></div></div>
+                  <span style="font-size:11px;color:var(--text-muted)">15%</span>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                  <span style="font-size:11.5px;font-weight:600;min-width:12px">3</span>
+                  <i class="bi bi-star-fill" style="color:#f59e0b;font-size:10px"></i>
+                  <div style="flex:1;height:5px;background:var(--body-bg);border-radius:10px;overflow:hidden"><div style="height:100%;width:7%;background:#f97316;border-radius:10px"></div></div>
+                  <span style="font-size:11px;color:var(--text-muted)">7%</span>
+                </div>
+              </div>
+            </div>
+            <div style="font-size:13px;font-style:italic;color:var(--text-muted);border-left:3px solid var(--green);padding-left:12px;line-height:1.6;">
+              "Dr. Mansour truly changed my life. Her calm approach and effective techniques helped me overcome years of anxiety."
+            </div>
+            <div style="font-size:11.5px;font-weight:600;margin-top:6px;color:var(--text-muted)">— Adam K. · Apr 3, 2026</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('open');
+  }
+</script>
+</body>
+</html>

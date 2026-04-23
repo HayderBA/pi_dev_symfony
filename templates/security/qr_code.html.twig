@@ -1,0 +1,233 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Activer Google Authenticator{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+    --green: #16c784;
+    --green-dark: #0fa36a;
+    --blue: #1e88e5;
+    --border: #e2e8f0;
+    --muted: #64748b;
+    --text: #1a2332;
+    --body-bg: #f0f4f8;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--body-bg);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    width: 500px; height: 500px;
+    background: var(--green);
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: .12;
+    top: -150px; left: -150px;
+    pointer-events: none;
+}
+body::after {
+    content: '';
+    position: fixed;
+    width: 400px; height: 400px;
+    background: var(--blue);
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: .12;
+    bottom: -100px; right: -100px;
+    pointer-events: none;
+}
+
+.card-qr {
+    background: #fff;
+    border-radius: 28px;
+    box-shadow: 0 24px 64px rgba(0,0,0,.10);
+    width: 100%;
+    max-width: 440px;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    animation: slideUp .5s cubic-bezier(.16,1,.3,1) both;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.card-header-qr {
+    background: linear-gradient(135deg, #0d1b2a, #1a2d45);
+    padding: 36px 40px 32px;
+    text-align: center;
+}
+
+.lock-icon {
+    width: 64px; height: 64px;
+    background: linear-gradient(135deg, var(--green), var(--blue));
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    font-size: 28px;
+    box-shadow: 0 8px 24px rgba(22,199,132,.3);
+}
+
+.card-header-qr h1 {
+    font-family: 'Fraunces', serif;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.card-header-qr p {
+    color: rgba(255,255,255,.55);
+    font-size: 13px;
+}
+
+.card-body-qr {
+    padding: 36px 40px 40px;
+    text-align: center;
+}
+
+.steps {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 28px;
+    text-align: left;
+}
+
+.step {
+    flex: 1;
+    background: var(--body-bg);
+    border-radius: 14px;
+    padding: 14px 12px;
+    text-align: center;
+}
+
+.step-num {
+    width: 28px; height: 28px;
+    background: linear-gradient(135deg, var(--green), var(--blue));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    margin: 0 auto 8px;
+}
+
+.step p {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.4;
+}
+
+.qr-wrapper {
+    background: #fff;
+    border: 2px solid var(--border);
+    border-radius: 20px;
+    padding: 20px;
+    display: inline-block;
+    margin-bottom: 28px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.06);
+}
+
+.qr-wrapper svg {
+    width: 180px !important;
+    height: 180px !important;
+    display: block;
+}
+
+.btn-scanned {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, var(--green), var(--green-dark));
+    border: none;
+    border-radius: 14px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    transition: all .25s;
+    letter-spacing: .3px;
+}
+
+.btn-scanned:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(22,199,132,.4);
+    color: #fff;
+}
+
+.warning {
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--muted);
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 10px;
+    padding: 10px 14px;
+    text-align: left;
+}
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="card-qr">
+
+    <div class="card-header-qr">
+        <div class="lock-icon">🔒</div>
+        <h1>Activer Google Authenticator</h1>
+        <p>Sécurise ton compte en 3 étapes simples</p>
+    </div>
+
+    <div class="card-body-qr">
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-num">1</div>
+                <p>Installe Google Authenticator</p>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <p>Scanne le QR Code</p>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <p>Entre le code à chaque login</p>
+            </div>
+        </div>
+
+        <div class="qr-wrapper">
+            {{ qrCode|raw }}
+        </div>
+
+        <a href="{{ path('2fa_setup_confirm') }}" class="btn-scanned">
+            ✅ J'ai scanné, continuer
+        </a>
+
+        <div class="warning">
+            ⚠️ Ne partage jamais ce QR Code. Il donne accès à ton compte.
+        </div>
+
+    </div>
+</div>
+{% endblock %}

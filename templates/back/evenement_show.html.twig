@@ -1,0 +1,450 @@
+{% extends 'back/admin_layout.html.twig' %}
+
+{% block title %}Détail - {{ evenement.titre }}{% endblock %}
+
+{% block admin_topbar_title %}Detail evenement{% endblock %}
+{% block admin_menu_active %}evenements{% endblock %}
+
+{% block admin_content %}
+<div class="admin-header">
+    <div class="container">
+        <div class="admin-header-content">
+            <div class="admin-breadcrumb">
+                <a href="{{ path('app_home') }}">Accueil</a>
+                <i class="fas fa-chevron-right"></i>
+                <a href="{{ path('app_evenement_admin') }}">Administration</a>
+                <i class="fas fa-chevron-right"></i>
+                <span>Détail</span>
+            </div>
+            <div class="admin-title-section">
+                <div class="admin-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div>
+                    <h1>{{ evenement.titre }}</h1>
+                    <p>Détails et réservations de l'événement</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="admin-container">
+    <div class="container">
+        <div class="detail-grid">
+            <div class="detail-card">
+                <div class="detail-header">
+                    <i class="fas fa-info-circle"></i>
+                    <h3>Informations générales</h3>
+                </div>
+                <div class="detail-content">
+                    <div class="detail-row">
+                        <span class="detail-label">Statut</span>
+                        <span class="status-badge status-{{ evenement.status == 'À venir' ? 'upcoming' : (evenement.status == 'Aujourd\'hui' ? 'today' : 'past') }}">
+                            {{ evenement.status }}
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Date</span>
+                        <span class="detail-value">{{ evenement.date|date('d/m/Y H:i') }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Lieu</span>
+                        <span class="detail-value">{{ evenement.localisation }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Capacité</span>
+                        <span class="detail-value">{{ evenement.currentReservationsCount }} / {{ evenement.maxCapacity }} places</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Tarif</span>
+                        <span class="detail-value">{{ evenement.dynamicPrice|number_format(2, ',', ' ') }} TND / personne</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Billets solidaires</span>
+                        <span class="detail-value">{{ evenement.solidarityReservationsCount }} reservation(s) solidaires</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Impact collecte</span>
+                        <span class="detail-value">{{ evenement.solidarityAmountCollected|number_format(2, ',', ' ') }} TND</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Description</span>
+                        <p class="detail-description">{{ evenement.description }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-header">
+                    <i class="fas fa-ticket-alt"></i>
+                    <h3>Réservations ({{ evenement.reservations|length }})</h3>
+                </div>
+                <div class="detail-content">
+                    {% if evenement.reservations|length > 0 %}
+                        <div class="reservations-list">
+                            {% for reservation in evenement.reservations %}
+                                <div class="reservation-item">
+                                    <div class="reservation-avatar">
+                                        <span>{{ reservation.nom|slice(0, 2)|upper }}</span>
+                                    </div>
+                                    <div class="reservation-info">
+                                        <strong>{{ reservation.nom }}</strong>
+                                        <span>{{ reservation.email }}</span>
+                                        <span>{{ reservation.telephone }}</span>
+                                        <span>Siege: {{ reservation.seatNumber ?: 'Auto' }}</span>
+                                        {% if reservation.solidarityAmount > 0 %}
+                                            <span class="solidarity-detail">Billet solidaire: {{ reservation.solidarityAmount|number_format(2, ',', ' ') }} TND pour {{ reservation.solidarityAssociation }}</span>
+                                            <span class="solidarity-code">Recu: {{ reservation.solidarityReceiptCode }}</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="reservation-date">
+                                        <i class="fas fa-calendar"></i>
+                                        {{ reservation.dateReservation|date('d/m/Y H:i') }}
+                                    </div>
+                                    <form method="post" action="{{ path('app_reservation_admin_delete', {'id': reservation.id}) }}" onsubmit="return confirm('Supprimer cette réservation ?')">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete_reservation_' ~ reservation.id) }}">
+                                        <button type="submit" class="delete-reservation-btn" title="Supprimer">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-reservations">
+                            <i class="fas fa-ticket-alt"></i>
+                            <p>Aucune réservation pour cet événement</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="action-footer">
+            <a href="{{ path('app_evenement_edit', {'id': evenement.id}) }}" class="btn-edit">
+                <i class="fas fa-pencil-alt"></i> Modifier
+            </a>
+            <a href="{{ path('app_evenement_admin') }}" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Retour à la liste
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .admin-header {
+        background: linear-gradient(135deg, #1E5BA8 0%, #3B8B7E 50%, #50BF8F 100%);
+        padding: 40px 0;
+        color: white;
+    }
+    .admin-breadcrumb {
+        font-size: 0.85rem;
+        margin-bottom: 20px;
+    }
+    .admin-breadcrumb a {
+        color: rgba(255,255,255,0.7);
+        text-decoration: none;
+    }
+    .admin-breadcrumb i {
+        margin: 0 8px;
+        font-size: 0.7rem;
+    }
+    .admin-title-section {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+    .admin-icon {
+        width: 60px;
+        height: 60px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+    }
+    .admin-title-section h1 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+    .admin-title-section p {
+        opacity: 0.8;
+        margin: 0;
+    }
+    .admin-container {
+        padding: 40px 0 60px;
+        background: #EFF7E6;
+        min-height: calc(100vh - 250px);
+    }
+    .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: 30px;
+        margin-bottom: 30px;
+    }
+    .detail-card {
+        background: white;
+        border-radius: 28px;
+        overflow: hidden;
+        box-shadow: 0 8px 28px rgba(30,91,168,0.08);
+        border: 2px solid linear-gradient(135deg, rgba(30, 91, 168, 0.1), rgba(80, 191, 143, 0.1));
+    }
+    .detail-header {
+        background: linear-gradient(135deg, #1E5BA8, #50BF8F);
+        padding: 18px 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: white;
+    }
+    .detail-header i {
+        font-size: 1.3rem;
+    }
+    .detail-header h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+    .detail-content {
+        padding: 24px;
+    }
+    .detail-row {
+        display: flex;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #EFF7E6;
+    }
+    .detail-label {
+        width: 120px;
+        font-weight: 600;
+        color: #1E5BA8;
+        font-size: 0.85rem;
+    }
+    .detail-value {
+        flex: 1;
+        color: #333;
+        font-size: 0.9rem;
+    }
+    .detail-description {
+        flex: 1;
+        color: #555;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin: 0;
+    }
+    .status-badge {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    .status-upcoming { background: linear-gradient(135deg, rgba(30, 91, 168, 0.12), rgba(80, 191, 143, 0.12)); color: #0D4A7F; }
+    .status-today { background: #B8E5F5; color: #1E5BA8; }
+    .status-past { background: #F5F5F5; color: #999; }
+    .reservations-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .reservation-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        background: #F8FCFB;
+        border-radius: 20px;
+        transition: all 0.3s;
+        border: 1px solid #EFF7E6;
+    }
+    .reservation-item:hover {
+        background: #E8F5FE;
+        transform: translateX(4px);
+        border-color: #50BF8F;
+    }
+    .reservation-avatar {
+        width: 45px;
+        height: 45px;
+        background: linear-gradient(135deg, #1E5BA8, #50BF8F);
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+    }
+    .reservation-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+    .reservation-info strong {
+        font-size: 0.9rem;
+        color: #1E5BA8;
+    }
+    .reservation-info span {
+        font-size: 0.75rem;
+        color: #666;
+    }
+    .reservation-info .solidarity-detail {
+        color: #1B5E20;
+        font-weight: 600;
+    }
+    .reservation-info .solidarity-code {
+        color: #1E5BA8;
+        font-family: monospace;
+    }
+    .reservation-date {
+        font-size: 0.75rem;
+        color: #666;
+    }
+    .delete-reservation-btn {
+        background: transparent;
+        border: none;
+        color: #FF6B6B;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 10px;
+        transition: all 0.3s;
+    }
+    .delete-reservation-btn:hover {
+        background: #FFF0F0;
+        transform: scale(1.1);
+    }
+    .empty-reservations {
+        text-align: center;
+        padding: 40px;
+    }
+    .empty-reservations i {
+        font-size: 3rem;
+        color: #1B5E20;
+        margin-bottom: 15px;
+    }
+    .action-footer {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+    }
+    .btn-edit {
+        background: linear-gradient(135deg, #1E5BA8 0%, #3B8B7E 50%, #50BF8F 100%);
+        color: white;
+        padding: 12px 30px;
+        border-radius: 40px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 15px rgba(30, 91, 168, 0.3);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-edit::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.6s;
+    }
+
+    .btn-edit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(30, 91, 168, 0.4);
+        color: white;
+    }
+
+    .btn-edit:hover::before {
+        left: 100%;
+    }
+    .btn-back {
+        background: transparent;
+        border: 2px solid #1E5BA8;
+        padding: 10px 28px;
+        border-radius: 40px;
+        text-decoration: none;
+        color: #1E5BA8;
+        font-weight: 500;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+    }
+
+    .btn-back::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, rgba(30, 91, 168, 0.15), rgba(107, 191, 89, 0.15));
+        transition: left 0.6s;
+        z-index: -1;
+    }
+
+    .btn-back:hover {
+        border-color: #50BF8F;
+        color: #50BF8F;
+        transform: translateX(-3px);
+        box-shadow: 0 8px 20px rgba(30, 91, 168, 0.2);
+    }
+
+    .btn-back:hover::before {
+        left: 100%;
+    }
+    @media (max-width: 992px) {
+        .detail-grid { grid-template-columns: 1fr; }
+        .reservation-item { flex-wrap: wrap; }
+    }
+    @media (max-width: 768px) {
+        .detail-row { flex-direction: column; gap: 5px; }
+        .detail-label { width: auto; }
+    }
+</style>
+{# 🔥 BOUTONS AJOUTER AU CALENDRIER - À placer où tu veux dans la page #}
+<div class="add-to-calendar mt-3 mb-3">
+    <div class="dropdown">
+        <button class="btn btn-outline-modern dropdown-toggle w-100" type="button" data-bs-toggle="dropdown">
+            <i class="fas fa-calendar-plus"></i> Ajouter à mon agenda
+        </button>
+        <ul class="dropdown-menu w-100">
+            <li>
+                <a class="dropdown-item" href="{{ evenement.googleCalendarLink }}" target="_blank">
+                    <i class="fab fa-google"></i> Google Agenda
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item" href="{{ path('app_evenement_ical', {'id': evenement.id}) }}">
+                    <i class="fas fa-calendar-alt"></i> Apple / Outlook (.ics)
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<style>
+.add-to-calendar .dropdown-menu {
+    min-width: 200px;
+}
+.add-to-calendar .dropdown-item i {
+    margin-right: 8px;
+}
+.add-to-calendar .dropdown-item:hover {
+    background: linear-gradient(135deg, #6BBF59, #1E5BA8);
+    color: white;
+}
+</style>
+{% endblock %}

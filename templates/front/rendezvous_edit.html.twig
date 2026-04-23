@@ -1,0 +1,9 @@
+{% extends 'front/front_layout.html.twig' %}
+
+{% block front_html_title %}Modifier rendez-vous{% endblock %}
+{% block front_heading %}Modifier le rendez-vous{% endblock %}
+{% block front_subheading %}Mettez à jour votre demande sans quitter le module cabinet original.{% endblock %}
+
+{% block front_content %}
+{% include 'front/rendezvous_new.html.twig' with { form: form, psychologues_by_cabinet: psychologues_by_cabinet } only %}
+{% endblock %}

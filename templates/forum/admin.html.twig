@@ -1,0 +1,152 @@
+{% extends 'back/base_back.html.twig' %}
+
+{% block title %}Gestion Forum{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link href="{{ asset('assets/css/voice-assistant.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block admin_content %}
+  <div class="page-header">
+    <div class="page-header-content">
+      <h1>Gestion du forum</h1>
+      <p>Moderer les discussions du forum depuis le meme back-office GrowMind.</p>
+      <div class="header-time" id="headerTime"></div>
+    </div>
+  </div>
+
+  <div class="gm-voice-box mb-4" data-voice-forum-admin>
+    <div class="gm-voice-top">
+      <div>
+        <h3>Commande Vocale Forum</h3>
+        <p>Dites une commande et GrowMind execute l action dans la gestion forum.</p>
+      </div>
+      <button type="button" class="gm-voice-toggle" data-voice-toggle aria-pressed="false" title="Activer la voix">
+        <i class="bi bi-mic-fill"></i>
+      </button>
+    </div>
+    <p class="gm-voice-status" data-voice-status>Essayez une des 7 commandes vocales ci-dessous.</p>
+    <div class="gm-voice-help">
+      <span class="gm-voice-chip">Nouvelle discussion</span>
+      <span class="gm-voice-chip">Voir front</span>
+      <span class="gm-voice-chip">Chercher stress</span>
+      <span class="gm-voice-chip">Voir archivees</span>
+      <span class="gm-voice-chip">Ouvrir premiere discussion</span>
+      <span class="gm-voice-chip">Modifier premiere discussion</span>
+      <span class="gm-voice-chip">Archiver premiere discussion</span>
+    </div>
+  </div>
+
+  <div class="gm-card">
+    <div class="gm-card-header">
+      <span class="gm-card-title">Discussions</span>
+      <div class="d-flex gap-2">
+        <a href="{{ path('app_forum_new') }}" class="btn-gm-primary" id="forumVoiceNew"><i class="bi bi-plus-lg"></i> Nouvelle discussion</a>
+        <a href="{{ path('app_forum_index') }}" class="btn-gm-outline" id="forumVoiceFront">Voir le front</a>
+      </div>
+    </div>
+    <div class="gm-card-body border-bottom" style="padding: 18px 24px;">
+      <div class="row g-3 align-items-center">
+        <div class="col-md-8">
+          <input
+            type="text"
+            id="forumSearchInput"
+            class="form-control"
+            placeholder="Rechercher par auteur, categorie ou contenu..."
+          >
+        </div>
+        <div class="col-md-4">
+          <select id="forumStateFilter" class="form-select">
+            <option value="all">Tous les etats</option>
+            <option value="visible">Visibles</option>
+            <option value="archive">Archivees</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="gm-card-body p-0" style="padding:0!important;">
+      <div style="overflow-x:auto;">
+        <table class="gm-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Auteur</th>
+              <th>Role</th>
+              <th>Categorie</th>
+              <th>Etat</th>
+              <th>Reponses</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for post in posts %}
+              <tr class="forum-row" data-state="{{ post.archive ? 'archive' : 'visible' }}" data-search="{{ (post.nom ~ ' ' ~ post.role ~ ' ' ~ post.categorie ~ ' ' ~ post.contenu)|lower }}">
+                <td>#{{ post.id }}</td>
+                <td>{{ post.nom }}</td>
+                <td>{{ post.role }}</td>
+                <td>{{ post.categorie }}</td>
+                <td>
+                  <span class="tag {{ post.archive ? 'tag-inactive' : 'tag-active' }}">
+                    {{ post.archive ? 'Archive' : 'Visible' }}
+                  </span>
+                </td>
+                <td>{{ post.reponses|length }}</td>
+                <td>{{ post.dateCreation|date('d/m/Y H:i') }}</td>
+                <td>
+                  <div class="d-flex gap-1 flex-wrap">
+                    <a href="{{ path('app_forum_show', {'id': post.id}) }}" class="btn-icon-sm" title="Voir" data-forum-show><i class="bi bi-eye"></i></a>
+                    <a href="{{ path('app_forum_edit', {'id': post.id}) }}" class="btn-icon-sm" title="Modifier" data-forum-edit><i class="bi bi-pencil"></i></a>
+                    <form method="post" action="{{ path('app_forum_toggle_archive', {'id': post.id}) }}">
+                      <input type="hidden" name="_token" value="{{ csrf_token('toggle_archive_' ~ post.id) }}">
+                      <button class="btn-icon-sm" title="Archiver" data-forum-archive><i class="bi bi-archive"></i></button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            {% else %}
+              <tr>
+                <td colspan="8">Aucune discussion disponible.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="{{ asset('assets/js/voice-assistant.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const searchInput = document.getElementById('forumSearchInput');
+  const stateFilter = document.getElementById('forumStateFilter');
+  const rows = Array.from(document.querySelectorAll('.forum-row'));
+
+  function applyForumFilters() {
+    const search = (searchInput?.value || '').toLowerCase().trim();
+    const state = stateFilter?.value || 'all';
+
+    rows.forEach((row) => {
+      const haystack = row.getAttribute('data-search') || '';
+      const rowState = row.getAttribute('data-state') || 'visible';
+      const matchesSearch = !search || haystack.includes(search);
+      const matchesState = state === 'all' || state === rowState;
+      row.style.display = matchesSearch && matchesState ? '' : 'none';
+    });
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('input', applyForumFilters);
+    searchInput.addEventListener('keyup', applyForumFilters);
+  }
+
+  if (stateFilter) {
+    stateFilter.addEventListener('change', applyForumFilters);
+  }
+});
+</script>
+{% endblock %}

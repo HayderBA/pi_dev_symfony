@@ -1,0 +1,30 @@
+{% extends 'back/base_back.html.twig' %}
+
+{% block title %}{{ is_edit ? 'Modifier Psychologue' : 'Nouveau Psychologue' }}{% endblock %}
+
+{% block admin_content %}
+  <div class="gm-card">
+    <div class="gm-card-header">
+      <span class="gm-card-title">{{ is_edit ? 'Modifier le psychologue' : 'Creer un psychologue' }}</span>
+      <a href="{{ path('admin_psychologue_index') }}" class="btn-gm-outline text-decoration-none">Retour</a>
+    </div>
+    <div class="gm-card-body">
+      <div class="alert alert-info">La liste deroulante "Medecin lie" vient directement de la gestion users.</div>
+      {{ form_start(form) }}
+        <div class="row g-3">
+          <div class="col-md-6">{{ form_row(form.cabinet) }}</div>
+          <div class="col-md-6">{{ form_row(form.user) }}</div>
+          <div class="col-md-6">{{ form_row(form.nom) }}</div>
+          <div class="col-md-6">{{ form_row(form.prenom) }}</div>
+          <div class="col-md-6">{{ form_row(form.specialite) }}</div>
+          <div class="col-md-6">{{ form_row(form.diplome) }}</div>
+          <div class="col-md-4">{{ form_row(form.experience) }}</div>
+          <div class="col-md-4">{{ form_row(form.tarif) }}</div>
+          <div class="col-md-4">{{ form_row(form.telephone) }}</div>
+          <div class="col-12">{{ form_row(form.email) }}</div>
+        </div>
+        <button class="btn btn-primary mt-3">{{ is_edit ? 'Enregistrer' : 'Creer' }}</button>
+      {{ form_end(form) }}
+    </div>
+  </div>
+{% endblock %}

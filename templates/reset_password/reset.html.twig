@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reinitialiser le mot de passe{% endblock %}
+
+{% block body %}
+  <div class="container py-5" style="max-width:560px;">
+    <div class="card border-0 shadow rounded-4 mt-5">
+      <div class="card-body p-4 p-md-5">
+        <h1 class="h3 mb-3">Nouveau mot de passe</h1>
+        {% for message in app.flashes('error') %}
+          <div class="alert alert-danger rounded-4">{{ message }}</div>
+        {% endfor %}
+        {{ form_start(form) }}
+          {{ form_row(form.password) }}
+          {{ form_row(form.confirm_password) }}
+          <button class="btn btn-primary rounded-pill px-4 mt-2">Mettre a jour</button>
+        {{ form_end(form) }}
+      </div>
+    </div>
+  </div>
+{% endblock %}

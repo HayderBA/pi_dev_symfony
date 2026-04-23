@@ -1,0 +1,193 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion ressource et bibliotheque{% endblock %}
+
+{% block body %}
+<style>
+    .resources-page {
+        background: linear-gradient(180deg, #f8fbf9 0%, #ffffff 100%);
+        min-height: 100vh;
+        padding-top: 120px;
+    }
+
+    .hero-section {
+        padding: 32px 0 40px;
+    }
+
+    .hero-badge {
+        display: inline-block;
+        background: #d8f3dc;
+        color: #2d6a4f;
+        padding: 8px 16px;
+        border-radius: 999px;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 18px;
+    }
+
+    .hero-title {
+        font-size: 52px;
+        line-height: 1.1;
+        font-weight: 800;
+        color: #1f513c;
+        margin-bottom: 18px;
+    }
+
+    .hero-title span {
+        color: #52b788;
+    }
+
+    .hero-text {
+        color: #6b7280;
+        font-size: 18px;
+        max-width: 720px;
+        line-height: 1.7;
+    }
+
+    .section-title {
+        font-size: 30px;
+        font-weight: 800;
+        color: #1f513c;
+        margin-bottom: 10px;
+    }
+
+    .section-subtitle {
+        color: #6b7280;
+        margin-bottom: 30px;
+    }
+
+    .resource-card {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+        border: 1px solid #eef2f0;
+        height: 100%;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .resource-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.09);
+    }
+
+    .resource-type {
+        display: inline-block;
+        background: #edf6f9;
+        color: #1d4ed8;
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 16px;
+        text-transform: uppercase;
+    }
+
+    .resource-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 14px;
+    }
+
+    .resource-meta {
+        color: #4b5563;
+        margin-bottom: 10px;
+        font-size: 15px;
+    }
+
+    .resource-meta strong {
+        color: #111827;
+    }
+
+    .btn-view {
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+        background: linear-gradient(90deg, #2d6a4f 0%, #52b788 100%);
+        color: #ffffff;
+        padding: 12px 18px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        margin-top: 14px;
+        transition: 0.3s;
+    }
+
+    .btn-view:hover {
+        color: #ffffff;
+        opacity: 0.92;
+    }
+
+    .empty-box {
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 40px;
+        text-align: center;
+        border: 1px solid #edf2ef;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+        color: #6b7280;
+    }
+</style>
+
+{% include 'front/_main_nav.html.twig' with { active_page: 'resources' } %}
+
+<div class="resources-page">
+    <section class="hero-section">
+        <div class="container">
+            <span class="hero-badge">Bibliotheque GrowMind</span>
+            <h1 class="hero-title">
+                Gestion <span>ressource</span> et bibliotheque
+            </h1>
+            <p class="hero-text">
+                Explorez des contenus utiles pour le bien-etre mental :
+                articles, formations, documents et ressources educatives publiees
+                sur la plateforme.
+            </p>
+        </div>
+    </section>
+
+    <section class="pb-5">
+        <div class="container">
+            <h2 class="section-title">Nos ressources disponibles</h2>
+            <p class="section-subtitle">
+                Decouvrez les ressources publiees et consultez leurs details.
+            </p>
+
+            <div class="row g-4">
+                {% for ressource in ressources %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="resource-card">
+                            <span class="resource-type">{{ ressource.type }}</span>
+
+                            <div class="resource-title">{{ ressource.title }}</div>
+
+                            <div class="resource-meta">
+                                <strong>Categorie :</strong> {{ ressource.category }}
+                            </div>
+
+                            <div class="resource-meta">
+                                <strong>Auteur :</strong> {{ ressource.author }}
+                            </div>
+
+                            <div class="resource-meta">
+                                <strong>Statut :</strong> {{ ressource.status }}
+                            </div>
+
+                            <a href="{{ path('front_resource_show', {'id': ressource.id}) }}" class="btn-view">
+                                Voir les details
+                            </a>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="col-12">
+                        <div class="empty-box">
+                            Aucune ressource publiee disponible pour le moment.
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

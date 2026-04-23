@@ -1,0 +1,676 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:ital,wght@0,700;1,600&display=swap');
+
+:root {
+    --bg: #fdf6ff;
+    --card: #ffffff;
+    --purple: #7c3aed;
+    --pink: #ec4899;
+    --teal: #0d9488;
+    --yellow: #f59e0b;
+    --green: #10b981;
+    --red: #ef4444;
+    --text: #1e1b2e;
+    --muted: #6b7280;
+    --border: #e9d5ff;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    background-image:
+        radial-gradient(ellipse 80% 60% at 0% 0%, rgba(124,58,237,0.10) 0%, transparent 50%),
+        radial-gradient(ellipse 60% 50% at 100% 100%, rgba(236,72,153,0.10) 0%, transparent 50%);
+}
+
+.mh-wrapper {
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+}
+
+.mh-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    animation: fadeDown 0.6s ease both;
+}
+
+.mh-logo {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    display: block;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-8px); }
+}
+
+.mh-title {
+    font-family: 'Fraunces', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+}
+
+.mh-title span {
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.mh-subtitle {
+    color: var(--muted);
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.done-card {
+    background: var(--card);
+    border-radius: 24px;
+    padding: 2.5rem;
+    text-align: center;
+    border: 2px solid var(--border);
+    box-shadow: 0 8px 32px rgba(124,58,237,0.10);
+    animation: fadeUp 0.5s ease both;
+}
+
+.done-emoji { font-size: 4rem; margin-bottom: 1rem; display: block; }
+.done-result {
+    font-family: 'Fraunces', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+}
+.done-advice {
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+}
+.done-timer {
+    background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(236,72,153,0.08));
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.75rem 1.2rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--purple);
+}
+
+.score-bar-wrap {
+    background: #f3f0ff;
+    border-radius: 99px;
+    height: 10px;
+    overflow: hidden;
+    margin: 1rem 0;
+}
+.score-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--purple), var(--pink));
+    transition: width 1s ease;
+}
+
+.loading-card {
+    background: var(--card);
+    border-radius: 24px;
+    padding: 3rem 2rem;
+    text-align: center;
+    border: 2px solid var(--border);
+    box-shadow: 0 8px 32px rgba(124,58,237,0.10);
+}
+
+.loading-spinner {
+    width: 60px; height: 60px;
+    border: 4px solid #e9d5ff;
+    border-top-color: var(--purple);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 1.5rem;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-text {
+    font-family: 'Fraunces', serif;
+    font-size: 1.3rem;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+}
+.loading-sub { color: var(--muted); font-size: 0.9rem; }
+
+.progress-bar {
+    background: #f3f0ff;
+    border-radius: 99px;
+    height: 8px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+.progress-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--purple), var(--pink));
+    transition: width 0.4s ease;
+}
+
+.step-counter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--muted);
+}
+
+.game-card {
+    background: var(--card);
+    border-radius: 28px;
+    padding: 2rem;
+    border: 2px solid var(--border);
+    box-shadow: 0 8px 40px rgba(124,58,237,0.10);
+    animation: fadeUp 0.4s ease both;
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.game-question {
+    font-family: 'Fraunces', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text);
+    text-align: center;
+    margin-bottom: 2rem;
+    line-height: 1.4;
+    flex-shrink: 0;
+}
+
+.game-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    flex: 1;
+    align-items: center;
+}
+
+.opt-emoji {
+    font-size: 2.2rem;
+    padding: 0.6rem 1rem;
+    border-radius: 16px;
+    border: 2px solid transparent;
+    background: #f9f5ff;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+}
+.opt-emoji:hover { transform: scale(1.15); background: #ede9fe; }
+.opt-emoji.selected {
+    border-color: var(--purple);
+    background: #ede9fe;
+    transform: scale(1.2);
+    box-shadow: 0 4px 16px rgba(124,58,237,0.3);
+}
+
+.opt-word {
+    padding: 0.7rem 1.4rem;
+    border-radius: 50px;
+    border: 2px solid var(--border);
+    background: #f9f5ff;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text);
+    transition: all 0.2s;
+}
+.opt-word:hover { border-color: var(--purple); background: #ede9fe; transform: translateY(-2px); }
+.opt-word.selected {
+    border-color: var(--purple);
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(124,58,237,0.35);
+}
+
+.opt-color {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.opt-color:hover { transform: scale(1.15); }
+.opt-color.selected {
+    border-color: var(--text);
+    transform: scale(1.2);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+
+.slider-wrap { width: 100%; padding: 0 1rem; }
+.slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+}
+input[type=range] {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 8px;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--purple) var(--val, 50%), #e9d5ff var(--val, 50%));
+    outline: none;
+    cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    box-shadow: 0 2px 8px rgba(124,58,237,0.4);
+    cursor: pointer;
+}
+.slider-value {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 2rem;
+}
+
+.btn-next {
+    display: block;
+    width: 100%;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border: none;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    color: #fff;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(124,58,237,0.35);
+}
+.btn-next:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(124,58,237,0.4); }
+.btn-next:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+.result-card {
+    background: var(--card);
+    border-radius: 28px;
+    padding: 2.5rem;
+    text-align: center;
+    border: 2px solid var(--border);
+    box-shadow: 0 8px 40px rgba(124,58,237,0.12);
+    animation: fadeUp 0.5s ease both;
+}
+
+.result-emoji { font-size: 5rem; margin-bottom: 1rem; display: block; animation: pop 0.5s ease both 0.2s; }
+@keyframes pop {
+    from { transform: scale(0); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+}
+
+.result-label {
+    font-family: 'Fraunces', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+}
+
+.result-advice {
+    color: var(--muted);
+    line-height: 1.8;
+    font-size: 1rem;
+    margin: 1.2rem 0 1.8rem;
+    background: #f9f5ff;
+    border-radius: 16px;
+    padding: 1.2rem 1.5rem;
+    border-left: 4px solid var(--purple);
+    text-align: left;
+}
+
+.alert-box {
+    background: rgba(239,68,68,0.08);
+    border: 2px solid rgba(239,68,68,0.3);
+    border-radius: 14px;
+    padding: 1rem 1.2rem;
+    color: var(--red);
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+}
+
+.btn-home {
+    display: inline-block;
+    padding: 0.9rem 2.5rem;
+    border-radius: 50px;
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    color: #fff;
+    font-weight: 800;
+    font-size: 1rem;
+    text-decoration: none;
+    box-shadow: 0 4px 16px rgba(124,58,237,0.35);
+    transition: all 0.2s;
+}
+.btn-home:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(124,58,237,0.4); }
+
+.hidden { display: none !important; }
+</style>
+
+<div class="mh-wrapper">
+
+    <!-- Header -->
+    <div class="mh-header">
+        <span class="mh-logo">🧠</span>
+        <h1 class="mh-title">Comment tu te sens <span>aujourd'hui ?</span></h1>
+        <p class="mh-subtitle">5 petits jeux • 2 minutes • 100% bienveillant</p>
+    </div>
+
+    {% if lastResult %}
+    <div class="done-card">
+        <span class="done-emoji">{{ lastResult.ai_result == 'ok' ? '😊' : (lastResult.ai_result == 'stress' ? '😤' : (lastResult.ai_result == 'anxiete' ? '😰' : '😔')) }}</span>
+        <div class="done-result">Tu as déjà fait ton check aujourd'hui !</div>
+        <div class="score-bar-wrap">
+            <div class="score-bar-fill" style="width: {{ lastResult.ai_score }}%"></div>
+        </div>
+        <div class="done-advice">{{ lastResult.ai_advice }}</div>
+        <div class="done-timer">⏰ Prochain check disponible dans 24h</div>
+        <br>
+        <a href="{{ path('app_home') }}" class="btn-home" style="margin-top:1rem;">Aller sur l'accueil →</a>
+    </div>
+
+    {% else %}
+
+    <!-- Loading -->
+    <div id="loadingCard" class="loading-card">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">L'IA prépare tes jeux... 🎮</div>
+        <div class="loading-sub">Chaque session est unique, juste pour toi !</div>
+    </div>
+
+    <!-- Progress -->
+    <div id="progressSection" class="hidden">
+        <div class="step-counter">
+            <span id="stepLabel">Jeu 1 / 5</span>
+            <span id="stepEmoji">🎯</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+    </div>
+
+    <!-- Game card -->
+    <div id="gameCard" class="game-card hidden">
+        <div class="game-question" id="gameQuestion"></div>
+        <div class="game-options" id="gameOptions"></div>
+        <button class="btn-next" id="btnNext" onclick="nextGame()" disabled>
+            Continuer →
+        </button>
+    </div>
+
+    <!-- Analyzing -->
+    <div id="analyzingCard" class="loading-card hidden">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">🧠 L'IA analyse tes réponses...</div>
+        <div class="loading-sub">Génération de ton bilan personnalisé</div>
+    </div>
+
+    <!-- Result -->
+    <div id="resultCard" class="result-card hidden">
+        <span class="result-emoji" id="resultEmoji"></span>
+        <div class="result-label" id="resultLabel"></div>
+        <div class="score-bar-wrap" style="margin: 1rem 0;">
+            <div class="score-bar-fill" id="resultBar" style="width: 0%"></div>
+        </div>
+        <div id="alertBox" class="alert-box hidden">
+            ⚠️ Nous te conseillons de parler à un professionnel de santé.
+        </div>
+        <div class="result-advice" id="resultAdvice"></div>
+        <a href="{{ path('app_home') }}" class="btn-home">Aller sur l'accueil 🏠</a>
+    </div>
+
+    {% endif %}
+</div>
+
+<script>
+let games        = [];
+let currentGame  = 0;
+let answers      = [];
+let currentValue = null;
+const stepEmojis = ['🎯', '🌈', '💭', '🎲', '✨'];
+
+// Jeux de secours (utilisés si l'IA échoue ou renvoie un type inconnu)
+const FALLBACK_GAMES = [
+    {id:1, type:'emoji_choice', question:'Comment vous sentez-vous en ce moment ?', options:['😄','🙂','😐','😕','😢'], weights:{'😄':2,'🙂':1,'😐':0,'😕':-1,'😢':-2}},
+    {id:2, type:'slider', question:'Quel est votre niveau de stress aujourd\'hui ?', options:['Très calme','Très stressé']},
+    {id:3, type:'color_pick', question:'Quelle couleur représente votre journée ?', options:['#FFD700','#87CEEB','#90EE90','#FF6B6B','#9B59B6'], weights:{'#FFD700':2,'#87CEEB':1,'#90EE90':2,'#FF6B6B':-1,'#9B59B6':0}},
+    {id:4, type:'word_association', question:'Quel mot vous correspond le mieux en ce moment ?', options:['Serein','Fatigué','Anxieux','Motivé','Triste'], weights:{'Serein':2,'Fatigué':-1,'Anxieux':-2,'Motivé':2,'Triste':-2}},
+    {id:5, type:'scenario', question:'Face à un problème inattendu, vous...', options:['Je cherche une solution','Je demande de l\'aide','Je panique','Je l\'ignore','Je me décourage'], weights:{'Je cherche une solution':2,'Je demande de l\'aide':1,'Je panique':-2,'Je l\'ignore':-1,'Je me décourage':-2}}
+];
+
+// Types autorisés — tout autre type sera rendu comme word_association
+const ALLOWED_TYPES = ['emoji_choice', 'slider', 'color_pick', 'word_association', 'scenario'];
+
+document.addEventListener('DOMContentLoaded', loadGames);
+
+async function loadGames() {
+    try {
+        const res  = await fetch("{{ path('mental_health_generate') }}", { method: 'POST' });
+        const data = await res.json();
+
+        if (data.error) throw new Error(data.error);
+
+        // Valider et nettoyer les jeux reçus
+        let receivedGames = data.games || [];
+        receivedGames = receivedGames.filter(g => g.question && Array.isArray(g.options) && g.options.length > 0);
+
+        // Forcer les types inconnus vers word_association
+        receivedGames = receivedGames.map(g => ({
+            ...g,
+            type: ALLOWED_TYPES.includes(g.type) ? g.type : 'word_association'
+        }));
+
+        // Si on a moins de 3 jeux valides → utiliser le fallback
+        games = receivedGames.length >= 3 ? receivedGames : FALLBACK_GAMES;
+
+        startGames();
+
+    } catch (e) {
+        console.warn('IA indisponible, utilisation du fallback :', e.message);
+        // Utiliser les jeux statiques si l'IA échoue
+        games = FALLBACK_GAMES;
+        startGames();
+    }
+}
+
+function startGames() {
+    document.getElementById('loadingCard').classList.add('hidden');
+    document.getElementById('progressSection').classList.remove('hidden');
+    document.getElementById('gameCard').classList.remove('hidden');
+    showGame(0);
+}
+
+function showGame(index) {
+    currentValue = null;
+    document.getElementById('btnNext').disabled = true;
+
+    const game     = games[index];
+    const progress = (index / games.length) * 100;
+
+    document.getElementById('progressFill').style.width = progress + '%';
+    document.getElementById('stepLabel').textContent    = 'Jeu ' + (index + 1) + ' / ' + games.length;
+    document.getElementById('stepEmoji').textContent    = stepEmojis[index] || '🎮';
+    document.getElementById('gameQuestion').textContent = game.question;
+
+    const optionsEl = document.getElementById('gameOptions');
+    optionsEl.innerHTML = '';
+
+    const type = ALLOWED_TYPES.includes(game.type) ? game.type : 'word_association';
+
+    switch (type) {
+
+        case 'emoji_choice':
+            game.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className   = 'opt-emoji';
+                btn.textContent = opt;
+                btn.onclick     = () => selectOption(btn, opt, 'opt-emoji');
+                optionsEl.appendChild(btn);
+            });
+            break;
+
+        case 'color_pick':
+            game.options.forEach(color => {
+                const btn = document.createElement('button');
+                btn.className = 'opt-color';
+                btn.style.background  = color;
+                btn.style.borderColor = 'transparent';
+                btn.onclick = () => selectOption(btn, color, 'opt-color');
+                optionsEl.appendChild(btn);
+            });
+            break;
+
+        case 'slider':
+            const wrap         = document.createElement('div');
+            wrap.className     = 'slider-wrap';
+            const labels       = document.createElement('div');
+            labels.className   = 'slider-labels';
+            labels.innerHTML   = '<span>' + (game.options[0] || 'Peu') + '</span><span>' + (game.options[1] || 'Beaucoup') + '</span>';
+            const slider       = document.createElement('input');
+            slider.type        = 'range';
+            slider.min         = 0;
+            slider.max         = 100;
+            slider.value       = 50;
+            const valueDisplay = document.createElement('div');
+            valueDisplay.className   = 'slider-value';
+            valueDisplay.textContent = getSliderEmoji(50);
+            slider.oninput = () => {
+                currentValue             = slider.value;
+                valueDisplay.textContent = getSliderEmoji(parseInt(slider.value));
+                slider.style.setProperty('--val', slider.value + '%');
+                document.getElementById('btnNext').disabled = false;
+            };
+            currentValue = 50;
+            document.getElementById('btnNext').disabled = false;
+            wrap.appendChild(labels);
+            wrap.appendChild(slider);
+            wrap.appendChild(valueDisplay);
+            optionsEl.appendChild(wrap);
+            break;
+
+        case 'word_association':
+        case 'scenario':
+        default:
+            game.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className   = 'opt-word';
+                btn.textContent = opt;
+                btn.onclick     = () => selectOption(btn, opt, 'opt-word');
+                optionsEl.appendChild(btn);
+            });
+    }
+
+    // Animation
+    const card = document.getElementById('gameCard');
+    card.style.animation = 'none';
+    card.offsetHeight;
+    card.style.animation = 'fadeUp 0.4s ease both';
+}
+
+function getSliderEmoji(val) {
+    if (val < 20) return '😔';
+    if (val < 40) return '😕';
+    if (val < 60) return '😐';
+    if (val < 80) return '🙂';
+    return '😄';
+}
+
+function selectOption(btn, value, className) {
+    document.querySelectorAll('.' + className).forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    currentValue = value;
+    document.getElementById('btnNext').disabled = false;
+}
+
+function nextGame() {
+    if (currentValue === null) return;
+
+    answers.push({ gameId: games[currentGame].id, value: currentValue });
+    currentGame++;
+
+    if (currentGame < games.length) {
+        showGame(currentGame);
+    } else {
+        analyzeResults();
+    }
+}
+
+async function analyzeResults() {
+    document.getElementById('gameCard').classList.add('hidden');
+    document.getElementById('progressSection').classList.add('hidden');
+    document.getElementById('analyzingCard').classList.remove('hidden');
+
+    try {
+        const res  = await fetch("{{ path('mental_health_analyze') }}", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ answers, games })
+        });
+        const data = await res.json();
+
+        if (data.error) throw new Error(data.error);
+
+        showResult(data);
+
+    } catch (e) {
+        document.getElementById('analyzingCard').innerHTML =
+            '<div style="color:#ef4444;font-weight:700;text-align:center;padding:2rem;">❌ Erreur analyse : ' + e.message + '</div>';
+    }
+}
+
+function showResult(data) {
+    document.getElementById('analyzingCard').classList.add('hidden');
+    const card = document.getElementById('resultCard');
+    card.classList.remove('hidden');
+
+    document.getElementById('resultEmoji').textContent  = data.emoji  || '🧠';
+    document.getElementById('resultLabel').textContent  = data.label  || 'Analyse terminée';
+    document.getElementById('resultAdvice').textContent = data.advice || '';
+
+    setTimeout(() => {
+        document.getElementById('resultBar').style.width = (data.score || 50) + '%';
+    }, 300);
+
+    if (data.alert) {
+        document.getElementById('alertBox').classList.remove('hidden');
+    }
+}
+</script>
+
+{% endblock %}

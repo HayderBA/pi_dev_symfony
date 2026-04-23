@@ -1,0 +1,31 @@
+{% extends 'wellness/base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block wellness_content %}
+  <div class="wellness-page-header">
+    <div class="wellness-page-copy">
+      <div class="page-kicker mb-2">Humeurs</div>
+      <h1 class="wellness-title">{{ title }}</h1>
+      <p class="wellness-lead">Enregistre les humeurs dans la meme ambiance visuelle et les memes cartes que le projet source.</p>
+    </div>
+    <div class="wellness-actions">
+      <a href="{{ path('app_humeur_index') }}" class="btn-shell btn-shell-outline">Retour a la liste</a>
+    </div>
+  </div>
+
+  <div class="card content-card wellness-form-card">
+    <div class="card-body p-4">
+      {{ form_start(form) }}
+        <div class="row g-3">
+          <div class="col-md-6">{{ form_row(form.utilisateur) }}</div>
+          <div class="col-md-6">{{ form_row(form.niveau) }}</div>
+          <div class="col-12">{{ form_row(form.notes) }}</div>
+        </div>
+        <div class="wellness-form-actions">
+          <button class="btn-shell btn-shell-primary">Enregistrer</button>
+        </div>
+      {{ form_end(form) }}
+    </div>
+  </div>
+{% endblock %}

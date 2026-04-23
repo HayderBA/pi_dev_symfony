@@ -1,0 +1,26 @@
+{% extends 'back/cabinet_new.html.twig' %}
+
+{% block admin_html_title %}Modifier un cabinet{% endblock %}
+{% block admin_topbar_title %}Modifier un cabinet{% endblock %}
+
+{% block admin_content %}
+<div class="page-header-admin">
+    <h1><i class="bi bi-pencil-square me-2"></i>Modifier {{ cabinet.nomcabinet }}</h1>
+    <p>Mettez à jour les informations du cabinet.</p>
+</div>
+
+<div class="gm-card admin-crud-card" style="max-width: 820px;">
+    <div class="gm-card-body">
+        {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
+        {{ form_errors(form) }}
+        {% for child in form %}
+            {{ form_row(child) }}
+        {% endfor %}
+        <div class="mt-4 d-flex gap-2 flex-wrap">
+            <button type="submit" class="btn-gm-primary"><i class="bi bi-check2"></i> Enregistrer</button>
+            <a href="{{ path('admin_cabinet_index') }}" class="btn-gm-outline">Retour</a>
+        </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Chat GrowMind{% endblock %}
+
+{% block body %}
+<main class="main">
+  <section class="section" style="padding-top: 100px;">
+    <div class="container">
+      {% for label, messages in app.flashes %}
+        {% for message in messages %}
+          <div class="alert alert-{{ label == 'success' ? 'success' : 'warning' }}">{{ message }}</div>
+        {% endfor %}
+      {% endfor %}
+
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body">
+              <h3 class="mb-3">Medecins disponibles</h3>
+              <div class="list-group">
+                {% for medecin in medecins %}
+                  <a href="{{ path('messages_new', {'userId': medecin.id}) }}" class="list-group-item list-group-item-action">
+                    <strong>{{ medecin.fullName }}</strong>
+                    <div class="small text-secondary">{{ medecin.email }}</div>
+                  </a>
+                {% else %}
+                  <div class="text-secondary">Aucun medecin disponible.</div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-8">
+          <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+              <h3 class="mb-0">Assistant GrowMind</h3>
+            </div>
+            <div class="card-body p-4">
+              {% include 'forum/sidebar.html.twig' %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}

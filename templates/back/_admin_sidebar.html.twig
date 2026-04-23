@@ -1,0 +1,26 @@
+{# active: dashboard | evenements | cabinet | rendezvous | doctor | patient #}
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon"><i class="bi bi-heart-pulse-fill"></i></div>
+    <div>
+      <div class="brand-name">GrowMind</div>
+      <div class="brand-tag">Mental Health Platform</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <span class="nav-label">Administration</span>
+    <a href="{{ path('app_admin_dashboard') }}" class="nav-link {{ active == 'dashboard' ? 'active' : '' }}"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
+    <a href="{{ path('app_evenement_admin') }}" class="nav-link {{ active == 'evenements' ? 'active' : '' }}"><i class="bi bi-calendar2-check-fill"></i> Evenements</a>
+    <a href="{{ path('admin_cabinet_index') }}" class="nav-link {{ active == 'cabinet' ? 'active' : '' }}"><i class="bi bi-building"></i> Cabinets</a>
+    <a href="{{ path('admin_psychologue_index') }}" class="nav-link {{ active == 'cabinet' ? 'active' : '' }}"><i class="bi bi-person-vcard-fill"></i> Psychologues</a>
+    <a href="{{ path('admin_rendezvous_index') }}" class="nav-link {{ active == 'rendezvous' ? 'active' : '' }}"><i class="bi bi-calendar2-check-fill"></i> Rendez-vous</a>
+    <span class="nav-label">Vues role</span>
+    <a href="{{ path('app_doctor_dashboard') }}" class="nav-link {{ active == 'doctor' ? 'active' : '' }}"><i class="bi bi-clipboard2-pulse-fill"></i> Doctor View</a>
+    <a href="{{ path('app_patient_dashboard') }}" class="nav-link {{ active == 'patient' ? 'active' : '' }}"><i class="bi bi-person-heart"></i> Patient View</a>
+    <span class="nav-label">Site public</span>
+    <a href="{{ path('app_home') }}" class="nav-link"><i class="bi bi-house-door-fill"></i> Accueil front</a>
+  </nav>
+  <div class="sidebar-footer">
+    <a href="{{ path('app_logout') }}" class="nav-link"><i class="bi bi-box-arrow-left"></i> Deconnexion</a>
+  </div>
+</aside>

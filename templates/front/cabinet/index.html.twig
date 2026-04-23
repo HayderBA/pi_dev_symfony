@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Cabinets GrowMind{% endblock %}
+
+{% block body %}
+{% include 'front/_main_nav.html.twig' with { active_page: 'cabinet' } %}
+<main class="main" style="padding-top: 120px;">
+  <section class="section">
+    <div class="container">
+      <div class="section-title text-center mb-5">
+        <h1>Cabinets medicaux</h1>
+        <p>Consultez les cabinets partenaires et explorez les psychologues relies a GrowMind.</p>
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-md-3"><div class="card border-0 shadow-sm text-center p-3"><div class="small text-muted">Total</div><div class="fs-3 fw-bold text-primary">{{ stats.total }}</div></div></div>
+        {% for label, count in stats.by_status %}
+          <div class="col-md-3"><div class="card border-0 shadow-sm text-center p-3"><div class="small text-muted text-capitalize">{{ label }}</div><div class="fs-3 fw-bold text-success">{{ count }}</div></div></div>
+        {% endfor %}
+      </div>
+
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+          <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-4"><label class="form-label">Mot-cle</label><input type="text" name="q" value="{{ filters.q }}" class="form-control" placeholder="Nom, ville, adresse"></div>
+            <div class="col-md-2"><label class="form-label">Statut</label><select name="status" class="form-select"><option value="">Tous</option><option value="actif" {{ filters.status == 'actif' ? 'selected' }}>Actif</option><option value="inactif" {{ filters.status == 'inactif' ? 'selected' }}>Inactif</option></select></div>
+            <div class="col-md-2"><label class="form-label">Ville</label><select name="ville" class="form-select"><option value="">Toutes</option>{% for ville in villes %}<option value="{{ ville }}" {{ filters.ville == ville ? 'selected' }}>{{ ville }}</option>{% endfor %}</select></div>
+            <div class="col-md-2"><label class="form-label">Tri</label><select name="sort" class="form-select"><option value="nom" {{ filters.sort == 'nom' ? 'selected' }}>Nom</option><option value="ville" {{ filters.sort == 'ville' ? 'selected' }}>Ville</option><option value="status" {{ filters.sort == 'status' ? 'selected' }}>Statut</option></select></div>
+            <div class="col-md-2"><label class="form-label">Ordre</label><select name="dir" class="form-select"><option value="asc" {{ filters.dir == 'asc' ? 'selected' }}>Asc</option><option value="desc" {{ filters.dir == 'desc' ? 'selected' }}>Desc</option></select></div>
+            <div class="col-12 d-flex gap-2"><button class="btn btn-primary">Appliquer</button><a href="{{ path('front_cabinet_index') }}" class="btn btn-outline-secondary">Reinitialiser</a></div>
+          </form>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        {% for cabinet in cabinets %}
+          <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-header text-white" style="background:linear-gradient(135deg,#0ea5e9,#2563eb);">
+                <h4 class="mb-0">{{ cabinet.nomcabinet }}</h4>
+              </div>
+              <div class="card-body">
+                <p><i class="bi bi-geo-alt me-1 text-primary"></i>{{ cabinet.adresse }}, {{ cabinet.ville }}</p>
+                <p><i class="bi bi-envelope me-1 text-primary"></i>{{ cabinet.email }}</p>
+                <p><i class="bi bi-telephone me-1 text-primary"></i>{{ cabinet.telephone }}</p>
+                <p class="text-muted">{{ cabinet.description }}</p>
+                <span class="badge {{ cabinet.status == 'actif' ? 'bg-success' : 'bg-secondary' }}">{{ cabinet.status }}</span>
+                <span class="badge bg-info text-dark">{{ cabinet.psychologuesCount }} psy</span>
+              </div>
+              <div class="card-footer bg-white border-0 d-flex gap-2">
+                <a href="{{ path('front_cabinet_show', {id: cabinet.idCabinet}) }}" class="btn btn-outline-primary btn-sm">Voir le cabinet</a>
+                <a href="{{ path('front_rendezvous_new') }}" class="btn btn-primary btn-sm">Prendre rendez-vous</a>
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <div class="col-12"><div class="alert alert-info">Aucun cabinet disponible pour le moment.</div></div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}

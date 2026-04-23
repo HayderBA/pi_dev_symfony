@@ -1,0 +1,32 @@
+{% extends 'wellness/base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block wellness_content %}
+  <div class="wellness-page-header">
+    <div class="wellness-page-copy">
+      <div class="page-kicker mb-2">Tests</div>
+      <h1 class="wellness-title">{{ title }}</h1>
+      <p class="wellness-lead">Ajoute un test wellness dans une fiche alignee sur le style du projet sante et bien-etre.</p>
+    </div>
+    <div class="wellness-actions">
+      <a href="{{ path('app_wellness_test_index') }}" class="btn-shell btn-shell-outline">Retour a la liste</a>
+    </div>
+  </div>
+
+  <div class="card content-card wellness-form-card">
+    <div class="card-body p-4">
+      {{ form_start(form) }}
+        <div class="row g-3">
+          <div class="col-md-6">{{ form_row(form.utilisateur) }}</div>
+          <div class="col-md-6">{{ form_row(form.typeTest) }}</div>
+          <div class="col-md-6">{{ form_row(form.score) }}</div>
+          <div class="col-md-6">{{ form_row(form.dateTest) }}</div>
+        </div>
+        <div class="wellness-form-actions">
+          <button class="btn-shell btn-shell-primary">Enregistrer</button>
+        </div>
+      {{ form_end(form) }}
+    </div>
+  </div>
+{% endblock %}

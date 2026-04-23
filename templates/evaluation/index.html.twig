@@ -1,0 +1,195 @@
+{% extends 'back/base_back.html.twig' %}
+
+{% block title %}Gestion des Évaluations{% endblock %}
+
+{% block admin_content %}
+<div class="page-header mb-4">
+  <div class="page-header-content">
+    <h1>Gestion des Évaluations</h1>
+    <p>Consulter, filtrer et gérer les évaluations utilisateur.</p>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-12">
+    <div class="gm-card">
+      <div class="gm-card-header mb-3">
+        <span class="gm-card-title">Liste des Évaluations</span>
+        <div class="d-flex gap-2 align-items-center">
+          <select id="filterNote" style="padding:7px;border-radius:9px;border:1px solid var(--border);font-size:12.5px;outline:none;background:var(--body-bg);">
+            <option value="">Toutes les Notes</option>
+            <option value="5">⭐⭐⭐⭐⭐</option>
+            <option value="4">⭐⭐⭐⭐</option>
+            <option value="3">⭐⭐⭐</option>
+            <option value="2">⭐⭐</option>
+            <option value="1">⭐</option>
+          </select>
+          <input type="text" id="searchInputEval" placeholder="Chercher ressource, avis..." style="padding:7px 14px;border-radius:9px;border:1px solid var(--border);font-size:12.5px;outline:none;background:var(--body-bg);width: 250px;">
+        </div>
+      </div>
+      <div class="gm-card-body p-0" style="padding:0!important;">
+        <div style="overflow-x:auto;">
+          <table class="gm-table">
+            <thead>
+              <tr>
+                <th>Ressource</th>
+                <th>Note</th>
+                <th>Date d'évaluation</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tableBodyEval">
+                {{ include('evaluation/_list.html.twig') }}
+            </tbody>
+          </table>
+        </div>
+        <div class="d-flex align-items-center justify-content-between px-4 py-3 border-top">
+          <span style="font-size:12.5px;color:var(--text-muted);">
+            {% set firstItem = (evaluations.currentPageNumber - 1) * evaluations.itemNumberPerPage + 1 %}
+            {% set lastItem  = firstItem + evaluations|length - 1 %}
+            Affichage {{ firstItem }}–{{ lastItem }} sur {{ evaluations.totalItemCount }} évaluations
+          </span>
+          <div>{{ knp_pagination_render(evaluations) }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# ── AI Sentiment Dashboard ────────────────────────────────────────────── #}
+<div class="row g-3 mb-4">
+  <div class="col-12">
+    <div class="gm-card" style="border:1.5px solid rgba(30,136,229,.25);background:linear-gradient(135deg,#f0f9ff,#fff);">
+      <div class="gm-card-header pb-3 border-bottom d-flex align-items-center justify-content-between">
+        <span class="gm-card-title">
+          <span style="background:linear-gradient(135deg,#16c784,#1e88e5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:15px;font-weight:700;">✨ Analyse IA — Sentiment des Patients</span>
+        </span>
+        <button id="btnLoadInsight" style="background:linear-gradient(135deg,#0d1b2a,#1e3a5f);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-size:12.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px;">
+          <span id="insightSpinner" style="display:none;width:12px;height:12px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;"></span>
+          <i class="bi bi-stars" id="insightIcon"></i> Générer l'analyse Gemini
+        </button>
+      </div>
+      <div class="gm-card-body">
+        <div id="insightPlaceholder" style="color:var(--text-muted);font-size:13px;font-style:italic;text-align:center;padding:12px 0;">
+          Cliquez sur le bouton pour générer une analyse IA des {{ stats.total }} évaluations en temps réel.
+        </div>
+        <div id="insightContent" style="display:none;">
+          <div id="insightText" style="font-size:14px;line-height:1.75;color:var(--text-primary);padding:4px 0;"></div>
+          <div id="insightMeta" style="font-size:11px;color:var(--text-muted);margin-top:10px;"></div>
+        </div>
+        <div id="insightError" style="display:none;color:#dc2626;font-size:13px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-8 mx-auto">
+    <div class="gm-card">
+       <div class="gm-card-header border-bottom pb-2 mb-3">
+          <span class="gm-card-title" style="font-size: 14px;"><i class="bi bi-star-fill me-2" style="color: #f59e0b;"></i>Répartition des Notes ({{ stats.total }} avis)</span>
+       </div>
+       <div style="height: 250px;">
+          <canvas id="notesChart"></canvas>
+       </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Bar Chart Notes
+    new Chart(document.getElementById('notesChart'), {
+        type: 'bar',
+        data: {
+            labels: {{ stats.chartNoteLabels|json_encode|raw }},
+            datasets: [{
+                label: 'Nombre d\'avis',
+                data: {{ stats.chartNoteData|json_encode|raw }},
+                backgroundColor: '#1e88e5',
+                borderRadius: 6
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, grid: { display: false } },
+                x: { grid: { display: false } }
+            },
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+
+    // 2. AJAX Search & Filters
+    const searchInput = document.getElementById('searchInputEval');
+    const filterNote = document.getElementById('filterNote');
+    const tableBody = document.getElementById('tableBodyEval');
+
+    function updateTable() {
+        const query = searchInput.value;
+        const note = filterNote.value;
+
+        const url = new URL('{{ path('app_evaluation_index') }}', window.location.origin);
+        url.searchParams.set('q', query);
+        url.searchParams.set('note', note);
+
+        fetch(url, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.text())
+        .then(html => {
+            tableBody.innerHTML = html;
+        });
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener('input', updateTable);
+        filterNote.addEventListener('change', updateTable);
+    }
+
+    // 3. AI Sentiment Insight
+    const btnLoadInsight  = document.getElementById('btnLoadInsight');
+    const insightSpinner  = document.getElementById('insightSpinner');
+    const insightIcon     = document.getElementById('insightIcon');
+    const insightText     = document.getElementById('insightText');
+    const insightMeta     = document.getElementById('insightMeta');
+    const insightContent  = document.getElementById('insightContent');
+    const insightPlaceholder = document.getElementById('insightPlaceholder');
+    const insightError    = document.getElementById('insightError');
+
+    if (btnLoadInsight) {
+        btnLoadInsight.addEventListener('click', async function () {
+            btnLoadInsight.disabled   = true;
+            insightSpinner.style.display = 'inline-block';
+            insightIcon.style.display    = 'none';
+            insightError.style.display   = 'none';
+            insightPlaceholder.style.display = 'none';
+
+            try {
+                const res  = await fetch('{{ path('app_ai_evaluation_insights') }}');
+                const data = await res.json();
+
+                if (data.success) {
+                    insightText.textContent = data.insight;
+                    insightMeta.textContent = '⚡ Analyse générée par Gemini 2.5 Flash · ' + new Date().toLocaleString('fr-FR');
+                    insightContent.style.display = 'block';
+                } else {
+                    insightError.textContent   = '⚠️ ' + (data.error || 'Erreur inconnue.');
+                    insightError.style.display = 'block';
+                }
+            } catch (err) {
+                insightError.textContent   = '⚠️ Erreur réseau : ' + err.message;
+                insightError.style.display = 'block';
+            } finally {
+                btnLoadInsight.disabled      = false;
+                insightSpinner.style.display = 'none';
+                insightIcon.style.display    = 'inline';
+            }
+        });
+    }
+});
+</script>
+<style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+{% endblock %}

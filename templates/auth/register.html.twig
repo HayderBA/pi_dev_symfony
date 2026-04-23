@@ -1,0 +1,471 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+<style>
+  :root {
+    --primary:    #0ea5e9;
+    --accent:     #22c55e;
+    --dark:       #0f172a;
+    --dark-2:     #1e293b;
+    --dark-3:     #334155;
+    --border:     #2d3f55;
+    --text:       #e2e8f0;
+    --text-muted: #94a3b8;
+    --error-col:  #f87171;
+    --radius:     10px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background: var(--dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: system-ui, sans-serif;
+    padding: 2rem 1rem;
+  }
+
+  /* ── Card ── */
+  .register-card {
+    background: var(--dark-2);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    width: 100%;
+    max-width: 680px;
+    overflow: hidden;
+  }
+
+  /* ── Header ── */
+  .card-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card-header .dot {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+  .card-header h1 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* ── Body ── */
+  .card-body { padding: 1.5rem 2rem; }
+
+  /* ── Erreur ── */
+  .alert-error {
+    background: rgba(248,113,113,.10);
+    border: 1px solid var(--error-col);
+    color: var(--error-col);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    margin-bottom: 1.25rem;
+  }
+
+  /* ── Section label ── */
+  .section-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 1.25rem 0 .75rem;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── Grid ── */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .form-grid .full { grid-column: span 2; }
+
+  /* ── Groupe ── */
+  .fg {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  label {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+
+  input:not([type=checkbox]),
+  select {
+    background: var(--dark);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-size: 13.5px;
+    padding: 9px 12px;
+    width: 100%;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+    appearance: none;
+  }
+  input:focus, select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(14,165,233,.15);
+  }
+
+  /* Champ invalide après submit */
+  .was-validated input.invalid,
+  .was-validated select.invalid {
+    border-color: var(--error-col);
+    box-shadow: 0 0 0 3px rgba(248,113,113,.12);
+  }
+
+  /* ── Sections rôle ── */
+  .role-section {
+    background: var(--dark);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.25rem 1.25rem;
+    margin-top: .5rem;
+    display: none;
+  }
+
+  /* ── Force password ── */
+  .password-strength {
+    height: 3px;
+    border-radius: 99px;
+    background: var(--border);
+    margin-top: 5px;
+    overflow: hidden;
+  }
+  .password-strength-bar {
+    height: 100%;
+    width: 0%;
+    border-radius: 99px;
+    transition: width .3s, background .3s;
+  }
+
+  /* ── Footer ── */
+  .card-footer {
+    padding: 1.25rem 2rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .footer-link {
+    font-size: 12.5px;
+    color: var(--text-muted);
+  }
+  .footer-link a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .footer-link a:hover { text-decoration: underline; }
+
+  .btn-register {
+    padding: 10px 28px;
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: #fff;
+    font-size: 13.5px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: opacity .2s, transform .15s;
+    white-space: nowrap;
+  }
+  .btn-register:hover  { opacity: .9; transform: translateY(-1px); }
+  .btn-register:active { transform: scale(.97); }
+
+  @media (max-width: 520px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .form-grid .full { grid-column: span 1; }
+    .card-body, .card-footer, .card-header { padding-left: 1rem; padding-right: 1rem; }
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="register-card">
+
+  {# ── Header ── #}
+  <div class="card-header">
+    <span class="dot"></span>
+    <h1>Créer un compte</h1>
+  </div>
+
+  <form method="POST" action="{{ path('app_register') }}" id="register-form" novalidate>
+
+    <div class="card-body">
+
+      {# ── Erreur serveur ── #}
+      {% if error %}
+        <div class="alert-error">⚠ {{ error }}</div>
+      {% endif %}
+
+      {# ────── IDENTITÉ ────── #}
+      <div class="section-label">Identité</div>
+      <div class="form-grid">
+
+        <div class="fg">
+          <label for="name">Prénom *</label>
+          <input type="text" id="name" name="name"
+                 placeholder="Prénom" required
+                 value="{{ app.request.request.get('name') }}"/>
+        </div>
+
+        <div class="fg">
+          <label for="second_name">Nom *</label>
+          <input type="text" id="second_name" name="second_name"
+                 placeholder="Nom de famille"
+                 value="{{ app.request.request.get('second_name') }}"/>
+        </div>
+
+        <div class="fg">
+          <label for="age">Âge</label>
+          <input type="number" id="age" name="age"
+                 placeholder="Âge" min="0" max="120"
+                 value="{{ app.request.request.get('age') }}"/>
+        </div>
+
+        <div class="fg">
+          <label for="gender">Genre</label>
+          <select id="gender" name="gender">
+            <option value="">-- Sélectionner --</option>
+            <option value="male"   {% if app.request.request.get('gender') == 'male'   %}selected{% endif %}>Homme</option>
+            <option value="female" {% if app.request.request.get('gender') == 'female' %}selected{% endif %}>Femme</option>
+          </select>
+        </div>
+
+        <div class="fg">
+          <label for="phone_number">Téléphone</label>
+          <input type="tel" id="phone_number" name="phone_number"
+                 placeholder="+216 XX XXX XXX"
+                 value="{{ app.request.request.get('phone_number') }}"/>
+        </div>
+
+        <div class="fg">
+          <label for="birth_date">Date de naissance</label>
+          <input type="date" id="birth_date" name="birth_date"
+                 value="{{ app.request.request.get('birth_date') }}"/>
+        </div>
+
+      </div>
+
+      {# ────── COMPTE ────── #}
+      <div class="section-label">Compte</div>
+      <div class="form-grid">
+
+        <div class="fg full">
+          <label for="email">Email *</label>
+          <input type="email" id="email" name="email"
+                 placeholder="email@exemple.com" required
+                 value="{{ app.request.request.get('email') }}"/>
+        </div>
+
+        <div class="fg">
+          <label for="password">Mot de passe * (min. 6 caractères)</label>
+          <input type="password" id="password" name="password"
+                 placeholder="••••••••" required minlength="6"/>
+          <div class="password-strength">
+            <div class="password-strength-bar" id="strength-bar"></div>
+          </div>
+        </div>
+
+        <div class="fg">
+          <label for="confirm_password">Confirmer le mot de passe *</label>
+          <input type="password" id="confirm_password" name="confirm_password"
+                 placeholder="••••••••" required/>
+        </div>
+
+        <div class="fg full">
+          <label for="role">Rôle *</label>
+          <select id="role-select" name="role" required>
+            <option value="">-- Choisir un rôle --</option>
+            <option value="patient" {% if app.request.request.get('role') == 'patient' %}selected{% endif %}>Patient</option>
+            <option value="doctor"  {% if app.request.request.get('role') == 'doctor'  %}selected{% endif %}>Médecin</option>
+          </select>
+        </div>
+
+      </div>
+
+      {# ────── PATIENT ────── #}
+      <div id="patient-fields" class="role-section">
+        <div class="section-label" style="margin-top:0">Informations patient</div>
+        <div class="form-grid">
+          <div class="fg">
+            <label for="blood_type">Groupe sanguin</label>
+            <select id="blood_type" name="blood_type">
+              <option value="">--</option>
+              {% for bt in ['A+','A-','B+','B-','AB+','AB-','O+','O-'] %}
+                <option value="{{ bt }}" {% if app.request.request.get('blood_type') == bt %}selected{% endif %}>{{ bt }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="fg">
+            <label for="weight">Poids (kg)</label>
+            <input type="number" id="weight" name="weight"
+                   placeholder="kg" min="0" step="0.1"
+                   value="{{ app.request.request.get('weight') }}"/>
+          </div>
+          <div class="fg">
+            <label for="height">Taille (cm)</label>
+            <input type="number" id="height" name="height"
+                   placeholder="cm" min="0"
+                   value="{{ app.request.request.get('height') }}"/>
+          </div>
+        </div>
+      </div>
+
+      {# ────── DOCTOR ────── #}
+      <div id="doctor-fields" class="role-section">
+        <div class="section-label" style="margin-top:0">Informations médecin</div>
+        <div class="form-grid">
+          <div class="fg">
+            <label for="specialty">Spécialité</label>
+            <input type="text" id="specialty" name="specialty"
+                   placeholder="Ex: Cardiologie"
+                   value="{{ app.request.request.get('specialty') }}"/>
+          </div>
+          <div class="fg">
+            <label for="experience">Années d'expérience</label>
+            <input type="number" id="experience" name="experience"
+                   placeholder="Années" min="0"
+                   value="{{ app.request.request.get('experience') }}"/>
+          </div>
+          <div class="fg full">
+            <label for="diplome">Diplôme</label>
+            <input type="text" id="diplome" name="diplome"
+                   placeholder="Titre du diplôme"
+                   value="{{ app.request.request.get('diplome') }}"/>
+          </div>
+          <div class="fg">
+            <label for="tarif_consultation">Tarif consultation (TND)</label>
+            <input type="number" id="tarif_consultation" name="tarif_consultation"
+                   placeholder="TND" min="0" step="0.5"
+                   value="{{ app.request.request.get('tarif_consultation') }}"/>
+          </div>
+          <div class="fg" style="flex-direction:row; align-items:center; gap:8px; margin-top:8px;">
+            <input type="checkbox" id="disponible" name="disponible"
+                   style="width:16px;height:16px;accent-color:var(--accent)"/>
+            <label for="disponible" style="margin:0">Disponible</label>
+          </div>
+        </div>
+      </div>
+
+    </div>{# fin card-body #}
+
+    {# ── Footer ── #}
+    <div class="card-footer">
+      <p class="footer-link">
+        Déjà un compte ? <a href="{{ path('app_login') }}">Se connecter</a>
+      </p>
+      <button type="submit" class="btn-register" id="btn-register">
+        Créer le compte
+      </button>
+    </div>
+
+  </form>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  // ── 1. Toggle champs rôle ──
+  const roleSelect    = document.getElementById("role-select");
+  const patientFields = document.getElementById("patient-fields");
+  const doctorFields  = document.getElementById("doctor-fields");
+
+  function toggleRole() {
+    const role = roleSelect.value;
+    patientFields.style.display = role === "patient" ? "block" : "none";
+    doctorFields.style.display  = role === "doctor"  ? "block" : "none";
+  }
+  roleSelect.addEventListener("change", toggleRole);
+  toggleRole();
+
+  // ── 2. Jauge force du mot de passe ──
+  const pwdInput   = document.getElementById("password");
+  const strengthBar = document.getElementById("strength-bar");
+
+  pwdInput.addEventListener("input", function () {
+    const val = pwdInput.value;
+    let score = 0;
+    if (val.length >= 6)  score++;
+    if (val.length >= 10) score++;
+    if (/[A-Z]/.test(val)) score++;
+    if (/[0-9]/.test(val)) score++;
+    if (/[^a-zA-Z0-9]/.test(val)) score++;
+
+    const colors = ["#f87171","#fb923c","#facc15","#4ade80","#22c55e"];
+    const widths = ["20%","40%","60%","80%","100%"];
+
+    strengthBar.style.width      = val.length ? widths[score - 1] || "10%" : "0%";
+    strengthBar.style.background = val.length ? colors[score - 1] || "#f87171" : "transparent";
+  });
+
+  // ── 3. Validation côté client au submit ──
+  const form = document.getElementById("register-form");
+
+  form.addEventListener("submit", function (e) {
+    form.classList.add("was-validated");
+    let valid = true;
+
+    // Champs requis
+    form.querySelectorAll("[required]").forEach(function (el) {
+      if (!el.value.trim()) {
+        el.classList.add("invalid");
+        valid = false;
+      } else {
+        el.classList.remove("invalid");
+      }
+    });
+
+    // Confirmation mot de passe
+    const pwd     = document.getElementById("password").value;
+    const confirm = document.getElementById("confirm_password").value;
+    if (pwd && confirm && pwd !== confirm) {
+      document.getElementById("confirm_password").classList.add("invalid");
+      valid = false;
+    }
+
+    if (!valid) {
+      e.preventDefault();
+      form.querySelector(".invalid")
+          ?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  });
+
+  // Retirer le rouge dès que l'utilisateur corrige
+  form.querySelectorAll("input, select").forEach(function (el) {
+    el.addEventListener("input", function () {
+      el.classList.remove("invalid");
+    });
+  });
+
+});
+</script>
+{% endblock %}

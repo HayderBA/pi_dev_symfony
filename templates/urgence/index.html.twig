@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Historique SOS - GrowMind{% endblock %}
+
+{% block body %}
+{% include 'front/_main_nav.html.twig' with { active_page: 'forum' } %}
+
+<main class="main">
+  <section class="section" style="padding-top: 130px;">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-8">
+          <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4 p-lg-5">
+              <span class="badge text-bg-danger mb-3">SOS</span>
+              <h1 class="mb-3">Historique des alertes</h1>
+              <p class="text-secondary mb-4">Consulte les alertes SOS envoyees depuis le forum, avec les informations medecin, distance et localisation.</p>
+              <div id="urgenceHistory" class="d-grid gap-3">
+                <div class="text-secondary">Chargement...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body p-4">
+              <h3 class="h5 mb-3">Canaux actifs</h3>
+              <div class="d-grid gap-2">
+                <div class="border rounded-4 p-3 bg-light">Telegram</div>
+                <div class="border rounded-4 p-3 bg-light">SMS Brevo</div>
+                <div class="border rounded-4 p-3 bg-light">Mail</div>
+                <div class="border rounded-4 p-3 bg-light">Notification FCM</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4">
+              <h3 class="h5 mb-3">Acces rapides</h3>
+              <div class="d-grid gap-2">
+                <a href="{{ path('app_forum_index') }}" class="btn btn-outline-secondary">Retour forum</a>
+                <a href="{{ path('app_analyse_index') }}" class="btn btn-outline-primary">Analyse</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const response = await fetch('{{ path('api_urgence_historique') }}');
+      const data = await response.json();
+      const container = document.getElementById('urgenceHistory');
+
+      if (!Array.isArray(data) || data.length === 0) {
+        container.innerHTML = '<div class="alert alert-light border rounded-4 mb-0">Aucune alerte enregistree pour le moment.</div>';
+        return;
+      }
+
+      container.innerHTML = data.map((item) => `
+        <div class="border rounded-4 p-3">
+          <div class="d-flex justify-content-between gap-3 flex-wrap">
+            <div>
+              <div class="fw-semibold">Dr. ${item.medecinNom}</div>
+              <div class="text-secondary small">${item.patientNom} - ${item.distance} km</div>
+            </div>
+            <div class="text-secondary small">${item.createdAt}</div>
+          </div>
+          <div class="mt-2">
+            <a class="btn btn-sm btn-outline-primary" target="_blank" href="https://www.google.com/maps?q=${item.latitude},${item.longitude}">Voir sur Google Maps</a>
+          </div>
+        </div>
+      `).join('');
+    });
+  </script>
+{% endblock %}

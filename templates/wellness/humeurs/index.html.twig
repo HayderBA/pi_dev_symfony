@@ -1,0 +1,50 @@
+{% extends 'wellness/base.html.twig' %}
+
+{% block title %}Humeurs{% endblock %}
+
+{% block wellness_content %}
+  <div class="wellness-page-header">
+    <div class="wellness-page-copy">
+      <div class="page-kicker mb-2">Humeurs</div>
+      <h1 class="wellness-title">Suivi des humeurs</h1>
+      <p class="wellness-lead">Consulter et gerer les niveaux d humeur enregistres ainsi que les notes.</p>
+    </div>
+    <div class="wellness-actions">
+      <a href="{{ path('app_humeur_new') }}" class="btn-shell btn-shell-primary">Ajouter une humeur</a>
+    </div>
+  </div>
+
+  <div class="card content-card">
+    <div class="card-body table-responsive">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h2 class="h5 mb-1">Historique des humeurs</h2>
+          <p class="text-muted mb-0">Entrees creees via le module des humeurs.</p>
+        </div>
+        <span class="badge rounded-pill text-bg-light">{{ humeurs|length }} elements</span>
+      </div>
+      <table class="table wellness-table">
+        <thead><tr><th>Utilisateur</th><th>Niveau</th><th>Notes</th><th>Date</th><th>Actions</th></tr></thead>
+        <tbody>
+        {% for item in humeurs %}
+          <tr>
+            <td>{{ item.utilisateur ? item.utilisateur.fullName : 'N/A' }}</td>
+            <td>{{ item.niveau }}/5</td>
+            <td>{{ item.notes|default('-')|slice(0, 65) }}</td>
+            <td>{{ item.dateCreation|date('d/m/Y H:i') }}</td>
+            <td class="wellness-actions">
+              <a class="btn btn-sm btn-outline-primary" href="{{ path('app_humeur_edit', {id: item.id}) }}">Modifier</a>
+              <form method="post" action="{{ path('app_humeur_delete', {id: item.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete_humeur_' ~ item.id) }}">
+                <button class="btn btn-sm btn-outline-danger">Supprimer</button>
+              </form>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="5">Aucune humeur disponible.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

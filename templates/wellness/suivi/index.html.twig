@@ -1,0 +1,64 @@
+{% extends 'wellness/base.html.twig' %}
+
+{% block title %}Suivi Bien-etre{% endblock %}
+
+{% block wellness_content %}
+  <div class="wellness-page-header">
+    <div class="wellness-page-copy">
+      <div class="page-kicker mb-2">Sante</div>
+      <h1 class="wellness-title">Suivi des enregistrements de sante</h1>
+      <p class="wellness-lead">Filtrer, trier et gerer les donnees de stress et de bien-etre.</p>
+    </div>
+    <div class="wellness-actions">
+      <a href="{{ path('app_sante_bien_etre_new') }}" class="btn-shell btn-shell-primary">Ajouter un enregistrement</a>
+    </div>
+  </div>
+
+  <div class="card content-card mb-4">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+        <div>
+          <h2 class="h5 mb-1">Filtres de recherche</h2>
+          <p class="text-muted mb-0">Filtrage simple du suivi de sante.</p>
+        </div>
+        <span class="badge rounded-pill text-bg-light">Suivi GrowMind</span>
+      </div>
+      <form class="row g-3 wellness-form" method="get">
+        <div class="col-md-5"><input class="form-control" name="humeur" value="{{ filters.humeur }}" placeholder="Filtrer par humeur"></div>
+        <div class="col-md-3"><input class="form-control" name="niveau" value="{{ filters.niveau }}" placeholder="Stress exact"></div>
+        <div class="col-md-4 d-flex gap-2">
+          <button class="btn-shell btn-shell-primary flex-fill border-0">Filtrer</button>
+          <a class="btn-shell btn-shell-outline flex-fill" href="{{ path('app_sante_bien_etre_index') }}">Reset</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card content-card">
+    <div class="card-body table-responsive">
+      <table class="table wellness-table">
+        <thead><tr><th>Utilisateur</th><th>Humeur</th><th>Stress</th><th>Sommeil</th><th>Date</th><th>Actions</th></tr></thead>
+        <tbody>
+        {% for item in records %}
+          <tr>
+            <td>{{ item.user.fullName }}</td>
+            <td>{{ item.humeur }}</td>
+            <td>{{ item.niveauStress }}/10</td>
+            <td>{{ item.qualiteSommeil }}/10</td>
+            <td>{{ item.dateSuivi|date('d/m/Y') }}</td>
+            <td class="wellness-actions">
+              <a class="btn btn-sm btn-outline-primary" href="{{ path('app_sante_bien_etre_edit', {id: item.id}) }}">Modifier</a>
+              <form method="post" action="{{ path('app_sante_bien_etre_delete', {id: item.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete_sante_' ~ item.id) }}">
+                <button class="btn btn-sm btn-outline-danger">Supprimer</button>
+              </form>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="6">Aucun suivi trouve.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

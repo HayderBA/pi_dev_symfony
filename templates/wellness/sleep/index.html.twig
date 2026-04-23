@@ -1,0 +1,50 @@
+{% extends 'wellness/base.html.twig' %}
+
+{% block title %}Sommeil{% endblock %}
+
+{% block wellness_content %}
+  <div class="wellness-page-header">
+    <div class="wellness-page-copy">
+      <div class="page-kicker mb-2">Sommeil</div>
+      <h1 class="wellness-title">Enregistrements de sommeil</h1>
+      <p class="wellness-lead">Suivre les sessions de sommeil, la duree et la qualite.</p>
+    </div>
+    <div class="wellness-actions">
+      <a href="{{ path('app_sleep_tracking_new') }}" class="btn-shell btn-shell-primary">Ajouter un enregistrement</a>
+    </div>
+  </div>
+
+  <div class="card content-card">
+    <div class="card-body table-responsive">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h2 class="h5 mb-1">Toutes les sessions de sommeil</h2>
+          <p class="text-muted mb-0">Vue d ensemble du comportement de sommeil.</p>
+        </div>
+        <span class="badge rounded-pill text-bg-light">{{ sleep_trackings|length }} enregistrements</span>
+      </div>
+      <table class="table wellness-table">
+        <thead><tr><th>Utilisateur</th><th>Date</th><th>Duree</th><th>Qualite</th><th>Actions</th></tr></thead>
+        <tbody>
+        {% for item in sleep_trackings %}
+          <tr>
+            <td>{{ item.user.fullName }}</td>
+            <td>{{ item.dateSommeil|date('d/m/Y') }}</td>
+            <td>{{ item.dureeMinutes }} min</td>
+            <td>{{ item.qualiteSommeil }}/10</td>
+            <td class="wellness-actions">
+              <a class="btn btn-sm btn-outline-primary" href="{{ path('app_sleep_tracking_edit', {id: item.id}) }}">Modifier</a>
+              <form method="post" action="{{ path('app_sleep_tracking_delete', {id: item.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete_sleep_' ~ item.id) }}">
+                <button class="btn btn-sm btn-outline-danger">Supprimer</button>
+              </form>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="5">Aucun suivi sommeil.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,725 @@
+{% extends 'back/admin_layout.html.twig' %}
+
+{% block title %}Administration - Événements{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('assets/css/voice-assistant.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block admin_topbar_title %}Gestion des evenements{% endblock %}
+{% block admin_menu_active %}evenements{% endblock %}
+
+{% block admin_content %}
+<div class="admin-header">
+    <div class="container">
+        <div class="admin-header-content">
+            <div class="admin-breadcrumb">
+                <a href="{{ path('app_home') }}">Accueil</a>
+                <i class="fas fa-chevron-right"></i>
+                <span>Administration</span>
+            </div>
+            <div class="admin-title-section">
+                <div class="admin-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div>
+                    <h1>Gestion des événements</h1>
+                    <p>Créez, modifiez et gérez tous vos ateliers et séances</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="admin-container">
+    <div class="container">
+        <section class="gm-voice-box mb-4" data-voice-event-admin>
+            <div class="gm-voice-top">
+                <div>
+                    <h3>Commande vocale Evenements</h3>
+                    <p>Dites une commande metier et GrowMind execute l action dans la gestion des evenements.</p>
+                </div>
+                <button type="button" class="gm-voice-toggle" data-voice-toggle aria-pressed="false" title="Activer la voix">
+                    <i class="fas fa-microphone"></i>
+                </button>
+            </div>
+            <p class="gm-voice-status" data-voice-status>Le micro reste actif jusqu a la commande stop. Essayez une commande simple ci-dessous.</p>
+            <div class="gm-voice-help">
+                <span class="gm-voice-chip">Nouvel evenement</span>
+                <span class="gm-voice-chip">Voir statistiques</span>
+                <span class="gm-voice-chip">Fais PDF</span>
+                <span class="gm-voice-chip">Chercher atelier</span>
+                <span class="gm-voice-chip">Reset</span>
+                <span class="gm-voice-chip">Voir a venir</span>
+                <span class="gm-voice-chip">Trier par popularite</span>
+                <span class="gm-voice-chip">Voir front</span>
+                <span class="gm-voice-chip">Ouvrir premier evenement</span>
+                <span class="gm-voice-chip">Modifier premier evenement</span>
+                <span class="gm-voice-chip">Stop</span>
+            </div>
+        </section>
+
+        <!-- Statistiques Dashboard -->
+        <div class="stats-grid">
+            <div class="stat-card-mini">
+                <div class="stat-icon-mini"><i class="fas fa-calendar-week"></i></div>
+                <div class="stat-info">
+                    <span class="stat-value-mini">{{ evenements|length }}</span>
+                    <span class="stat-label-mini">Total événements</span>
+                </div>
+            </div>
+            <div class="stat-card-mini">
+                <div class="stat-icon-mini"><i class="fas fa-clock"></i></div>
+                <div class="stat-info">
+                    <span class="stat-value-mini">{{ evenements|filter(e => e.status == 'À venir')|length }}</span>
+                    <span class="stat-label-mini">À venir</span>
+                </div>
+            </div>
+            <div class="stat-card-mini">
+                <div class="stat-icon-mini"><i class="fas fa-chart-line"></i></div>
+                <div class="stat-info">
+                    <span class="stat-value-mini">
+                        {% set totalReservations = 0 %}
+                        {% for e in evenements %}
+                            {% set totalReservations = totalReservations + e.currentReservationsCount %}
+                        {% endfor %}
+                        {{ totalReservations }}
+                    </span>
+                    <span class="stat-label-mini">Total réservations</span>
+                </div>
+            </div>
+            <div class="stat-card-mini">
+                <div class="stat-icon-mini"><i class="fas fa-chart-pie"></i></div>
+                <div class="stat-info">
+                    <span class="stat-value-mini">
+                        {% set taux = 0 %}
+                        {% if evenements|length > 0 %}
+                            {% set totalCap = 0 %}
+                            {% set totalOcc = 0 %}
+                            {% for e in evenements %}
+                                {% set totalCap = totalCap + e.maxCapacity %}
+                                {% set totalOcc = totalOcc + e.currentReservationsCount %}
+                            {% endfor %}
+                            {% set taux = (totalOcc / totalCap) * 100 %}
+                        {% endif %}
+                        {{ taux|round(1) }}%
+                    </span>
+                    <span class="stat-label-mini">Taux d'occupation</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtres et Actions -->
+        <div class="filters-bar">
+            <div class="filters-group">
+                <div class="filter-item">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Rechercher un événement...">
+                </div>
+                <div class="filter-item">
+                    <i class="fas fa-filter"></i>
+                    <select id="statusFilter">
+                        <option value="all">Tous les statuts</option>
+                        <option value="À venir">À venir</option>
+                        <option value="Aujourd'hui">Aujourd'hui</option>
+                        <option value="Passé">Passé</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <i class="fas fa-sort-amount-down"></i>
+                    <select id="sortFilter">
+                        <option value="date_asc">Date (plus récent)</option>
+                        <option value="date_desc">Date (plus ancien)</option>
+                        <option value="titre_asc">Titre (A-Z)</option>
+                        <option value="titre_desc">Titre (Z-A)</option>
+                        <option value="reservations">Popularité</option>
+                    </select>
+                </div>
+            </div>
+            <div class="actions-group">
+                <a href="{{ path('app_evenement_stats') }}" class="btn-stats" id="eventVoiceStats">
+                    <i class="fas fa-chart-pie"></i> Statistiques
+                </a>
+                <button class="btn-export" id="exportPdfBtn">
+                    <i class="fas fa-file-pdf"></i> Export PDF
+                </button>
+                <a href="{{ path('app_evenement_new') }}" class="btn-new-event" id="eventVoiceNew">
+                    <i class="fas fa-plus"></i> Nouvel événement
+                </a>
+            </div>
+        </div>
+
+        <!-- Tableau des événements -->
+        <div class="admin-table-card">
+            <div class="table-header">
+                <div class="table-title">
+                    <i class="fas fa-list"></i> Liste des événements
+                </div>
+                <div class="table-info">
+                    <span id="resultCount">{{ evenements|length }}</span> événements affichés
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="admin-table" id="eventsTable">
+                    <thead>
+                        <tr>
+                            <th>Titre</th>
+                            <th>Date</th>
+                            <th>Lieu</th>
+                            <th>Places</th>
+                            <th>Réservations</th>
+                            <th>Billet solidaire</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        {% for evenement in evenements %}
+                        <tr class="event-row" data-title="{{ evenement.titre|lower }}" data-status="{{ evenement.status }}" data-date="{{ evenement.date|date('Y-m-d') }}" data-reservations="{{ evenement.currentReservationsCount }}">
+                            <td class="event-title-cell">
+                                <div class="event-title-wrapper">
+                                    <div class="event-icon-small"><i class="fas fa-spa"></i></div>
+                                    <span>{{ evenement.titre }}</span>
+                                </div>
+                            </td>
+                            <td data-sort="{{ evenement.date|date('Y-m-d') }}">{{ evenement.date|date('d/m/Y') }}</td>
+                            <td>{{ evenement.localisation|slice(0, 25) }}</td>
+                            <td>
+                                <div class="capacity-indicator">
+                                    <div class="capacity-bar-small">
+                                        <div class="capacity-fill-small" style="width: {{ (evenement.currentReservationsCount / evenement.maxCapacity) * 100 }}%"></div>
+                                    </div>
+                                    <span>{{ evenement.currentReservationsCount }}/{{ evenement.maxCapacity }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="booking-count">{{ evenement.currentReservationsCount }}</span>
+                            </td>
+                            <td>
+                                {% if evenement.solidarityReservationsCount > 0 %}
+                                    <div class="solidarity-cell">
+                                        <span class="solidarity-chip">{{ evenement.solidarityReservationsCount }} don{{ evenement.solidarityReservationsCount > 1 ? 's' : '' }}</span>
+                                        <small>{{ evenement.solidarityAmountCollected|number_format(2, ',', ' ') }} TND</small>
+                                    </div>
+                                {% else %}
+                                    <span class="solidarity-empty">Aucun</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="status-badge status-{{ evenement.status == 'À venir' ? 'upcoming' : (evenement.status == 'Aujourd\'hui' ? 'today' : 'past') }}">
+                                    {{ evenement.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{{ path('app_evenement_show_admin', {'id': evenement.id}) }}" class="action-btn view-btn" title="Voir" data-event-show>
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ path('app_evenement_edit', {'id': evenement.id}) }}" class="action-btn edit-btn" title="Modifier" data-event-edit>
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </a>
+                                    <form method="post" action="{{ path('app_evenement_delete', {'id': evenement.id}) }}" style="display: inline-block;" onsubmit="return confirm('⚠️ Supprimer cet événement ? Toutes les réservations seront également supprimées.')">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ evenement.id) }}">
+                                        <button type="submit" class="action-btn delete-btn" title="Supprimer" data-event-delete>
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="8" class="empty-table">
+                                <i class="fas fa-calendar-times"></i>
+                                <p>Aucun événement trouvé</p>
+                                <a href="{{ path('app_evenement_new') }}" class="btn-new-small">Créer le premier événement</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="admin-footer-links">
+            <a href="{{ path('app_evenement_list') }}" class="footer-link">
+                <i class="fas fa-arrow-left"></i> Retour au site
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --teal: #2c7a7d;
+        --teal-light: #4a9fa3;
+        --teal-dark: #1e5558;
+        --teal-bg: #e6f4f5;
+        --teal-gradient: linear-gradient(135deg, #2c7a7d, #4a9fa3);
+    }
+    
+    .admin-header {
+        background: linear-gradient(135deg, #2c7a7d 0%, #4a9fa3 50%, #6bb5b8 100%);
+        padding: 40px 0;
+        color: white;
+    }
+    .admin-breadcrumb {
+        font-size: 0.85rem;
+        margin-bottom: 20px;
+    }
+    .admin-breadcrumb a {
+        color: rgba(255,255,255,0.7);
+        text-decoration: none;
+    }
+    .admin-breadcrumb i {
+        margin: 0 8px;
+        font-size: 0.7rem;
+    }
+    .admin-title-section {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+    .admin-icon {
+        width: 60px;
+        height: 60px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+    }
+    .admin-title-section h1 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+    .admin-title-section p {
+        opacity: 0.8;
+        margin: 0;
+    }
+    .admin-container {
+        padding: 40px 0 60px;
+        background: #f5f7fc;
+        min-height: calc(100vh - 250px);
+    }
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    .stat-card-mini {
+        background: white;
+        border-radius: 20px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .stat-card-mini:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(44,122,125,0.15);
+    }
+    .stat-icon-mini {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #e6f4f5, #cce8ea);
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #2c7a7d;
+        font-size: 1.3rem;
+    }
+    .stat-info {
+        flex: 1;
+    }
+    .stat-value-mini {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2c7a7d;
+        display: block;
+    }
+    .stat-label-mini {
+        font-size: 0.75rem;
+        color: #64748b;
+    }
+    .filters-bar {
+        background: white;
+        border-radius: 20px;
+        padding: 15px 20px;
+        margin-bottom: 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .filters-group {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+    .filter-item {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    .filter-item i {
+        position: absolute;
+        left: 14px;
+        color: #2c7a7d;
+        font-size: 0.9rem;
+    }
+    .filter-item input, .filter-item select {
+        padding: 10px 12px 10px 38px;
+        border: 1px solid #e2e8f0;
+        border-radius: 30px;
+        font-size: 0.85rem;
+        background: white;
+        cursor: pointer;
+        outline: none;
+        transition: all 0.3s;
+    }
+    .filter-item input:focus, .filter-item select:focus {
+        border-color: #2c7a7d;
+        box-shadow: 0 0 0 3px rgba(44,122,125,0.1);
+    }
+    .actions-group {
+        display: flex;
+        gap: 12px;
+    }
+    .btn-stats {
+        background: linear-gradient(135deg, #1e88e5, #2c7a7d);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 40px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .btn-stats:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(30,136,229,0.3);
+        color: white;
+    }
+    .btn-export {
+        background: white;
+        border: 2px solid #2c7a7d;
+        color: #2c7a7d;
+        padding: 10px 20px;
+        border-radius: 40px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .btn-export:hover {
+        background: #2c7a7d;
+        color: white;
+        transform: translateY(-2px);
+    }
+    .btn-new-event {
+        background: linear-gradient(135deg, #2c7a7d, #4a9fa3);
+        color: white;
+        padding: 10px 24px;
+        border-radius: 40px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    .btn-new-event:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(44,122,125,0.3);
+        color: white;
+    }
+    .admin-table-card {
+        background: white;
+        border-radius: 28px;
+        overflow: hidden;
+        box-shadow: 0 8px 28px rgba(0,0,0,0.05);
+    }
+    .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 24px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .table-title {
+        font-weight: 600;
+        color: #2c7a7d;
+    }
+    .table-title i {
+        color: #2c7a7d;
+        margin-right: 8px;
+    }
+    .table-info {
+        font-size: 0.8rem;
+        color: #64748b;
+    }
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .admin-table th {
+        text-align: left;
+        padding: 16px 20px;
+        background: #f8fafc;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: #2c7a7d;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .admin-table td {
+        padding: 16px 20px;
+        font-size: 0.85rem;
+        color: #1e293b;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .admin-table tr:hover {
+        background: #f8fafc;
+    }
+    .event-title-cell .event-title-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .event-icon-small {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #e6f4f5, #cce8ea);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #2c7a7d;
+    }
+    .capacity-indicator {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .capacity-bar-small {
+        width: 60px;
+        height: 4px;
+        background: #e2e8f0;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    .capacity-fill-small {
+        height: 100%;
+        background: linear-gradient(90deg, #2c7a7d, #4a9fa3);
+        border-radius: 4px;
+    }
+    .booking-count {
+        background: #e6f4f5;
+        color: #2c7a7d;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.75rem;
+    }
+    .solidarity-cell {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .solidarity-chip {
+        background: #edf8ea;
+        color: #1f5b28;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 0.75rem;
+        width: fit-content;
+    }
+    .solidarity-empty {
+        color: #94a3b8;
+        font-size: 0.8rem;
+    }
+    .status-badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 600;
+    }
+    .status-upcoming { background: #e6f4f5; color: #2c7a7d; }
+    .status-today { background: #fef3c7; color: #d97706; }
+    .status-past { background: #f1f5f9; color: #94a3b8; }
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+    }
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+    }
+    .view-btn {
+        background: #e6f4f5;
+        color: #2c7a7d;
+    }
+    .edit-btn {
+        background: #fef3c7;
+        color: #d97706;
+    }
+    .delete-btn {
+        background: #fef2f2;
+        color: #ef476f;
+    }
+    .action-btn:hover {
+        transform: translateY(-2px);
+    }
+    .empty-table {
+        text-align: center;
+        padding: 60px !important;
+    }
+    .empty-table i {
+        font-size: 3rem;
+        color: #cbd5e1;
+        margin-bottom: 15px;
+    }
+    .btn-new-small {
+        display: inline-block;
+        margin-top: 15px;
+        background: #2c7a7d;
+        color: white;
+        padding: 8px 20px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-size: 0.85rem;
+    }
+    .admin-footer-links {
+        margin-top: 30px;
+        text-align: center;
+    }
+    .footer-link {
+        color: #64748b;
+        text-decoration: none;
+        font-size: 0.85rem;
+    }
+    .footer-link:hover {
+        color: #2c7a7d;
+    }
+    @media (max-width: 992px) {
+        .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        .filters-bar { flex-direction: column; align-items: stretch; }
+        .filters-group { justify-content: space-between; }
+        .actions-group { justify-content: flex-start; flex-wrap: wrap; }
+    }
+    @media (max-width: 768px) {
+        .stats-grid { grid-template-columns: 1fr; }
+        .filters-group { flex-direction: column; }
+        .table-header { flex-direction: column; gap: 10px; }
+        .actions-group { flex-direction: column; }
+        .actions-group a, .actions-group button { text-align: center; }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const sortFilter = document.getElementById('sortFilter');
+    const tableBody = document.getElementById('tableBody');
+    const resultCount = document.getElementById('resultCount');
+    let rows = Array.from(document.querySelectorAll('.event-row'));
+    
+    function filterAndSort() {
+        const searchTerm = searchInput?.value.toLowerCase() || '';
+        const statusValue = statusFilter?.value || 'all';
+        const sortValue = sortFilter?.value || 'date_asc';
+        
+        let filteredRows = rows.filter(row => {
+            const title = row.getAttribute('data-title') || '';
+            const status = row.getAttribute('data-status') || '';
+            const matchesSearch = title.includes(searchTerm);
+            const matchesStatus = statusValue === 'all' || status === statusValue;
+            return matchesSearch && matchesStatus;
+        });
+        
+        // Tri
+        filteredRows.sort((a, b) => {
+            switch(sortValue) {
+                case 'date_asc':
+                    return new Date(b.getAttribute('data-date')) - new Date(a.getAttribute('data-date'));
+                case 'date_desc':
+                    return new Date(a.getAttribute('data-date')) - new Date(b.getAttribute('data-date'));
+                case 'titre_asc':
+                    return (a.getAttribute('data-title') || '').localeCompare(b.getAttribute('data-title') || '');
+                case 'titre_desc':
+                    return (b.getAttribute('data-title') || '').localeCompare(a.getAttribute('data-title') || '');
+                case 'reservations':
+                    return (b.getAttribute('data-reservations') || 0) - (a.getAttribute('data-reservations') || 0);
+                default:
+                    return 0;
+            }
+        });
+        
+        // Mettre à jour l'affichage
+        filteredRows.forEach(row => tableBody.appendChild(row));
+        rows.forEach(row => {
+            row.style.display = filteredRows.includes(row) ? '' : 'none';
+        });
+        
+        if (resultCount) {
+            resultCount.textContent = filteredRows.length;
+        }
+    }
+    
+    if (searchInput) searchInput.addEventListener('keyup', filterAndSort);
+    if (statusFilter) statusFilter.addEventListener('change', filterAndSort);
+    if (sortFilter) sortFilter.addEventListener('change', filterAndSort);
+    
+    // Export PDF
+    const exportBtn = document.getElementById('exportPdfBtn');
+    if (exportBtn) {
+        exportBtn.addEventListener('click', function() {
+            const printContent = document.querySelector('.admin-table-card').cloneNode(true);
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Liste des événements - GrowMind</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 20px; }
+                        table { width: 100%; border-collapse: collapse; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background: #2c7a7d; color: white; }
+                        h1 { color: #2c7a7d; }
+                    </style>
+                </head>
+                <body>
+                    <h1>GrowMind - Liste des événements</h1>
+                    <p>Date d'export: ${new Date().toLocaleString()}</p>
+                    ${printContent.outerHTML}
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        });
+    }
+});
+</script>
+<script src="{{ asset('assets/js/voice-assistant.js') }}"></script>
+{% endblock %}

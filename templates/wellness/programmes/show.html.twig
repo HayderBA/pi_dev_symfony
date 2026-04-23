@@ -1,0 +1,130 @@
+{% extends 'wellness/base.html.twig' %}
+
+{% block title %}Programme sportif{% endblock %}
+
+{% block wellness_content %}
+  <div class="container wellness-page px-0">
+    <div class="wellness-page-header">
+      <div class="wellness-page-copy">
+        <div class="page-kicker mb-2">Programme sportif</div>
+        <h1 class="wellness-title">{{ programme.typeProgramme }}</h1>
+        <p class="wellness-lead">
+          Programme genere pour {{ programme.user.fullName }} le {{ programme.createdAt|date('d/m/Y a H:i') }}.
+        </p>
+      </div>
+
+      <div class="wellness-actions">
+        <a class="btn-shell btn-shell-outline" href="{{ path('app_programme_sportif_index') }}">
+          Historique
+        </a>
+        <a class="btn-shell btn-shell-primary" href="{{ path('app_programme_sportif_new') }}">
+          Nouveau calcul
+        </a>
+      </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+      <div class="col-xl-8">
+        <div class="card content-card h-100">
+          <div class="card-body p-4 p-xl-5">
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+              <span class="badge rounded-pill text-bg-success">{{ programme.intensite }}</span>
+              <span class="badge rounded-pill text-bg-light">{{ programme.objectif|replace({'_': ' '})|title }}</span>
+              {% if latest_for_user and latest_for_user.id == programme.id %}
+                <span class="badge rounded-pill text-bg-light">Derniere version utilisateur</span>
+              {% endif %}
+            </div>
+
+            <h2 class="h4 mb-3">Synthese</h2>
+            <p class="mb-0 text-muted">{{ programme.resume }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xl-4">
+        <div class="card content-card h-100">
+          <div class="card-body p-4">
+            <div class="page-kicker mb-2">Sources</div>
+            <ul class="list-unstyled mb-0 small text-muted d-grid gap-2">
+              <li>IMC: <strong class="text-dark">{{ programme.sourceImc }}</strong></li>
+              <li>Calories: <strong class="text-dark">{{ programme.sourceCalories }}</strong></li>
+              <li>Utilisateur: <strong class="text-dark">{{ programme.user.email }}</strong></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+      <div class="col-md-6 col-xl-3">
+        <div class="card content-card h-100">
+          <div class="card-body p-4">
+            <div class="page-kicker mb-2">Sommeil</div>
+            <div class="display-6 mb-2">{{ programme.dureeSommeilHeures|number_format(1, '.', ' ') }} h</div>
+            <div class="text-muted">Qualite {{ programme.qualiteSommeil }}/10</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-3">
+        <div class="card content-card h-100">
+          <div class="card-body p-4">
+            <div class="page-kicker mb-2">Stress</div>
+            <div class="display-6 mb-2">{{ programme.niveauStress }}/10</div>
+            <div class="text-muted">Charge percue</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-3">
+        <div class="card content-card h-100">
+          <div class="card-body p-4">
+            <div class="page-kicker mb-2">IMC</div>
+            <div class="display-6 mb-2">{{ programme.imc|number_format(1, '.', ' ') }}</div>
+            <div class="text-muted">{{ programme.categorieImc }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-3">
+        <div class="card content-card h-100">
+          <div class="card-body p-4">
+            <div class="page-kicker mb-2">Calories</div>
+            <div class="display-6 mb-2">{{ programme.besoinCalorique }}</div>
+            <div class="text-muted">kcal / jour</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card content-card">
+      <div class="card-body p-4 p-xl-5">
+        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+          <div>
+            <div class="page-kicker mb-2">Planning</div>
+            <h2 class="h4 mb-0">Programme sur 7 jours</h2>
+          </div>
+
+          <div class="text-muted">
+            Seance de reference: {{ programme.caloriesActivite }} kcal estimees
+          </div>
+        </div>
+
+        <div class="row g-3">
+          {% for seance in programme.seances %}
+            <div class="col-xl-6">
+              <div class="border rounded-4 p-4 h-100">
+                <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                  <div>
+                    <div class="page-kicker mb-1">{{ seance.jour }}</div>
+                    <h3 class="h5 mb-0">{{ seance.titre }}</h3>
+                  </div>
+                  <span class="badge rounded-pill text-bg-light">{{ seance.duree }} min</span>
+                </div>
+
+                <p class="text-muted mb-0">{{ seance.details }}</p>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

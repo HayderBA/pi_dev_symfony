@@ -1,0 +1,174 @@
+{% extends 'wellness/base.html.twig' %}
+
+{% block title %}Dashboard Bien-etre{% endblock %}
+
+{% block wellness_content %}
+  <div class="wellness-page-header">
+    <div class="wellness-page-copy">
+      <div class="page-kicker mb-2">Tableau de bord</div>
+      <h1 class="wellness-title">Vue d ensemble sante et bien-etre</h1>
+      <p class="wellness-lead">Retrouve le suivi, le sommeil, les programmes sportifs et les APIs sante dans le meme espace GrowMind.</p>
+    </div>
+    <div class="wellness-actions">
+      <a href="{{ path('app_programme_sportif_new') }}" class="btn-shell btn-shell-primary">Generer un programme</a>
+      <a href="{{ path('app_wellness_api_services') }}" class="btn-shell btn-shell-outline">APIs sante</a>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-4">
+    {% for label, value in {
+      'Suivis': stats.suivis,
+      'Humeurs': stats.humeurs,
+      'Sommeil': stats.sommeil,
+      'Tests': stats.tests,
+      'Conseils': stats.conseils,
+      'Programmes': stats.programmes
+    } %}
+      <div class="col-md-4 col-xl-2">
+        <div class="wellness-stat">
+          <strong>{{ value }}</strong>
+          <span>{{ label }}</span>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="card wellness-card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h5 mb-0">Derniers suivis</h2>
+            <a href="{{ path('app_sante_bien_etre_new') }}" class="btn btn-success rounded-pill">Ajouter</a>
+          </div>
+          <div class="table-responsive">
+            <table class="table wellness-table">
+              <thead><tr><th>Utilisateur</th><th>Humeur</th><th>Stress</th><th>Date</th></tr></thead>
+              <tbody>
+              {% for item in records %}
+                <tr>
+                  <td>{{ item.user.fullName }}</td>
+                  <td>{{ item.humeur }}</td>
+                  <td>{{ item.niveauStress }}/10</td>
+                  <td>{{ item.dateSuivi|date('d/m/Y') }}</td>
+                </tr>
+              {% else %}
+                <tr><td colspan="4">Aucun suivi disponible.</td></tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card wellness-card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h5 mb-0">Dernieres humeurs</h2>
+            <a href="{{ path('app_humeur_new') }}" class="btn btn-primary rounded-pill">Ajouter</a>
+          </div>
+          <div class="table-responsive">
+            <table class="table wellness-table">
+              <thead><tr><th>Utilisateur</th><th>Niveau</th><th>Notes</th></tr></thead>
+              <tbody>
+              {% for item in humeurs %}
+                <tr>
+                  <td>{{ item.utilisateur ? item.utilisateur.fullName : 'N/A' }}</td>
+                  <td>{{ item.niveau }}/5</td>
+                  <td>{{ item.notes|default('-')|slice(0, 45) }}</td>
+                </tr>
+              {% else %}
+                <tr><td colspan="3">Aucune humeur disponible.</td></tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card wellness-card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h5 mb-0">Derniers suivis sommeil</h2>
+            <a href="{{ path('app_sleep_tracking_new') }}" class="btn btn-outline-primary rounded-pill">Ajouter</a>
+          </div>
+          <div class="table-responsive">
+            <table class="table wellness-table">
+              <thead><tr><th>Utilisateur</th><th>Duree</th><th>Qualite</th><th>Date</th></tr></thead>
+              <tbody>
+              {% for item in sleep_entries %}
+                <tr>
+                  <td>{{ item.user.fullName }}</td>
+                  <td>{{ item.dureeMinutes }} min</td>
+                  <td>{{ item.qualiteSommeil }}/10</td>
+                  <td>{{ item.dateSommeil|date('d/m/Y') }}</td>
+                </tr>
+              {% else %}
+                <tr><td colspan="4">Aucun suivi sommeil.</td></tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card wellness-card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h5 mb-0">Programmes recents</h2>
+            <a href="{{ path('app_programme_sportif_new') }}" class="btn btn-outline-success rounded-pill">Generer</a>
+          </div>
+          <div class="list-group list-group-flush">
+            {% for programme in programmes %}
+              <a class="list-group-item list-group-item-action border-0 px-0" href="{{ path('app_programme_sportif_show', {id: programme.id}) }}">
+                <strong>{{ programme.user.fullName }}</strong>
+                <div class="text-muted small">{{ programme.typeProgramme }} - {{ programme.intensite }}</div>
+              </a>
+            {% else %}
+              <div class="text-muted">Aucun programme genere.</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card content-card h-100">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <div class="page-kicker mb-2">APIs sante</div>
+              <h2 class="h5 mb-0">Calcul IMC et calories</h2>
+            </div>
+            <a href="{{ path('app_wellness_api_services') }}" class="btn-shell btn-shell-outline">Ouvrir</a>
+          </div>
+          <p class="text-muted mb-4">
+            Lance les services sante pour calculer l IMC a partir du poids et de la taille puis estimer les calories d une requete nutritionnelle.
+          </p>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="border rounded-4 p-3 h-100 bg-white">
+                <div class="page-kicker mb-1">Exemple</div>
+                <strong>70 kg / 1.75 m</strong>
+                <div class="text-muted small">Calcul IMC local</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="border rounded-4 p-3 h-100 bg-white">
+                <div class="page-kicker mb-1">Nutrition</div>
+                <strong>1 sandwich and 1 soda</strong>
+                <div class="text-muted small">Analyse locale de calories</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

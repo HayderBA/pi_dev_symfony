@@ -1,0 +1,12 @@
+<html><body style="font-family:Arial,sans-serif;background:#f6f8fb;padding:24px;color:#1f2937;">
+  <div style="max-width:620px;margin:0 auto;background:#fff;border-radius:16px;padding:28px;">
+    <h1 style="margin:0 0 12px;color:#7c3aed;">Statut de rendez-vous mis a jour</h1>
+    <p>Bonjour {{ rdv.prenomPatient }} {{ rdv.nomPatient }},</p>
+    <p>Le statut de votre rendez-vous est maintenant <strong>{{ rdv.statut|replace({'_': ' '}) }}</strong>.</p>
+    <ul>
+      <li>Date: {{ rdv.dateRdv ? rdv.dateRdv|date('d/m/Y') : '-' }}</li>
+      <li>Heure: {{ rdv.heure ? rdv.heure|date('H:i') : '-' }}</li>
+      <li>Psychologue: {{ rdv.psychologue.displayName }}</li>
+    </ul>
+  </div>
+</body></html>

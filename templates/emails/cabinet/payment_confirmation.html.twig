@@ -1,0 +1,14 @@
+<html><body style="font-family:Arial,sans-serif;background:#f6f8fb;padding:24px;color:#1f2937;">
+  <div style="max-width:620px;margin:0 auto;background:#fff;border-radius:16px;padding:28px;">
+    <h1 style="margin:0 0 12px;color:#16a34a;">Paiement confirme</h1>
+    <p>Bonjour {{ rdv.prenomPatient }} {{ rdv.nomPatient }},</p>
+    <p>Votre paiement a bien ete enregistre pour la consultation GrowMind.</p>
+    <ul>
+      <li>Montant: {{ rdv.montant ?: rdv.tarifConsultation ?: rdv.psychologue.tarif }} TND</li>
+      <li>Date: {{ rdv.dateRdv ? rdv.dateRdv|date('d/m/Y') : '-' }}</li>
+      <li>Heure: {{ rdv.heure ? rdv.heure|date('H:i') : '-' }}</li>
+      <li>Psychologue: {{ rdv.psychologue.displayName }}</li>
+      <li>Transaction: {{ rdv.stripeSessionId ?: 'Paiement confirme' }}</li>
+    </ul>
+  </div>
+</body></html>
