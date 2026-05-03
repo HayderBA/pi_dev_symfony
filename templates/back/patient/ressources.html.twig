@@ -1,0 +1,443 @@
+{% extends 'back/patient/base_patient.html.twig' %}
+
+{% block title %}Ressources Bien-être - GrowMind{% endblock %}
+
+{% block patient_content %}
+<div class="page-header mb-4" style="background: linear-gradient(135deg, #0d1b2a 0%, #1e88e5 100%); border-radius: 16px; padding: 28px; color: #fff;">
+  <div class="page-header-content">
+    <h1>Ressources Bien-être</h1>
+    <p>Découvrez nos contenus sélectionnés pour votre épanouissement personnel.</p>
+  </div>
+</div>
+
+{# ── AI Recommendations ────────────────────────────────────────────────── #}
+<div class="row g-3 mb-4" id="aiRecoSection" style="display:none;">
+  <div class="col-12">
+    <div style="background:linear-gradient(135deg,#0d1b2a,#1e3a5f);border-radius:16px;padding:22px 26px;color:#fff;">
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <div style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#16c784,#1e88e5);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">✨</div>
+        <div>
+          <div style="font-size:15px;font-weight:700;">Recommandé pour vous — Gemini 2.5 Flash</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.6);">Sélectionné en analysant vos favoris et évaluations.</div>
+        </div>
+      </div>
+      <div id="aiRecoLoading" class="text-center py-3" style="color:rgba(255,255,255,.6);font-size:13px;">
+        <div style="width:20px;height:20px;border:2px solid rgba(255,255,255,.3);border-top-color:#16c784;border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto 10px;"></div>
+        Analyse de vos préférences en cours…
+      </div>
+      <div id="aiRecoCards" class="row g-3" style="display:none;"></div>
+      <div id="aiRecoError" style="display:none;color:#fca5a5;font-size:13px;"></div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  {% for ressource in ressources %}
+  <div class="col-md-6 col-xl-4">
+    <div class="gm-card h-100 d-flex flex-column" style="transition: transform 0.3s; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+      <div class="gm-card-body p-4 flex-grow-1">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <div class="d-flex align-items-center gap-3">
+            <div class="stat-icon green m-0" style="width: 40px; height: 40px; font-size: 18px;">
+              <i class="bi bi-journal-text"></i>
+            </div>
+            <div>
+              <h5 class="fw-bold mb-0" style="font-size: 16px;">{{ ressource.title }}</h5>
+              <span class="tag tag-doctor" style="font-size: 10px;">{{ ressource.type }}</span>
+            </div>
+          </div>
+          <a href="{{ path('app_favori_toggle', {id: ressource.id}) }}" class="btn-icon-sm" style="border-radius: 50%; color: {% if ressource.id in favoriIds %} #ef4444 {% else %} var(--text-muted) {% endif %}; background: {% if ressource.id in favoriIds %} #fee2e2 {% else %} var(--body-bg) {% endif %};">
+            <i class="bi {% if ressource.id in favoriIds %} bi-heart-fill {% else %} bi-heart {% endif %}"></i>
+          </a>
+        </div>
+        
+        <p class="text-muted mb-4" style="font-size: 13px; line-height: 1.6;">
+          {{ ressource.description }}
+        </p>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+           <span class="badge bg-light text-dark border" style="font-size: 11px;">{{ ressource.category }}</span>
+           <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2" 
+                   style="border-radius: 10px; font-size: 11px; font-weight: 600; padding: 6px 12px;"
+                   data-bs-toggle="modal" 
+                   data-bs-target="#qrModal" 
+                   {% set qrPath = path('app_ressource_qr_view', {'id': ressource.id}) %}
+                   {% set qrBase = qr_public_base_url %}
+                   {% if qrBase and (qrBase ends with '/') %}
+                       {% set qrBase = qrBase|slice(0, -1) %}
+                   {% endif %}
+                   {% set qrUrl = (qrBase ? (qrBase ~ qrPath) : absolute_url(qrPath)) %}
+                   data-qr-url="{{ qrUrl }}"
+                   data-qr-title="{{ ressource.title }}"
+                   onclick="openQrModal(this)">
+              <i class="bi bi-qr-code"></i> QR Code
+           </button>
+        </div>
+      </div>
+      
+      <div class="gm-card-body pt-0 px-4 pb-4">
+        <div class="d-flex gap-2">
+            <button class="btn-gm-primary flex-grow-1" style="font-size: 12px; padding: 10px 5px;" data-bs-toggle="modal" data-bs-target="#evalModal{{ ressource.id }}">
+               <i class="bi bi-star"></i> Évaluer
+            </button>
+            <button class="btn-gm-outline flex-grow-1" style="font-size: 12px; padding: 10px 5px;" data-bs-toggle="modal" data-bs-target="#viewEvalsModal{{ ressource.id }}">
+               <i class="bi bi-chat-text"></i> Avis ({{ ressource.evaluations|length }})
+            </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- View Evaluations Modal -->
+    <div class="modal fade" id="viewEvalsModal{{ ressource.id }}" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow" style="border-radius:16px;">
+          <div class="modal-header border-0 pb-0">
+            <h5 class="modal-title fw-bold">Avis des utilisateurs : {{ ressource.title }}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="d-flex flex-column gap-3">
+              {% for eval in ressource.evaluations %}
+              <div class="p-3 border rounded-4 bg-light">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="avatar-xs" style="width:24px; height:24px; font-size:9px;">U{{ eval.userId }}</div>
+                    <span class="fw-bold" style="font-size:13px;">Utilisateur #{{ eval.userId }}</span>
+                    {% if eval.userId == 1 %}
+                       <span class="badge bg-primary-subtle text-primary border-0" style="font-size: 9px;">MOI</span>
+                    {% endif %}
+                  </div>
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="text-warning" style="font-size:12px;">
+                        {% for i in 1..5 %}
+                           <i class="bi bi-star{{ i <= eval.note ? '-fill' : '' }}"></i>
+                        {% endfor %}
+                    </div>
+                    {% if eval.userId == 1 %}
+                    <div class="d-flex gap-1">
+                        <button class="btn-icon-sm" style="width:24px; height:24px; font-size:10px;" title="Modifier" data-bs-toggle="modal" data-bs-target="#editEvalModal{{ eval.id }}"><i class="bi bi-pencil"></i></button>
+                        <form method="post" action="{{ path('app_evaluation_delete', {id: eval.id}) }}" onsubmit="return confirm('Supprimer cet avis ?');" style="display:inline;">
+                          <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ eval.id) }}">
+                          <button class="btn-icon-sm" style="width:24px; height:24px; font-size:10px; color:#ef4444;" title="Supprimer"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+                <p class="mb-1 text-muted" style="font-size: 13px;">{{ eval.commentaire }}</p>
+                <small class="text-muted" style="font-size: 11px;">Publié le {{ eval.dateEvaluation|date('d/m/Y') }}</small>
+              </div>
+              {% else %}
+              <div class="text-center py-4">
+                <i class="bi bi-chat-square-text text-muted fs-2"></i>
+                <p class="text-muted mt-2">Aucun avis n'a encore été publié pour cette ressource.</p>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn-gm-primary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#evalModal{{ ressource.id }}">
+               Laisser mon avis
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Evaluation Modal -->
+  <div class="modal fade" id="evalModal{{ ressource.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow" style="border-radius:16px;">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title fw-bold">Votre avis sur : {{ ressource.title }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action="{{ path('app_evaluation_new') }}" method="POST">
+            <input type="hidden" name="evaluation[_token]" value="{{ csrf_token('evaluation') }}">
+            <div class="modal-body">
+              <input type="hidden" name="evaluation[ressource]" value="{{ ressource.id }}">
+              <div class="mb-3">
+                <label class="gm-label">Note</label>
+                <select name="evaluation[note]" class="gm-input">
+                  <option value="5">⭐⭐⭐⭐⭐ (Excellent)</option>
+                  <option value="4">⭐⭐⭐⭐ (Très bien)</option>
+                  <option value="3" selected>⭐⭐⭐ (Bien)</option>
+                  <option value="2">⭐⭐ (Moyen)</option>
+                  <option value="1">⭐ (Mauvais)</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="gm-label">Votre commentaire</label>
+                <textarea name="evaluation[commentaire]" class="gm-input" rows="4" placeholder="Qu'avez-vous pensé de cette ressource ?"></textarea>
+              </div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+              <button type="button" class="btn-gm-outline" data-bs-dismiss="modal">Annuler</button>
+              <button type="submit" class="btn-gm-primary">Publier l'avis</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  {# MODALS DE MODIFICATION POUR CHAQUE AVIS DE L'UTILISATEUR #}
+  {% for eval in ressource.evaluations %}
+    {% if eval.userId == 1 %}
+    <div class="modal fade" id="editEvalModal{{ eval.id }}" tabindex="-1" aria-hidden="true" style="z-index: 1060;">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow" style="border-radius:16px;">
+          <div class="modal-header border-0 pb-0">
+            <h5 class="modal-title fw-bold">Modifier mon avis</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form action="{{ path('app_evaluation_edit', {id: eval.id}) }}" method="POST">
+              <input type="hidden" name="evaluation[_token]" value="{{ csrf_token('evaluation') }}">
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label class="gm-label">Note</label>
+                  <select name="evaluation[note]" class="gm-input">
+                    <option value="5" {{ eval.note == 5 ? 'selected' : '' }}>⭐⭐⭐⭐⭐ (Excellent)</option>
+                    <option value="4" {{ eval.note == 4 ? 'selected' : '' }}>⭐⭐⭐⭐ (Très bien)</option>
+                    <option value="3" {{ eval.note == 3 ? 'selected' : '' }}>⭐⭐⭐ (Bien)</option>
+                    <option value="2" {{ eval.note == 2 ? 'selected' : '' }}>⭐⭐ (Moyen)</option>
+                    <option value="1" {{ eval.note == 1 ? 'selected' : '' }}>⭐ (Mauvais)</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="gm-label">Votre commentaire</label>
+                  <textarea name="evaluation[commentaire]" class="gm-input" rows="4">{{ eval.commentaire }}</textarea>
+                </div>
+              </div>
+              <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn-gm-outline" data-bs-dismiss="modal">Annuler</button>
+                <button type="submit" class="btn-gm-primary">Enregistrer les modifications</button>
+              </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  {% endfor %}
+  {% else %}
+  <div class="col-12 text-center py-5">
+      <i class="bi bi-inbox fs-1 text-muted"></i>
+      <p class="mt-3 text-muted">Aucune ressource disponible pour le moment.</p>
+  </div>
+  {% endfor %}
+</div>
+
+<style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+<script>
+document.addEventListener('DOMContentLoaded', async function () {
+    const section    = document.getElementById('aiRecoSection');
+    const loading    = document.getElementById('aiRecoLoading');
+    const cards      = document.getElementById('aiRecoCards');
+    const errorBox   = document.getElementById('aiRecoError');
+
+    section.style.display = 'block';
+
+    try {
+        const res  = await fetch('{{ path('app_ai_recommendations') }}');
+        const data = await res.json();
+
+        loading.style.display = 'none';
+
+        if (!data.success || !data.recommendations || data.recommendations.length === 0) {
+            errorBox.textContent   = data.error || 'Aucune recommandation disponible pour le moment.';
+            errorBox.style.display = 'block';
+            return;
+        }
+
+        const typeIcons = { 'VIDEO': 'bi-play-circle-fill', 'ARTICLE': 'bi-file-text-fill', 'FORMATION': 'bi-mortarboard-fill', 'EVENT': 'bi-calendar-event-fill' };
+
+        data.recommendations.forEach((r, i) => {
+            const icon = typeIcons[r.type] || 'bi-journal-text';
+            const delay = i * 0.12;
+            cards.innerHTML += `
+              <div class="col-md-4" style="animation: fadeUp 0.4s ease ${delay}s both;">
+                <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:18px;height:100%;backdrop-filter:blur(6px);">
+                  <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="bi ${icon}" style="color:#16c784;font-size:16px;"></i>
+                    <span style="font-size:10px;font-weight:700;color:#16c784;text-transform:uppercase;letter-spacing:0.8px;">${r.type}</span>
+                  </div>
+                  <div style="font-size:14px;font-weight:700;margin-bottom:6px;line-height:1.3;">${r.title}</div>
+                  <div style="font-size:11.5px;color:rgba(255,255,255,.55);margin-bottom:10px;line-height:1.5;">${r.description}</div>
+                  <div style="background:rgba(22,199,132,.12);border:1px solid rgba(22,199,132,.25);border-radius:8px;padding:8px 10px;font-size:11px;color:#6ee7b7;line-height:1.4;">
+                    <i class="bi bi-stars me-1"></i>${r.reason}
+                  </div>
+                </div>
+              </div>`;
+        });
+
+        cards.style.display = 'flex';
+        cards.classList.add('row');
+
+    } catch (err) {
+        loading.style.display  = 'none';
+        errorBox.textContent   = 'Erreur lors du chargement des recommandations IA.';
+        errorBox.style.display = 'block';
+    }
+});
+</script>
+<style>
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+{# ── SIMPLE AI CHATBOT ────────────────────────────────────────────────── #}
+<div id="aiChatWrapper" data-url="{{ path('app_simple_chat_final') }}" style="position:fixed; bottom:30px; right:30px; z-index:1050;">
+  <button id="aiChatToggle" class="btn btn-primary shadow-lg" style="width:60px; height:60px; border-radius:30px; display:flex; align-items:center; justify-content:center;">
+    <i class="bi bi-chat-dots-fill fs-4"></i>
+  </button>
+
+  <div id="aiChatWindow" style="display:none; position:absolute; bottom:80px; right:0; width:320px; background:white; border-radius:15px; box-shadow:0 10px 30px rgba(0,0,0,0.2); overflow:hidden; flex-direction:column;">
+    <div style="background:#1e88e5; padding:15px; color:white; font-weight:700;">Simple Assistant</div>
+    <div id="aiChatMessages" style="height:250px; overflow-y:auto; padding:15px; display:flex; flex-direction:column; gap:10px; background:#f9f9f9; font-size:13px;">
+      <div style="background:white; padding:8px; border-radius:8px; align-self:flex-start; border:1px solid #eee;">Bonjour ! Posez-moi une question simple.</div>
+    </div>
+    <div style="padding:10px; border-top:1px solid #eee; display:flex; gap:5px;">
+      <input type="text" id="aiChatInput" placeholder="Votre message..." style="flex-grow:1; border:1px solid #ddd; border-radius:5px; padding:5px 10px; font-size:13px; outline:none;">
+      <button id="aiChatSend" class="btn btn-primary btn-sm"><i class="bi bi-send"></i></button>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const wrapper = document.getElementById('aiChatWrapper');
+    const toggle = document.getElementById('aiChatToggle');
+    const chatWindow = document.getElementById('aiChatWindow');
+    const input = document.getElementById('aiChatInput');
+    const send = document.getElementById('aiChatSend');
+    const messages = document.getElementById('aiChatMessages');
+    const chatUrl = (wrapper && wrapper.dataset && wrapper.dataset.url) ? wrapper.dataset.url : '{{ path('app_simple_chat_final') }}';
+
+    function escapeHtml(value) {
+        return String(value)
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+    }
+
+    function appendBubble(text, opts) {
+        const from = opts && opts.from ? opts.from : 'bot';
+        const safeText = escapeHtml(text);
+
+        if (from === 'user') {
+            messages.insertAdjacentHTML('beforeend', `<div style="background:#e3f2fd; padding:8px; border-radius:8px; align-self:flex-end;">${safeText}</div>`);
+            return;
+        }
+
+        if (from === 'error') {
+            messages.insertAdjacentHTML('beforeend', `<div style="background:#fff1f2; color:#b91c1c; padding:8px; border-radius:8px; align-self:flex-start; border:1px solid #fecdd3;">${safeText}</div>`);
+            return;
+        }
+
+        messages.insertAdjacentHTML('beforeend', `<div style="background:white; padding:8px; border-radius:8px; align-self:flex-start; border:1px solid #eee;">${safeText}</div>`);
+    }
+
+    if (toggle) {
+        toggle.onclick = () => {
+            chatWindow.style.display = chatWindow.style.display === 'none' ? 'flex' : 'none';
+            if (chatWindow.style.display === 'flex') input.focus();
+        };
+    }
+
+    async function sendMessage() {
+        const query = input.value.trim();
+        if (!query) return;
+
+        appendBubble(query, { from: 'user' });
+        input.value = '';
+        messages.scrollTop = messages.scrollHeight;
+
+        try {
+            const res = await fetch(chatUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                body: JSON.stringify({ query: query })
+            });
+
+            const contentType = res.headers.get('content-type') || '';
+            if (!contentType.includes('application/json')) {
+                throw new Error(`Réponse non JSON (HTTP ${res.status}).`);
+            }
+
+            const data = await res.json();
+            if (res.ok && data && data.success) {
+                appendBubble(data.response || '', { from: 'bot' });
+            } else {
+                const error = (data && data.error) ? data.error : `Erreur HTTP ${res.status}`;
+                appendBubble(`Erreur: ${error}`, { from: 'error' });
+            }
+        } catch (e) {
+            appendBubble(`Erreur réseau: ${e.message}`, { from: 'error' });
+        }
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    if (send) send.onclick = sendMessage;
+    if (input) input.onkeypress = (e) => { if(e.key === 'Enter') sendMessage(); };
+});
+</script>
+
+<script>
+function openQrModal(btn) {
+    const url = btn.getAttribute('data-qr-url');
+    const title = btn.getAttribute('data-qr-title');
+    const qrImg = document.getElementById('qrImage');
+    const qrLoader = document.getElementById('qrLoading');
+    const qrTitle = document.getElementById('qrModalTitle');
+    const downloadBtn = document.getElementById('qrDownloadLink');
+    
+    qrTitle.innerText = "QR Code: " + title;
+    qrImg.style.display = 'none';
+    qrLoader.style.display = 'inline-block';
+    
+    const qrFullUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(url)}`;
+    
+    qrImg.src = qrFullUrl;
+    downloadBtn.href = qrFullUrl;
+    
+    qrImg.onload = function() {
+        qrLoader.style.display = 'none';
+        qrImg.style.display = 'inline-block';
+    };
+}
+</script>
+
+{# ── QR Code Modal ─────────────────────────────────────────────────────── #}
+<div class="modal fade" id="qrModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+    <div class="modal-content" style="border-radius: 20px; border: none; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.2);">
+      <div class="modal-header" style="background: linear-gradient(135deg, #1e88e5, #1565c0); border: none; padding: 25px; color: white;">
+        <h5 class="modal-title" id="qrModalTitle" style="font-weight: 700; font-size: 18px;">Générer QR Code</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center" style="padding: 40px 20px; background: #f8faff;">
+        <div id="qrFrame" style="display: inline-block; padding: 20px; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #eee;">
+          <img id="qrImage" src="" alt="QR Code" style="width: 200px; height: 200px; display: none;">
+          <div id="qrLoading" class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Chargement...</span>
+          </div>
+        </div>
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 0;">Scannez ce code pour accéder directement à la ressource sur votre mobile.</p>
+      </div>
+      <div class="modal-footer" style="background: white; border: none; padding: 20px; justify-content: center;">
+        <a id="qrDownloadLink" href="" download="qrcode.png" class="btn-gm-primary" style="width: 100%; justify-content: center; text-decoration:none;">
+          <i class="bi bi-download"></i> Télécharger le QR Code
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+@keyframes pulse { from { opacity: 0.3; transform: scale(0.8); } to { opacity: 1; transform: scale(1.2); } }
+</style>
+{% endblock %}

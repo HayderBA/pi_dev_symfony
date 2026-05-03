@@ -1,0 +1,146 @@
+<?php
+
+namespace App\Controller;
+
+use App\Repository\EvaluationRepository;
+use App\Repository\FavoriRepository;
+use App\Entity\Ressource;
+use App\Form\RessourceType;
+use App\Repository\RessourceRepository;
+use App\Service\MailerService;
+use App\Service\GeminiService;
+use Cloudinary\Cloudinary;
+use Dompdf\Dompdf;
+use Dompdf\Options;
+use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
+
+#[Route('/ressource')]
+class RessourceController extends AbstractController
+{
+    private function getFirstFormError(FormInterface $form): ?string
+    {
+        foreach ($form->getErrors(true, true) as $error) { return $error->getMessage(); }
+        return null;
+    }
+
+    private function getCloudinary(): Cloudinary
+    {
+        return new Cloudinary([
+            'cloud' => [
+                'cloud_name' => $this->getParameter('cloudinary.cloud_name'),
+                'api_key'    => $this->getParameter('cloudinary.api_key'),
+                'api_secret' => $this->getParameter('cloudinary.api_secret'),
+            ],
+        ]);
+    }
+
+    private function uploadToCloudinary(\Symfony\Component\HttpFoundation\File\UploadedFile $file, string $title): string
+    {
+        $result = $this->getCloudinary()->uploadApi()->upload($file->getPathname(), ['folder' => 'growmind/ressources']);
+        return (string) $result['secure_url'];
+    }
+
+    #[Route('/', name: 'app_ressource_index', methods: ['GET', 'POST'])]
+    public function index(Request $request, RessourceRepository $ressourceRepository, EvaluationRepository $evaluationRepository, FavoriRepository $favoriRepository, PaginatorInterface $paginator): Response
+    {
+        if ($request->isMethod('POST') && str_contains((string)$request->headers->get('Content-Type'), 'application/json')) {
+            $data = json_decode($request->getContent(), true);
+            $query = $data['query'] ?? '';
+            if ($query) {
+                try {
+                    $gemini = $this->container->get('App\Service\GeminiService');
+                    $aiResponse = $gemini->simpleChat($query);
+                    return new JsonResponse(['success' => true, 'response' => $aiResponse]);
+                } catch (\Throwable $e) {
+                    return new JsonResponse(['success' => false, 'error' => $e->getMessage()]);
+                }
+            }
+        }
+
+        if ($request->isXmlHttpRequest()) {
+            $qb = $ressourceRepository->createQueryBuilder('r');
+            $query = $request->query->get('q');
+            if ($query) { $qb->andWhere('r.title LIKE :q')->setParameter('q', "%$query%"); }
+            return $this->render('ressource/_list.html.twig', ['ressources' => $qb->getQuery()->getResult()]);
+        }
+
+        $all = $ressourceRepository->findAll();
+        $dashboardStats = [
+            'total' => count($all),
+            'published' => count($ressourceRepository->findBy(['status' => 'PUBLISHED'])),
+            'draft' => count($ressourceRepository->findBy(['status' => 'DRAFT'])),
+            'evaluations' => $evaluationRepository->count([]),
+            'favoris' => $favoriRepository->count([])
+        ];
+        
+        $pagination = $paginator->paginate(
+            $ressourceRepository->createQueryBuilder('r')->orderBy('r.id', 'DESC'),
+            $request->query->getInt('page', 1),
+            5
+        );
+
+        return $this->render('ressource/index.html.twig', [
+            'ressources' => $pagination,
+            'stats' => $dashboardStats,
+            'dashboardStats' => $dashboardStats
+        ]);
+    }
+
+    #[Route('/new', name: 'app_ressource_new', methods: ['GET', 'POST'])]
+    public function new(Request $request, EntityManagerInterface $entityManager, MailerService $mailerService): Response
+    {
+        $ressource = new Ressource();
+        $ressource->setDateCreation(new \DateTime());
+        $form = $this->createForm(RessourceType::class, $ressource);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $pdfFile = $form->get('pdfFile')->getData();
+            if ($pdfFile) {
+                $url = $this->uploadToCloudinary($pdfFile, $ressource->getTitle());
+                $ressource->setContent('PDF::' . $url);
+            }
+            $entityManager->persist($ressource);
+            $entityManager->flush();
+            return $this->redirectToRoute('app_ressource_index');
+        }
+        return $this->render('ressource/new.html.twig', ['ressource' => $ressource, 'form' => $form->createView()]);
+    }
+
+    #[Route('/{id}/edit', name: 'app_ressource_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Ressource $ressource, EntityManagerInterface $entityManager): Response
+    {
+        $form = $this->createForm(RessourceType::class, $ressource);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+            return $this->redirectToRoute('app_ressource_index');
+        }
+        return $this->render('ressource/edit.html.twig', ['ressource' => $ressource, 'form' => $form->createView()]);
+    }
+
+    #[Route('/{id}', name: 'app_ressource_delete', methods: ['POST'])]
+    public function delete(Request $request, Ressource $ressource, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$ressource->getId(), $request->request->get('_token'))) {
+            $entityManager->remove($ressource);
+            $entityManager->flush();
+        }
+        return $this->redirectToRoute('app_ressource_index');
+    }
+
+    public static function getSubscribedServices(): array
+    {
+        return array_merge(parent::getSubscribedServices(), [
+            'App\Service\GeminiService' => 'App\Service\GeminiService',
+        ]);
+    }
+}

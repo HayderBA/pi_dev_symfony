@@ -1,0 +1,314 @@
+{% extends 'back/base_back.html.twig' %}
+
+{% block title %}Gestion des Ressources{% endblock %}
+
+{% block admin_content %}
+<div class="page-header mb-4">
+  <div class="page-header-content">
+    <h1>Gestion des Ressources</h1>
+    <p>Gérer, ajouter, modifier et supprimer les ressources de la plateforme.</p>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-2">
+    <div class="gm-card p-3 text-center">
+      <div style="font-size: 20px; font-weight: 700; color: var(--blue);">{{ dashboardStats.total }}</div>
+      <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">RESSOURCES</div>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="gm-card p-3 text-center">
+      <div style="font-size: 20px; font-weight: 700; color: var(--green);">{{ dashboardStats.published }}</div>
+      <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">PUBLIÉES</div>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="gm-card p-3 text-center">
+      <div style="font-size: 20px; font-weight: 700; color: #f59e0b;">{{ dashboardStats.draft }}</div>
+      <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">BROUILLONS</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="gm-card p-3 text-center">
+      <div style="font-size: 20px; font-weight: 700; color: #ef4444;">{{ dashboardStats.evaluations }}</div>
+      <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">ÉVALUATIONS TOTALES</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="gm-card p-3 text-center">
+      <div style="font-size: 20px; font-weight: 700; color: #ec4899;">{{ dashboardStats.favoris }}</div>
+      <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">FAVORIS PATIENTS</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-12">
+    <div class="gm-card">
+      <div class="gm-card-header mb-3">
+        <span class="gm-card-title">Liste des Ressources</span>
+        <div class="d-flex gap-2 align-items-center">
+          <select id="filterType" style="padding:7px;border-radius:9px;border:1px solid var(--border);font-size:12.5px;outline:none;background:var(--body-bg);">
+            <option value="">Tous les Types</option>
+            <option value="Formation">Formation</option>
+            <option value="Article">Article</option>
+            <option value="Video">Vidéo</option>
+          </select>
+          <select id="filterStatus" style="padding:7px;border-radius:9px;border:1px solid var(--border);font-size:12.5px;outline:none;background:var(--body-bg);">
+            <option value="">Tous les Statuts</option>
+            <option value="PUBLISHED">Publiée</option>
+            <option value="DRAFT">Brouillon</option>
+          </select>
+          <input type="text" id="searchInput" placeholder="Rechercher..." style="padding:7px 14px;border-radius:9px;border:1px solid var(--border);font-size:12.5px;outline:none;background:var(--body-bg);width: 180px;">
+          <a href="{{ path('app_ressource_new') }}" class="btn-gm-primary text-decoration-none"><i class="bi bi-plus-lg"></i> Créer</a>
+        </div>
+      </div>
+      <div class="gm-card-body p-0" style="padding:0!important;">
+        <div style="overflow-x:auto;">
+          <table class="gm-table">
+            <thead>
+              <tr>
+                <th>Titre</th>
+                <th>Type</th>
+                <th>Catégorie</th>
+                <th>Auteur</th>
+                <th>Statut</th>
+                <th>QR</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+                {{ include('ressource/_list.html.twig') }}
+            </tbody>
+          </table>
+        </div>
+        <div class="d-flex align-items-center justify-content-between px-4 py-3 border-top">
+          <span style="font-size:12.5px;color:var(--text-muted);">
+            {% set firstItem = (ressources.currentPageNumber - 1) * ressources.itemNumberPerPage + 1 %}
+            {% set lastItem  = firstItem + ressources|length - 1 %}
+            Affichage {{ firstItem }}–{{ lastItem }} sur {{ ressources.totalItemCount }} ressources
+          </span>
+          <div>{{ knp_pagination_render(ressources) }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mt-4">
+  <div class="col-md-6">
+    <div class="gm-card">
+       <div class="gm-card-header border-bottom pb-2 mb-3">
+          <span class="gm-card-title" style="font-size: 14px;"><i class="bi bi-pie-chart-fill me-2" style="color: var(--blue);"></i>Distribution par Type</span>
+       </div>
+       <div style="height: 250px;">
+          <canvas id="typeChart"></canvas>
+       </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="gm-card">
+       <div class="gm-card-header border-bottom pb-2 mb-3">
+          <span class="gm-card-title" style="font-size: 14px;"><i class="bi bi-bar-chart-fill me-2" style="color: var(--green);"></i>État des Ressources</span>
+       </div>
+       <div style="height: 250px;">
+          <canvas id="statusChart"></canvas>
+       </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Pie Chart Type
+    new Chart(document.getElementById('typeChart'), {
+        type: 'doughnut',
+        data: {
+            labels: {{ stats.chartTypeLabels|json_encode|raw }},
+            datasets: [{
+                data: {{ stats.chartTypeData|json_encode|raw }},
+                backgroundColor: ['#1e88e5', '#16c784', '#f59e0b', '#ef4444', '#9333ea'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } }
+            }
+        }
+    });
+
+    // 2. Bar Chart Status
+    new Chart(document.getElementById('statusChart'), {
+        type: 'bar',
+        data: {
+            labels: ['Publiées', 'Brouillons'],
+            datasets: [{
+                label: 'Nombre',
+                data: [{{ stats.published }}, {{ stats.draft }}],
+                backgroundColor: ['#16c784', '#f59e0b'],
+                borderRadius: 6
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, grid: { display: false }, ticks: { font: { size: 10 } } },
+                x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+            },
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+
+    // 3. AJAX Search & Filters
+    const searchInput = document.getElementById('searchInput');
+    const filterType = document.getElementById('filterType');
+    const filterStatus = document.getElementById('filterStatus');
+    const tableBody = document.getElementById('tableBody');
+
+    function updateTable() {
+        const query = searchInput.value;
+        const type = filterType.value;
+        const status = filterStatus.value;
+
+        const url = new URL('{{ path('app_ressource_index') }}', window.location.origin);
+        url.searchParams.set('q', query);
+        url.searchParams.set('type', type);
+        url.searchParams.set('status', status);
+
+        fetch(url, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.text())
+        .then(html => {
+            tableBody.innerHTML = html;
+        });
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener('input', updateTable);
+        filterType.addEventListener('change', updateTable);
+        filterStatus.addEventListener('change', updateTable);
+    }
+});
+</script>
+
+{# ── SIMPLE AI CHATBOT ────────────────────────────────────────────────── #}
+<div id="aiChatWrapper" data-url="/admin/simple-chat" style="position:fixed; bottom:30px; right:30px; z-index:1050;">
+  <button id="aiChatToggle" class="btn btn-primary shadow-lg" style="width:60px; height:60px; border-radius:30px; display:flex; align-items:center; justify-content:center;">
+    <i class="bi bi-chat-dots-fill fs-4"></i>
+  </button>
+
+  <div id="aiChatWindow" style="display:none; position:absolute; bottom:80px; right:0; width:320px; background:white; border-radius:15px; box-shadow:0 10px 30px rgba(0,0,0,0.2); overflow:hidden; flex-direction:column;">
+    <div style="background:#1e88e5; padding:15px; color:white; font-weight:700;">Simple Assistant Admin</div>
+    <div id="aiChatMessages" style="height:250px; overflow-y:auto; padding:15px; display:flex; flex-direction:column; gap:10px; background:#f9f9f9; font-size:13px;">
+      <div style="background:white; padding:8px; border-radius:8px; align-self:flex-start; border:1px solid #eee;">Bonjour Admin ! Comment puis-je vous aider ?</div>
+    </div>
+    <div style="padding:10px; border-top:1px solid #eee; display:flex; gap:5px;">
+      <input type="text" id="aiChatInput" placeholder="Votre message..." style="flex-grow:1; border:1px solid #ddd; border-radius:5px; padding:5px 10px; font-size:13px; outline:none;">
+      <button id="aiChatSend" class="btn btn-primary btn-sm"><i class="bi bi-send"></i></button>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggle = document.getElementById('aiChatToggle');
+    const chatWindow = document.getElementById('aiChatWindow');
+    const input = document.getElementById('aiChatInput');
+    const send = document.getElementById('aiChatSend');
+    const messages = document.getElementById('aiChatMessages');
+
+    if (toggle) {
+        toggle.onclick = () => {
+            chatWindow.style.display = chatWindow.style.display === 'none' ? 'flex' : 'none';
+            if (chatWindow.style.display === 'flex') input.focus();
+        };
+    }
+
+    async function sendMessage() {
+        const query = input.value.trim();
+        if (!query) return;
+
+        messages.innerHTML += `<div style="background:#e3f2fd; padding:8px; border-radius:8px; align-self:flex-end;">${query}</div>`;
+        input.value = '';
+        messages.scrollTop = messages.scrollHeight;
+
+        try {
+            // New Dedicated Stable Route
+            const chatUrl = '/chat/send';
+            
+            const res = await fetch(chatUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query: query })
+            });
+            const data = await res.json();
+            const text = data.success ? data.response : "Erreur: " + (data.error || "Réponse invalide");
+            messages.innerHTML += `<div style="background:white; padding:8px; border-radius:8px; align-self:flex-start; border:1px solid #eee;">${text}</div>`;
+        } catch (e) {
+            messages.innerHTML += `<div style="color:red; font-size:11px;">Détails: ${e.message}</div>`;
+        }
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    if (send) send.onclick = sendMessage;
+    if (input) input.onkeypress = (e) => { if(e.key === 'Enter') sendMessage(); };
+});
+</script>
+
+{# ── QR Code Modal ─────────────────────────────────────────────────────── #}
+<div class="modal fade" id="qrModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+    <div class="modal-content" style="border-radius: 20px; border: none; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.2);">
+      <div class="modal-header" style="background: linear-gradient(135deg, #1e88e5, #1565c0); border: none; padding: 25px; color: white;">
+        <h5 class="modal-title" id="qrModalTitle" style="font-weight: 700; font-size: 18px;">Générer QR Code</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center" style="padding: 40px 20px; background: #f8faff;">
+        <div id="qrFrame" style="display: inline-block; padding: 20px; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #eee;">
+          <img id="qrImage" src="" alt="QR Code" style="width: 200px; height: 200px; display: none;">
+          <div id="qrLoading" class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Chargement...</span>
+          </div>
+        </div>
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 0;">Scannez ce code pour accéder directement à la ressource sur votre mobile.</p>
+      </div>
+      <div class="modal-footer" style="background: white; border: none; padding: 20px; justify-content: center;">
+        <a id="qrDownloadLink" href="" download="qrcode.png" class="btn-gm-primary" style="width: 100%; justify-content: center; text-decoration:none;">
+          <i class="bi bi-download"></i> Télécharger le QR Code
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function openQrModal(btn) {
+    const url = btn.getAttribute('data-qr-url');
+    const title = btn.getAttribute('data-qr-title');
+    const qrImg = document.getElementById('qrImage');
+    const qrLoader = document.getElementById('qrLoading');
+    const qrTitle = document.getElementById('qrModalTitle');
+    const downloadBtn = document.getElementById('qrDownloadLink');
+    
+    qrTitle.innerText = "QR Code: " + title;
+    qrImg.style.display = 'none';
+    qrLoader.style.display = 'inline-block';
+    
+    const qrFullUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(url)}`;
+    
+    qrImg.src = qrFullUrl;
+    downloadBtn.href = qrFullUrl;
+    
+    qrImg.onload = function() {
+        qrLoader.style.display = 'none';
+        qrImg.style.display = 'inline-block';
+    };
+}
+</script>
+{% endblock %}

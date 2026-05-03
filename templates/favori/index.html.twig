@@ -1,0 +1,111 @@
+{% extends 'back/base_back.html.twig' %}
+
+{% block title %}Gestion des Favoris{% endblock %}
+
+{% block admin_content %}
+<div class="page-header mb-4">
+  <div class="page-header-content">
+    <h1>Gestion des Favoris</h1>
+    <p>Consulter les favoris des utilisateurs.</p>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-12">
+    <div class="gm-card">
+      <div class="gm-card-header mb-3">
+        <span class="gm-card-title"><i class="bi bi-heart-fill text-danger me-2"></i>Liste des Favoris</span>
+      </div>
+      <div class="gm-card-body p-0" style="padding:0!important;">
+        <div style="overflow-x:auto;">
+          <table class="gm-table">
+            <thead>
+              <tr>
+                <th>Ressource</th>
+                <th>Date d'ajout</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for favori in favoris %}
+                <tr>
+                    <td><span class="tag tag-patient">{{ favori.ressource ? favori.ressource.title : 'N/A' }}</span></td>
+                    <td style="color:var(--text-muted);font-size:13px">{{ favori.dateAjout ? favori.dateAjout|date('d M, Y') : '' }}</td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <a href="{{ path('app_favori_show', {'id': favori.id}) }}" class="btn-icon-sm text-decoration-none" title="Voir"><i class="bi bi-eye"></i></a>
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3" class="text-center py-4" style="color:var(--text-muted);font-size:13px;">
+                        <i class="bi bi-heart fs-4 d-block mb-2"></i>
+                        Aucun favori trouvé
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="d-flex align-items-center justify-content-between px-4 py-3 border-top">
+          <span style="font-size:12.5px;color:var(--text-muted);">
+            {% set firstItem = (favoris.currentPageNumber - 1) * favoris.itemNumberPerPage + 1 %}
+            {% set lastItem  = firstItem + favoris|length - 1 %}
+            Affichage {{ firstItem }}–{{ lastItem }} sur {{ favoris.totalItemCount }} favoris
+          </span>
+          <div>{{ knp_pagination_render(favoris) }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# ── AI RECOMMENDATIONS (Ajax Loader) ────────────────────────────────────── #}
+<div class="row g-3">
+  <div class="col-12">
+    <div class="gm-card" style="border: 1px dashed var(--primary); background: rgba(30, 136, 229, 0.05);">
+      <div class="gm-card-header mb-3 d-flex align-items-center justify-content-between">
+        <span class="gm-card-title"><i class="bi bi-stars text-primary me-2"></i>Suggestions IA (Basé sur vos favoris)</span>
+      </div>
+      <div class="gm-card-body">
+        <div id="aiRecContainer" class="row g-3 text-center py-4">
+          <div class="col-12 text-muted">
+            <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+            Analyse de vos favoris en cours...
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+    const container = document.getElementById('aiRecContainer');
+    
+    try {
+        const response = await fetch('/favori/api/recommendations');
+        const result = await response.json();
+        
+        if (result.success && result.data.length > 0) {
+            container.classList.remove('text-center', 'py-4');
+            container.innerHTML = result.data.map(rec => `
+                <div class="col-md-4">
+                  <div class="p-3 bg-white border rounded shadow-sm h-100 d-flex flex-column">
+                    <div class="mb-2"><span class="tag tag-published">${rec.category}</span></div>
+                    <h6 class="mb-2" style="font-weight:700;">${rec.title}</h6>
+                    <p class="mb-3" style="font-size:12px; color:var(--text-muted); flex-grow:1;">${rec.content}</p>
+                    <a href="${rec.url}" class="btn btn-primary btn-sm w-100">Découvrir</a>
+                  </div>
+                </div>
+            `).join('');
+        } else {
+            container.innerHTML = '<div class="col-12 text-muted" style="font-size:13px;">Ajoutez plus de favoris pour obtenir des recommandations personnalisées.</div>';
+        }
+    } catch (e) {
+        container.innerHTML = '<div class="col-12 text-muted" style="font-size:13px;">Impossible de charger les suggestions pour le moment.</div>';
+    }
+});
+</script>
+{% endblock %}
