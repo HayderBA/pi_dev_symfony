@@ -1,0 +1,32 @@
+specialite,abrev_specialite,diplome,abrev_diplome,question,mots_cles
+Psychiatrie,PSY,Doctorat en Medecine,MD,Comment diagnostiquer une depression ?,evaluation clinique DSM symptomes entretien
+Psychiatrie,PSY,Doctorat en Medecine,MD,Quels sont les symptomes de la schizophrenie ?,hallucinations delires pensee desorganisee
+Psychiatrie,PSY,Doctorat en Medecine,MD,Comment traiter un trouble bipolaire ?,stabilisateurs humeur traitement suivi
+
+PsychologieClinique,PSYCL,Master en Psychologie,MPSY,Comment traiter l anxiete ?,TCC relaxation therapie accompagnement
+PsychologieClinique,PSYCL,Master en Psychologie,MPSY,Quelles sont les methodes d evaluation psychologique ?,tests entretien observation evaluation
+PsychologieClinique,PSYCL,Master en Psychologie,MPSY,Qu est ce que la therapie cognitive comportementale ?,pensees comportements modification
+
+Neuropsychiatrie,NPSY,Doctorat en Medecine,MD,Quel est le lien entre cerveau et troubles mentaux ?,cerveau neurotransmetteurs comportement
+Neuropsychiatrie,NPSY,Doctorat en Medecine,MD,Comment diagnostiquer un trouble neurologique mental ?,IRM EEG examen neurologique
+
+Psychotherapie,PSYT,Master en Psychologie,MPSY,Quelles sont les techniques de psychotherapie ?,ecoute active reformulation cognition
+Psychotherapie,PSYT,Master en Psychologie,MPSY,Comment accompagner un patient en detresse ?,empathie soutien suivi
+
+Addictologie,ADDICT,Doctorat en Medecine,MD,Comment traiter une addiction ?,sevrage traitement psychologique medicaments
+Addictologie,ADDICT,Doctorat en Medecine,MD,Quels sont les types de dependance ?,substances comportement dependance
+
+PsychiatrieInfantile,PSYINF,Doctorat en Medecine,MD,Comment diagnostiquer l autisme chez un enfant ?,observation comportement developpement
+PsychiatrieInfantile,PSYINF,Doctorat en Medecine,MD,Quels sont les troubles du developpement ?,langage social cognition
+
+PsychiatrieLegale,PSYLEG,Doctorat en Medecine,MD,Quel est le role du psychiatre legal ?,evaluation responsabilite mentale justice
+PsychiatrieLegale,PSYLEG,Doctorat en Medecine,MD,Comment evaluer la responsabilite mentale ?,analyse comportement judiciaire
+
+PsychiatrieGeriatrique,PSYGER,Doctorat en Medecine,MD,Quels sont les troubles mentaux chez les personnes agees ?,demence depression cognition
+PsychiatrieGeriatrique,PSYGER,Doctorat en Medecine,MD,Comment diagnostiquer la demence ?,memoire tests cognitifs
+
+Neurologie,NEUR,Doctorat en Medecine,MD,Quel est le lien entre cerveau et comportement ?,cerveau activite comportement
+Neurologie,NEUR,Doctorat en Medecine,MD,Comment diagnostiquer une maladie neurologique ?,IRM EEG diagnostic
+
+Psychopharmacologie,PSYPH,Doctorat en Medecine,MD,Comment fonctionnent les medicaments psychiatriques ?,neurotransmetteurs cerveau traitement
+Psychopharmacologie,PSYPH,Doctorat en Medecine,MD,Quels sont les effets secondaires des antidepresseurs ?,nausees fatigue insomnie
