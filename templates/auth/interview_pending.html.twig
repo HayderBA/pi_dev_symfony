@@ -1,0 +1,952 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Entretien GrowMind Agent IA{% endblock %}
+
+{% block stylesheets %}
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:         #f0f7f4;
+  --surface:    #ffffff;
+  --surface2:   #e8f5f0;
+  --border:     rgba(16,143,101,.15);
+  --border2:    rgba(16,143,101,.30);
+  --primary:    #0077b6;
+  --primary-dim:#005f99;
+  --accent:     #10b981;
+  --warn:       #f59e0b;
+  --danger:     #ef4444;
+  --text:       #0f2d24;
+  --muted:      #4a7c6a;
+  --radius:     14px;
+  --card-r:     18px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 10%, rgba(0,119,182,.07) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 90% 90%, rgba(16,185,129,.06) 0%, transparent 55%);
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  display: grid;
+  grid-template-columns: 300px 1fr 280px;
+  grid-template-rows: 64px 1fr;
+  gap: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  grid-column: 1 / -1;
+  background: rgba(255,255,255,.95);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 2rem;
+  gap: 1.25rem;
+  backdrop-filter: blur(12px);
+  position: sticky; top: 0; z-index: 10;
+}
+.logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -.3px;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.topbar-sep { flex: 1; }
+.badge-live {
+  display: flex; align-items: center; gap: 7px;
+  padding: 5px 13px;
+  border-radius: 99px;
+  background: rgba(56,189,248,.08);
+  border: 1px solid rgba(56,189,248,.2);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+}
+.pulse-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent);
+  animation: pulse-anim 1.5s ease-in-out infinite;
+}
+@keyframes pulse-anim {
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.4;transform:scale(.7)}
+}
+
+/* ── PROGRESS BAR (topbar) ── */
+.progress-track {
+  flex: 1; max-width: 260px;
+  height: 4px;
+  background: rgba(255,255,255,.07);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-dim), var(--accent));
+  border-radius: 99px;
+  transition: width .6s cubic-bezier(.4,0,.2,1);
+}
+
+/* ── LEFT PANEL (caméra + agent) ── */
+.panel-left {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 16px;
+  overflow-y: auto;
+}
+
+.cam-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--card-r);
+  overflow: hidden;
+  position: relative;
+}
+.cam-label {
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--surface2);
+}
+#cam-preview {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  background: #0a1520;
+  display: block;
+}
+.cam-overlay {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 36px;
+  background: linear-gradient(to top, rgba(8,13,20,.9), transparent);
+}
+#emotion-badge {
+  font-size: 12px;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.agent-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--card-r);
+  padding: 20px;
+  text-align: center;
+}
+.agent-avatar {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(56,189,248,.2), rgba(52,211,153,.15));
+  border: 2px solid rgba(56,189,248,.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem;
+  margin: 0 auto 12px;
+}
+.agent-name {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.agent-role {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+.agent-status {
+  font-size: 12px;
+  color: var(--accent);
+  font-weight: 500;
+  padding: 6px 12px;
+  background: rgba(52,211,153,.08);
+  border-radius: 99px;
+  border: 1px solid rgba(52,211,153,.15);
+}
+
+/* ── MAIN PANEL ── */
+.panel-main {
+  display: flex;
+  flex-direction: column;
+  padding: 24px 28px;
+  gap: 18px;
+  overflow-y: auto;
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+/* Question box */
+.question-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--card-r);
+  padding: 20px 22px;
+  position: relative;
+  overflow: hidden;
+}
+.question-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--primary), var(--accent));
+}
+.question-num {
+  font-size: 11px;
+  color: var(--primary);
+  font-weight: 600;
+  letter-spacing: .05em;
+  margin-bottom: 8px;
+}
+#question-text {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+/* Mic */
+.mic-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.mic-btn {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  border: 2px solid rgba(56,189,248,.3);
+  background: rgba(56,189,248,.08);
+  color: var(--primary);
+  font-size: 1.8rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .25s ease;
+  outline: none;
+  position: relative;
+}
+.mic-btn:hover { background: rgba(56,189,248,.15); border-color: rgba(56,189,248,.5); }
+.mic-btn.listening {
+  background: rgba(248,113,113,.15);
+  border-color: var(--danger);
+  color: var(--danger);
+  animation: mic-pulse 1.2s ease-in-out infinite;
+}
+@keyframes mic-pulse {
+  0%,100%{box-shadow:0 0 0 0 rgba(248,113,113,.4)}
+  50%{box-shadow:0 0 0 18px rgba(248,113,113,0)}
+}
+.mic-status {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Transcription */
+.transcript-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  min-height: 70px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+  font-style: italic;
+  position: relative;
+}
+#transcript-text { color: var(--text); }
+
+/* Submit btn */
+.submit-btn {
+  padding: 13px 32px;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--primary-dim), var(--accent));
+  color: #fff;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  transition: opacity .2s, transform .15s;
+}
+.submit-btn:hover { opacity: .9; transform: translateY(-1px); }
+.submit-btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+/* Result box */
+.result-card {
+  border-radius: var(--card-r);
+  padding: 22px 24px;
+  display: none;
+}
+.result-card.accepted {
+  background: rgba(52,211,153,.07);
+  border: 1px solid rgba(52,211,153,.25);
+}
+.result-card.refused {
+  background: rgba(248,113,113,.07);
+  border: 1px solid rgba(248,113,113,.25);
+}
+.result-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+.result-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+.redirect-btn {
+  display: inline-block;
+  padding: 10px 22px;
+  border-radius: 10px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  background: linear-gradient(135deg, var(--primary-dim), var(--accent));
+  transition: opacity .2s;
+}
+.redirect-btn.danger { background: linear-gradient(135deg, #f87171, #dc2626); }
+.redirect-btn:hover { opacity: .88; }
+
+/* ── RIGHT PANEL (analyses) ── */
+.panel-right {
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 16px;
+  gap: 12px;
+  overflow-y: auto;
+}
+
+.score-display {
+  text-align: center;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--card-r);
+  padding: 18px;
+}
+.score-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 3rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.score-sub { font-size: 12px; color: var(--muted); }
+
+.analyse-list { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+
+.analyse-item {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 11px 13px;
+  border-left: 3px solid var(--border);
+  font-size: 12.5px;
+  animation: slide-in .3s ease;
+}
+@keyframes slide-in { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+.analyse-item.good { border-left-color: var(--accent); }
+.analyse-item.mid  { border-left-color: var(--warn); }
+.analyse-item.bad  { border-left-color: var(--danger); }
+.analyse-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+.analyse-qnum { font-weight: 600; color: var(--text); font-size: 12px; }
+.analyse-note { font-weight: 700; font-size: 13px; }
+.analyse-verdict { color: var(--muted); font-size: 11.5px; line-height: 1.4; }
+
+.empty-state {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  color: var(--muted); font-size: 12px; text-align: center; gap: 8px;
+}
+.empty-icon { font-size: 2rem; opacity: .4; }
+
+/* ── Notification toast ── */
+.toast {
+  position: fixed; bottom: 24px; right: 24px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-size: 13px;
+  color: var(--text);
+  box-shadow: 0 8px 32px rgba(0,0,0,.4);
+  z-index: 999;
+  transform: translateY(80px);
+  opacity: 0;
+  transition: all .35s cubic-bezier(.4,0,.2,1);
+}
+.toast.show { transform: none; opacity: 1; }
+
+/* ── Spinner ── */
+.spin {
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid rgba(56,189,248,.2);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin-anim .7s linear infinite;
+  vertical-align: middle; margin-right: 6px;
+}
+@keyframes spin-anim { to { transform: rotate(360deg); } }
+</style>
+{% endblock %}
+
+{% block body %}
+
+{# ── TOPBAR ── #}
+<div class="topbar">
+  <span class="logo">GrowMind</span>
+  <span style="font-size:13px;color:var(--muted)">Candidat : <strong style="color:var(--text)">{{ doctor_name }}</strong></span>
+  <div class="topbar-sep"></div>
+  <div class="progress-track">
+    <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+  </div>
+  <span style="font-size:12px;color:var(--muted)" id="q-counter">0 / 4</span>
+  <div class="badge-live">
+    <span class="pulse-dot" id="live-dot"></span>
+    <span id="live-label">En attente</span>
+  </div>
+</div>
+
+{# ── GAUCHE : Caméra + Agent ── #}
+<div class="panel-left">
+  <div class="cam-card">
+    <div class="cam-label">
+      <span>📷 Caméra</span>
+      <span id="emotion-badge">😐 Neutre</span>
+    </div>
+    <video id="cam-preview" autoplay muted playsinline></video>
+    <div class="cam-overlay"></div>
+  </div>
+
+  <div class="agent-card">
+    <div class="agent-avatar">🤖</div>
+    <div class="agent-name">GrowMind Agent IA</div>
+    <div class="agent-role">Spécialiste en recrutement médical</div>
+    <div class="agent-status" id="agent-status">
+      <span class="spin"></span> Initialisation...
+    </div>
+  </div>
+</div>
+
+{# ── MILIEU : Question + Mic + Transcription ── #}
+<div class="panel-main">
+  <div>
+    <div class="section-label">Question en cours</div>
+    <div class="question-card">
+      <div class="question-num" id="question-num">Question 0 / 4</div>
+      <div id="question-text">Connexion à l'agent IA...</div>
+    </div>
+  </div>
+
+  <div class="mic-section">
+    <button class="mic-btn" id="mic-btn" onclick="toggleMic()" title="Parler / Arrêter">
+      🎙️
+    </button>
+    <div class="mic-status" id="mic-status">Cliquez sur le micro pour répondre</div>
+  </div>
+
+  <div>
+    <div class="section-label">Votre réponse</div>
+    <div class="transcript-box">
+      <span id="transcript-text" style="color:var(--muted)">Votre réponse apparaîtra ici...</span>
+    </div>
+  </div>
+
+  <button class="submit-btn" id="submit-btn" disabled onclick="submitAnswer()">
+    Envoyer la réponse →
+  </button>
+
+  {# Résultat final #}
+  <div class="result-card" id="result-card"></div>
+</div>
+
+{# ── DROITE : Score + Analyses ── #}
+<div class="panel-right">
+  <div class="score-display">
+    <div class="score-num" id="score-num">0</div>
+    <div class="score-sub">points / 100</div>
+  </div>
+
+  <div class="section-label" style="margin-top:4px">Analyses par question</div>
+
+  <div class="analyse-list" id="analyse-list">
+    <div class="empty-state">
+      <span class="empty-icon">📊</span>
+      Les analyses apparaîtront<br>après chaque réponse.
+    </div>
+  </div>
+</div>
+
+{# Toast notification #}
+<div class="toast" id="toast"></div>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+const SESSION_ID    = "{{ session_id }}";
+const TOTAL_Q       = 4;
+
+let currentQ        = 0;
+let finalTranscript = "";
+let interimText     = "";
+let recognition     = null;
+let listening       = false;
+let interviewDone   = false;
+let analyseCount    = 0;
+let restartTimer    = null;
+
+// ── INIT ──────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+  startCamera();
+  await loadQuestion(0);
+  setLive("En cours", true);
+  // BUG 3 FIX : bouton désactivé — s'active seulement quand il y a du transcript
+  document.getElementById('submit-btn').disabled = true;
+});
+
+async function startCamera() {
+  const vid = document.getElementById('cam-preview');
+  const badge = document.getElementById('emotion-badge');
+
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    badge.textContent = '❌ API non supportée';
+    vid.style.display = 'none';
+    showToast('Navigateur non compatible');
+    return;
+  }
+
+  try {
+    // 🔍 1. Lister toutes les caméras disponibles et l'afficher dans la console
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const videoDevices = devices.filter(d => d.kind === 'videoinput');
+    console.log('📷 Caméras détectées :', videoDevices.map(d => d.label || 'sans nom'));
+    if (videoDevices.length === 0) {
+      badge.textContent = '❌ Aucune caméra trouvée';
+      vid.style.display = 'none';
+      showToast('Aucune caméra détectée. Vérifiez que votre caméra de téléphone est bien connectée et reconnue par le système.');
+      return;
+    }
+
+    // 2. Essayer d'ouvrir la première caméra
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { deviceId: videoDevices[0].deviceId }
+    });
+
+    vid.srcObject = stream;
+    vid.style.display = 'block';
+    await vid.play();
+    badge.textContent = '😐 Neutre';
+    console.log('✅ Caméra activée avec :', videoDevices[0].label);
+
+  } catch (error) {
+    console.error('Erreur caméra :', error.name, error.message);
+    // Messages détaillés (inchangé)
+    let msg = '';
+    if (error.name === 'NotAllowedError') {
+      msg = 'Accès refusé. Cliquez sur le cadenas 🔒 > Paramètres du site > Caméra > Autoriser.';
+    } else if (error.name === 'NotFoundError') {
+      msg = 'Aucune caméra trouvée. Branchez votre caméra de téléphone et rechargez.';
+    } else {
+      msg = `Erreur : ${error.name} - ${error.message}`;
+    }
+    badge.textContent = '❌ Pas de caméra';
+    vid.style.display = 'none';
+    showToast(msg);
+  }
+}
+// ── CHARGER QUESTION ──────────────────────────────────────
+async function loadQuestion(idx) {
+  document.getElementById('question-text').textContent = "⏳ Chargement...";
+  try {
+    const r = await fetch(`/agent/question/${idx}`);
+    if (!r.ok) throw new Error(`HTTP ${r.status} — route /agent/question/${idx} retourne une erreur. Vérifiez security.yaml`);
+    const data = await r.json();
+    if (data.error) throw new Error(data.error);
+
+    document.getElementById('question-text').textContent = data.question;
+    document.getElementById('question-num').textContent  = `Question ${idx + 1} / ${TOTAL_Q}`;
+    document.getElementById('q-counter').textContent     = `${idx + 1} / ${TOTAL_Q}`;
+    document.getElementById('progress-fill').style.width = Math.round((idx / TOTAL_Q) * 100) + '%';
+
+    finalTranscript = "";
+    interimText     = "";
+    renderTranscript();
+    document.getElementById('mic-status').textContent = "🎙️ Cliquez sur le micro pour répondre";
+    // BUG 3 FIX cohérence : bouton re-désactivé entre chaque question, se réactive au transcript
+    document.getElementById('submit-btn').disabled    = true;
+    document.getElementById('submit-btn').innerHTML   = "Envoyer la réponse →";
+    resetMicBtn();
+    setAgentStatus("Prêt — parlez puis envoyez");
+    speakQuestion(data.question);
+
+  } catch(e) {
+    console.error("[LOAD]", e.message);
+    document.getElementById('question-text').textContent = "❌ " + e.message;
+    showToast("Erreur: " + e.message);
+  }
+}
+
+// ── TTS ───────────────────────────────────────────────────
+function speakQuestion(text) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang  = 'fr-FR'; utt.rate = 0.9;
+  const voices = window.speechSynthesis.getVoices();
+  const fr = voices.find(v => v.lang.startsWith('fr'));
+  if (fr) utt.voice = fr;
+  window.speechSynthesis.speak(utt);
+}
+window.speechSynthesis?.addEventListener('voiceschanged', () => {});
+
+// ── MICRO ─────────────────────────────────────────────────
+function toggleMic() {
+  if (listening) stopMic(); else startMic();
+}
+
+function startMic() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { showToast("⚠️ Utilisez Google Chrome pour la reconnaissance vocale."); return; }
+
+  if (recognition) { try { recognition.abort(); } catch(_){} recognition = null; }
+
+  recognition = new SR();
+  recognition.lang           = 'fr-FR';
+  recognition.continuous     = true;
+  recognition.interimResults = true;
+
+  recognition.onstart = () => {
+    listening = true;
+    document.getElementById('mic-btn').className   = "mic-btn listening";
+    document.getElementById('mic-btn').textContent = "⏹";
+    document.getElementById('mic-status').textContent = "🔴 Micro actif — parlez maintenant...";
+    setAgentStatus("🎙️ Je vous écoute...");
+  };
+
+  recognition.onresult = (e) => {
+    let nf = "", ni = "";
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const t = e.results[i][0].transcript;
+      if (e.results[i].isFinal) nf += t + " ";
+      else ni = t;
+    }
+    finalTranscript += nf;
+    interimText      = ni;
+    renderTranscript();
+    // BUG 3 FIX : activer le bouton dès qu'il y a du texte transcrit
+    const hasText = (finalTranscript + interimText).trim().length > 0;
+    document.getElementById('submit-btn').disabled = !hasText;
+  };
+
+  recognition.onerror = (e) => {
+    if (e.error === 'not-allowed' || e.error === 'audio-capture') {
+      showToast("❌ Micro refusé — cliquez sur 🔒 dans Chrome et autorisez le micro.");
+      listening = false; resetMicBtn();
+    }
+  };
+
+  recognition.onend = () => {
+    if (listening) {
+      restartTimer = setTimeout(() => {
+        if (listening) { try { recognition.start(); } catch(_){} }
+      }, 300);
+    }
+  };
+
+  try { recognition.start(); }
+  catch(e) { showToast("Erreur micro: " + e.message); }
+}
+
+function stopMic() {
+  listening = false;
+  clearTimeout(restartTimer);
+  if (recognition) { try { recognition.stop(); } catch(_){} }
+  interimText = "";
+  renderTranscript();
+  document.getElementById('mic-status').textContent = "✅ Réponse enregistrée — cliquez Envoyer";
+  resetMicBtn();
+}
+
+function resetMicBtn() {
+  document.getElementById('mic-btn').className   = "mic-btn";
+  document.getElementById('mic-btn').textContent = "🎙️";
+}
+
+function renderTranscript() {
+  const el = document.getElementById('transcript-text');
+  if (!finalTranscript && !interimText) {
+    el.innerHTML = `<span style="color:var(--muted)">Votre réponse apparaîtra ici...</span>`;
+  } else {
+    el.innerHTML =
+      `<span style="color:var(--text)">${esc(finalTranscript)}</span>` +
+      (interimText ? `<span style="color:var(--muted);font-style:italic"> ${esc(interimText)}</span>` : '');
+  }
+}
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ── ENVOYER RÉPONSE ───────────────────────────────────────
+async function submitAnswer() {
+  if (interviewDone) return;
+
+  // BUG 1 FIX : capturer le transcript AVANT stopMic()
+  // car stopMic() vide interimText — la capture après était toujours ""
+  const capturedFinal   = finalTranscript;
+  const capturedInterim = interimText;
+  const toSend = (capturedFinal + " " + capturedInterim).trim();
+
+  stopMic();  // peut maintenant vider interimText sans problème
+
+  // Bloquer si aucune réponse vocale (BUG 1 + ex-Bug "(silence)")
+  if (!toSend) {
+    showToast("⚠️ Veuillez utiliser le micro et parler avant d'envoyer.");
+    document.getElementById('submit-btn').disabled = false;
+    return;
+  }
+
+  // Réinitialiser le transcript pour la prochaine question
+  finalTranscript = "";
+  interimText     = "";
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled  = true;
+  btn.innerHTML = '<span class="spin"></span> Analyse en cours...';
+  setAgentStatus("🤔 Analyse de votre réponse...");
+
+  console.log(`[SEND] Q${currentQ} → "${toSend}"`);
+
+  try {
+    const r = await fetch('/agent/answer', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ session_id: SESSION_ID, question_index: currentQ, answer: toSend }),
+    });
+
+    const raw = await r.text();
+    console.log(`[RECV] statut=${r.status} body=${raw.substring(0,200)}`);
+
+    if (!r.ok) throw new Error(`HTTP ${r.status}: ${raw.substring(0,100)}`);
+
+    let data;
+    try { data = JSON.parse(raw); }
+    catch(e) { throw new Error("Réponse non-JSON : " + raw.substring(0,100)); }
+
+    // Les 3 premières questions (spécialité, diplôme, expérience) sont juste "Enregistré"
+    // BUG 5 FIX : supprimé le dead code "immediate_refusal" — Flask ne l'envoie jamais
+    const isRegistrationQ = currentQ < 3;
+    if (isRegistrationQ) {
+      addAnalyse(currentQ + 1, null, "✅ " + (data.message || "Enregistré"), "good");
+    } else {
+      const note = Math.max(0, Number(data.note) || 0);
+      const cls  = note >= 15 ? "good" : (note >= 10 ? "mid" : "bad");
+      const verd = data.verdict || (note >= 10 ? "Bonne réponse" : "Réponse faible");
+      addAnalyse(currentQ + 1, note, verd, cls);
+    }
+
+    // BUG 4 FIX : n'afficher le score que pour les vraies questions évaluées (idx >= 3)
+    if (currentQ >= 3 && data.score_partiel !== undefined) {
+      document.getElementById('score-num').textContent = data.score_partiel;
+    }
+
+    currentQ++;
+    if (currentQ >= TOTAL_Q) {
+      await finaliseInterview();
+    } else {
+      setAgentStatus(`✅ Question ${currentQ} analysée — suivante...`);
+      setTimeout(() => loadQuestion(currentQ), 1000);
+    }
+
+  } catch(e) {
+    console.error("[ERR]", e.message);
+    showToast("❌ " + e.message);
+    btn.disabled  = false;
+    btn.innerHTML = "Réessayer →";
+  }
+}
+
+// ── FINALISATION ──────────────────────────────────────────
+// Step 1 : POST /agent/finalise  → Flask generates full report
+// Step 2 : POST /register/entretien/finaliser → Symfony saves to DB only if accepted
+async function finaliseInterview() {
+  interviewDone = true;
+  setLive("Rapport...", false);
+  setAgentStatus("📝 Génération du rapport...");
+  document.getElementById('submit-btn').innerHTML = '<span class="spin"></span> Rapport...';
+  document.getElementById('progress-fill').style.width = '100%';
+  document.getElementById('q-counter').textContent = `${TOTAL_Q} / ${TOTAL_Q}`;
+
+  try {
+    // ── STEP 1 : get full report from Flask ──────────────────
+    const fr = await fetch('/agent/finalise', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ session_id: SESSION_ID }),
+    });
+    if (!fr.ok) throw new Error(`/agent/finalise HTTP ${fr.status}`);
+    const report = await fr.json();
+    console.log("[RAPPORT Flask]", report);
+
+    // Update score display with the final score from Flask
+    document.getElementById('score-num').textContent = report.score ?? 0;
+
+    // ── STEP 2 : save to DB (Symfony) ────────────────────────
+    const sr = await fetch('/register/entretien/finaliser', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(report),
+    });
+    const dbRes = await sr.json();
+    console.log("[DB Symfony]", dbRes);
+
+    showFinalResult(report, dbRes);
+
+  } catch(e) {
+    console.error("[FINAL ERR]", e);
+    showToast("Erreur finale: " + e.message);
+    document.getElementById('submit-btn').disabled  = false;
+    document.getElementById('submit-btn').innerHTML = "Réessayer →";
+  }
+}
+
+// ── RÉSULTAT ──────────────────────────────────────────────
+// report = response from /agent/finalise (Flask)
+//   { accepted, score, specialite, diplome, experience,
+//     refusal_reasons[], details[], criteria{} }
+// dbRes  = response from /register/entretien/finaliser (Symfony)
+//   accepted → { accepted, redirect, message }
+//   refused  → { accepted, refusal_reason, redirect }
+function showFinalResult(report, dbRes) {
+  const card     = document.getElementById('result-card');
+  const accepted = report.accepted === true;
+  card.style.display = 'block';
+  document.getElementById('submit-btn').style.display = 'none';
+  setAgentStatus("Entretien terminé.");
+
+  if (accepted) {
+    // ── ACCEPTÉ : connexion automatique immédiate ─────────────
+    setLive("Accepté ✅", false);
+    document.getElementById('live-dot').style.background = "var(--accent)";
+    document.getElementById('progress-fill').style.background = "var(--accent)";
+    card.className = "result-card accepted";
+
+    const criteriaHTML = `
+      <ul style="margin:8px 0 14px;padding-left:18px;font-size:12.5px;color:var(--muted);line-height:1.8">
+        <li>Spécialité : <strong style="color:var(--text)">${esc(report.specialite)}</strong></li>
+        <li>Diplôme : <strong style="color:var(--text)">${esc(report.diplome)}</strong> ✅</li>
+        <li>Expérience : <strong style="color:var(--text)">${report.experience} an(s)</strong> ✅</li>
+        <li>Score : <strong style="color:var(--accent)">${report.score}/100</strong> ✅</li>
+      </ul>`;
+
+    // dbRes.redirect points to /login/auto/{token} — direct login, no password needed
+    const autoLoginUrl = dbRes?.redirect || '/login';
+
+    card.innerHTML = `
+      <div class="result-title" style="color:var(--accent)">🎉 Candidature acceptée !</div>
+      ${criteriaHTML}
+      <div class="result-desc" style="margin-bottom:14px">
+        <span class="spin"></span> Connexion automatique en cours...
+      </div>`;
+
+    // Auto-redirect immediately — Symfony already logged the user in
+    setTimeout(() => { window.location.href = autoLoginUrl; }, 1500);
+
+  } else {
+    // ── REFUSÉ ────────────────────────────────────────────────
+    setLive("Refusé ❌", false);
+    document.getElementById('live-dot').style.background = "var(--danger)";
+    card.className = "result-card refused";
+
+    const reasons = Array.isArray(report.refusal_reasons) && report.refusal_reasons.length > 0
+      ? report.refusal_reasons : ["Candidature non retenue."];
+
+    const c = report.criteria || {};
+    const criteriaHTML = `
+      <ul style="margin:8px 0 14px;padding-left:18px;font-size:12.5px;color:var(--muted);line-height:1.8">
+        <li>Diplôme <strong style="color:var(--text)">${esc(report.diplome)}</strong> : ${c.diplome_ok ? '✅' : '❌ non reconnu (requis MD ou MPSY)'}</li>
+        <li>Expérience <strong style="color:var(--text)">${report.experience} an(s)</strong> : ${c.experience_ok ? '✅' : '❌ minimum 2 ans requis'}</li>
+        <li>Score <strong style="color:var(--text)">${report.score}/100</strong> : ${c.score_ok ? '✅' : '❌ minimum 50 requis'}</li>
+      </ul>`;
+
+    card.innerHTML = `
+      <div class="result-title" style="color:var(--danger)">❌ Candidature non retenue</div>
+      ${criteriaHTML}
+      <ul style="margin:0 0 14px;padding-left:18px;font-size:12.5px;color:var(--danger);line-height:1.8">
+        ${reasons.map(r => `<li style="margin-bottom:4px">${esc(r)}</li>`).join('')}
+      </ul>
+      <a href="/register" class="redirect-btn danger">Réessayer →</a>`;
+  }
+}
+
+// ── HELPERS UI ────────────────────────────────────────────
+function addAnalyse(qNum, note, verdict, cls) {
+  const list = document.getElementById('analyse-list');
+  if (analyseCount === 0) list.innerHTML = "";
+  analyseCount++;
+  const colors = { good: "var(--accent)", mid: "var(--warn)", bad: "var(--danger)" };
+  const el = document.createElement('div');
+  el.className = `analyse-item ${cls}`;
+  el.innerHTML = `
+    <div class="analyse-header">
+      <span class="analyse-qnum">Question ${qNum}</span>
+      <span class="analyse-note" style="color:${colors[cls]||'var(--muted)'}">${note === null ? "—" : note + "/20"}</span>
+    </div>
+    <div class="analyse-verdict">${esc(verdict)}</div>`;
+  list.appendChild(el);
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function setAgentStatus(t) { document.getElementById('agent-status').innerHTML = t; }
+function setLive(label, spin) {
+  document.getElementById('live-label').textContent = label;
+  document.getElementById('live-dot').style.animation = spin ? "" : "none";
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 5000);
+}
+</script>
+{% endblock %}

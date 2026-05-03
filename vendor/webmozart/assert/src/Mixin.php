@@ -1,5203 +1,5089 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Webmozart\Assert;
 
 use ArrayAccess;
+use Closure;
 use Countable;
 use Throwable;
 
 /**
- * This trait provides nullOr*, all* and allNullOr* variants of assertion base methods.
+ * This trait provides nurllOr*, all* and allNullOr* variants of assertion base methods.
  * Do not use this trait directly: it will change, and is not designed for reuse.
  */
 trait Mixin
 {
     /**
      * @psalm-pure
-     *
      * @psalm-assert string|null $value
      *
-     * @return string|null
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrString(mixed $value, string $message = ''): mixed
+    public static function nullOrString($value, $message = '')
     {
         null === $value || static::string($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<string> $value
      *
-     * @return iterable<string>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allString(mixed $value, string $message = ''): iterable
+    public static function allString($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::string($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<string|null> $value
      *
-     * @return iterable<string|null>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrString(mixed $value, string $message = ''): iterable
+    public static function allNullOrString($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::string($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert non-empty-string|null $value
      *
-     * @return non-empty-string|null
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrStringNotEmpty(mixed $value, string $message = ''): mixed
+    public static function nullOrStringNotEmpty($value, $message = '')
     {
         null === $value || static::stringNotEmpty($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<non-empty-string> $value
      *
-     * @return iterable<non-empty-string>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allStringNotEmpty(mixed $value, string $message = ''): iterable
+    public static function allStringNotEmpty($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::stringNotEmpty($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<non-empty-string|null> $value
      *
-     * @return iterable<non-empty-string|null>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrStringNotEmpty(mixed $value, string $message = ''): iterable
+    public static function allNullOrStringNotEmpty($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::stringNotEmpty($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert int|null $value
      *
-     * @return int|null
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrInteger(mixed $value, string $message = ''): mixed
+    public static function nullOrInteger($value, $message = '')
     {
         null === $value || static::integer($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<int> $value
      *
-     * @return iterable<int>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allInteger(mixed $value, string $message = ''): iterable
+    public static function allInteger($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::integer($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<int|null> $value
      *
-     * @return iterable<int|null>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrInteger(mixed $value, string $message = ''): iterable
+    public static function allNullOrInteger($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::integer($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert numeric|null $value
      *
-     * @return numeric|null
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrIntegerish(mixed $value, string $message = ''): mixed
+    public static function nullOrIntegerish($value, $message = '')
     {
         null === $value || static::integerish($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<numeric> $value
      *
-     * @return iterable<numeric>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allIntegerish(mixed $value, string $message = ''): iterable
+    public static function allIntegerish($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::integerish($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<numeric|null> $value
      *
-     * @return iterable<numeric|null>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrIntegerish(mixed $value, string $message = ''): iterable
+    public static function allNullOrIntegerish($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::integerish($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert positive-int|null $value
      *
-     * @return positive-int|null
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrPositiveInteger(mixed $value, string $message = ''): mixed
+    public static function nullOrPositiveInteger($value, $message = '')
     {
         null === $value || static::positiveInteger($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<positive-int> $value
      *
-     * @return iterable<positive-int>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allPositiveInteger(mixed $value, string $message = ''): iterable
+    public static function allPositiveInteger($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::positiveInteger($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<positive-int|null> $value
      *
-     * @return iterable<positive-int|null>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrPositiveInteger(mixed $value, string $message = ''): iterable
+    public static function allNullOrPositiveInteger($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::positiveInteger($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
-     * @psalm-assert non-negative-int|null $value
-     *
-     * @return non-negative-int|null
-     *
-     * @throws InvalidArgumentException
-     */
-    public static function nullOrNotNegativeInteger(mixed $value, string $message = ''): mixed
-    {
-        null === $value || static::notNegativeInteger($value, $message);
-
-        return $value;
-    }
-
-    /**
-     * @psalm-pure
-     *
-     * @psalm-assert iterable<non-negative-int> $value
-     *
-     * @return iterable<non-negative-int>
-     *
-     * @throws InvalidArgumentException
-     */
-    public static function allNotNegativeInteger(mixed $value, string $message = ''): iterable
-    {
-        static::isIterable($value);
-
-        foreach ($value as $entry) {
-            static::notNegativeInteger($entry, $message);
-        }
-
-        return $value;
-    }
-
-    /**
-     * @psalm-pure
-     *
-     * @psalm-assert iterable<non-negative-int|null> $value
-     *
-     * @return iterable<non-negative-int|null>
-     *
-     * @throws InvalidArgumentException
-     */
-    public static function allNullOrNotNegativeInteger(mixed $value, string $message = ''): iterable
-    {
-        static::isIterable($value);
-
-        foreach ($value as $entry) {
-            null === $entry || static::notNegativeInteger($entry, $message);
-        }
-
-        return $value;
-    }
-
-    /**
-     * @psalm-pure
-     *
-     * @psalm-assert negative-int|null $value
-     *
-     * @return negative-int|null
-     *
-     * @throws InvalidArgumentException
-     */
-    public static function nullOrNegativeInteger(mixed $value, string $message = ''): mixed
-    {
-        null === $value || static::negativeInteger($value, $message);
-
-        return $value;
-    }
-
-    /**
-     * @psalm-pure
-     *
-     * @psalm-assert iterable<negative-int> $value
-     *
-     * @return iterable<negative-int>
-     *
-     * @throws InvalidArgumentException
-     */
-    public static function allNegativeInteger(mixed $value, string $message = ''): iterable
-    {
-        static::isIterable($value);
-
-        foreach ($value as $entry) {
-            static::negativeInteger($entry, $message);
-        }
-
-        return $value;
-    }
-
-    /**
-     * @psalm-pure
-     *
-     * @psalm-assert iterable<negative-int|null> $value
-     *
-     * @return iterable<negative-int|null>
-     *
-     * @throws InvalidArgumentException
-     */
-    public static function allNullOrNegativeInteger(mixed $value, string $message = ''): iterable
-    {
-        static::isIterable($value);
-
-        foreach ($value as $entry) {
-            null === $entry || static::negativeInteger($entry, $message);
-        }
-
-        return $value;
-    }
-
-    /**
-     * @psalm-pure
-     *
      * @psalm-assert float|null $value
      *
-     * @return float|null
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrFloat(mixed $value, string $message = ''): mixed
+    public static function nullOrFloat($value, $message = '')
     {
         null === $value || static::float($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<float> $value
      *
-     * @return iterable<float>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allFloat(mixed $value, string $message = ''): iterable
+    public static function allFloat($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::float($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<float|null> $value
      *
-     * @return iterable<float|null>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrFloat(mixed $value, string $message = ''): iterable
+    public static function allNullOrFloat($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::float($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert numeric|null $value
      *
-     * @return numeric|null
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrNumeric(mixed $value, string $message = ''): mixed
+    public static function nullOrNumeric($value, $message = '')
     {
         null === $value || static::numeric($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<numeric> $value
      *
-     * @return iterable<numeric>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNumeric(mixed $value, string $message = ''): iterable
+    public static function allNumeric($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::numeric($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<numeric|null> $value
      *
-     * @return iterable<numeric|null>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrNumeric(mixed $value, string $message = ''): iterable
+    public static function allNullOrNumeric($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::numeric($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert positive-int|0|null $value
      *
-     * @return positive-int|0|null
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrNatural(mixed $value, string $message = ''): mixed
+    public static function nullOrNatural($value, $message = '')
     {
         null === $value || static::natural($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<positive-int|0> $value
      *
-     * @return iterable<positive-int|0>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNatural(mixed $value, string $message = ''): iterable
+    public static function allNatural($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::natural($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<positive-int|0|null> $value
      *
-     * @return iterable<positive-int|0|null>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrNatural(mixed $value, string $message = ''): iterable
+    public static function allNullOrNatural($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::natural($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert bool|null $value
      *
-     * @return bool|null
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrBoolean(mixed $value, string $message = ''): mixed
+    public static function nullOrBoolean($value, $message = '')
     {
         null === $value || static::boolean($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<bool> $value
      *
-     * @return iterable<bool>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allBoolean(mixed $value, string $message = ''): iterable
+    public static function allBoolean($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::boolean($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<bool|null> $value
      *
-     * @return iterable<bool|null>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrBoolean(mixed $value, string $message = ''): iterable
+    public static function allNullOrBoolean($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::boolean($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert scalar|null $value
      *
-     * @return scalar|null
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrScalar(mixed $value, string $message = ''): mixed
+    public static function nullOrScalar($value, $message = '')
     {
         null === $value || static::scalar($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<scalar> $value
      *
-     * @return iterable<scalar>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allScalar(mixed $value, string $message = ''): iterable
+    public static function allScalar($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::scalar($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<scalar|null> $value
      *
-     * @return iterable<scalar|null>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrScalar(mixed $value, string $message = ''): iterable
+    public static function allNullOrScalar($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::scalar($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert object|null $value
      *
-     * @return object|null
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrObject(mixed $value, string $message = ''): mixed
+    public static function nullOrObject($value, $message = '')
     {
         null === $value || static::object($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<object> $value
      *
-     * @return iterable<object>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allObject(mixed $value, string $message = ''): iterable
+    public static function allObject($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::object($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<object|null> $value
      *
-     * @return iterable<object|null>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrObject(mixed $value, string $message = ''): iterable
+    public static function allNullOrObject($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::object($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
-     * @psalm-assert object|string|null $value
-     *
-     * @return object|string|null
-     *
-     * @throws InvalidArgumentException
-     */
-    public static function nullOrObjectish(mixed $value, string $message = ''): mixed
-    {
-        null === $value || static::objectish($value, $message);
-
-        return $value;
-    }
-
-    /**
-     * @psalm-pure
-     *
-     * @psalm-assert iterable<object|string> $value
-     *
-     * @return iterable<object|string>
-     *
-     * @throws InvalidArgumentException
-     */
-    public static function allObjectish(mixed $value, string $message = ''): iterable
-    {
-        static::isIterable($value);
-
-        foreach ($value as $entry) {
-            static::objectish($entry, $message);
-        }
-
-        return $value;
-    }
-
-    /**
-     * @psalm-pure
-     *
-     * @psalm-assert iterable<object|string|null> $value
-     *
-     * @return iterable<object|string|null>
-     *
-     * @throws InvalidArgumentException
-     */
-    public static function allNullOrObjectish(mixed $value, string $message = ''): iterable
-    {
-        static::isIterable($value);
-
-        foreach ($value as $entry) {
-            null === $entry || static::objectish($entry, $message);
-        }
-
-        return $value;
-    }
-
-    /**
-     * @psalm-pure
-     *
      * @psalm-assert resource|null $value
      *
-     * @see https://www.php.net/manual/en/function.get-resource-type.php
-     *
-     * @return resource|null
+     * @param mixed       $value
+     * @param string|null $type    type of resource this should be. @see https://www.php.net/manual/en/function.get-resource-type.php
+     * @param string      $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrResource(mixed $value, ?string $type = null, string $message = ''): mixed
+    public static function nullOrResource($value, $type = null, $message = '')
     {
         null === $value || static::resource($value, $type, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<resource> $value
      *
-     * @see https://www.php.net/manual/en/function.get-resource-type.php
-     *
-     * @return iterable<resource>
+     * @param mixed       $value
+     * @param string|null $type    type of resource this should be. @see https://www.php.net/manual/en/function.get-resource-type.php
+     * @param string      $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allResource(mixed $value, ?string $type = null, string $message = ''): iterable
+    public static function allResource($value, $type = null, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::resource($entry, $type, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<resource|null> $value
      *
-     * @see https://www.php.net/manual/en/function.get-resource-type.php
-     *
-     * @return iterable<resource|null>
+     * @param mixed       $value
+     * @param string|null $type    type of resource this should be. @see https://www.php.net/manual/en/function.get-resource-type.php
+     * @param string      $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrResource(mixed $value, ?string $type = null, string $message = ''): iterable
+    public static function allNullOrResource($value, $type = null, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::resource($entry, $type, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert callable|null $value
      *
-     * @return callable|null
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrIsCallable(mixed $value, string $message = ''): mixed
+    public static function nullOrIsCallable($value, $message = '')
     {
         null === $value || static::isCallable($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<callable> $value
      *
-     * @return iterable<callable>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allIsCallable(mixed $value, string $message = ''): iterable
+    public static function allIsCallable($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::isCallable($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<callable|null> $value
      *
-     * @return iterable<callable|null>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrIsCallable(mixed $value, string $message = ''): iterable
+    public static function allNullOrIsCallable($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::isCallable($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert array|null $value
      *
-     * @return array|null
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrIsArray(mixed $value, string $message = ''): mixed
+    public static function nullOrIsArray($value, $message = '')
     {
         null === $value || static::isArray($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<array> $value
      *
-     * @return iterable<array>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allIsArray(mixed $value, string $message = ''): iterable
+    public static function allIsArray($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::isArray($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<array|null> $value
      *
-     * @return iterable<array|null>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrIsArray(mixed $value, string $message = ''): iterable
+    public static function allNullOrIsArray($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::isArray($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
+     * @psalm-assert iterable|null $value
      *
+     * @deprecated use "isIterable" or "isInstanceOf" instead
+     *
+     * @param mixed  $value
+     * @param string $message
+     *
+     * @throws InvalidArgumentException
+     *
+     * @return void
+     */
+    public static function nullOrIsTraversable($value, $message = '')
+    {
+        null === $value || static::isTraversable($value, $message);
+    }
+
+    /**
+     * @psalm-pure
+     * @psalm-assert iterable<iterable> $value
+     *
+     * @deprecated use "isIterable" or "isInstanceOf" instead
+     *
+     * @param mixed  $value
+     * @param string $message
+     *
+     * @throws InvalidArgumentException
+     *
+     * @return void
+     */
+    public static function allIsTraversable($value, $message = '')
+    {
+        static::isIterable($value);
+
+        foreach ($value as $entry) {
+            static::isTraversable($entry, $message);
+        }
+    }
+
+    /**
+     * @psalm-pure
+     * @psalm-assert iterable<iterable|null> $value
+     *
+     * @deprecated use "isIterable" or "isInstanceOf" instead
+     *
+     * @param mixed  $value
+     * @param string $message
+     *
+     * @throws InvalidArgumentException
+     *
+     * @return void
+     */
+    public static function allNullOrIsTraversable($value, $message = '')
+    {
+        static::isIterable($value);
+
+        foreach ($value as $entry) {
+            null === $entry || static::isTraversable($entry, $message);
+        }
+    }
+
+    /**
+     * @psalm-pure
      * @psalm-assert array|ArrayAccess|null $value
      *
-     * @return array|ArrayAccess|null
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrIsArrayAccessible(mixed $value, string $message = ''): mixed
+    public static function nullOrIsArrayAccessible($value, $message = '')
     {
         null === $value || static::isArrayAccessible($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<array|ArrayAccess> $value
      *
-     * @return iterable<array|ArrayAccess>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allIsArrayAccessible(mixed $value, string $message = ''): iterable
+    public static function allIsArrayAccessible($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::isArrayAccessible($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<array|ArrayAccess|null> $value
      *
-     * @return iterable<array|ArrayAccess|null>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrIsArrayAccessible(mixed $value, string $message = ''): iterable
+    public static function allNullOrIsArrayAccessible($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::isArrayAccessible($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert countable|null $value
      *
-     * @return countable|null
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrIsCountable(mixed $value, string $message = ''): mixed
+    public static function nullOrIsCountable($value, $message = '')
     {
         null === $value || static::isCountable($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<countable> $value
      *
-     * @return iterable<countable>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allIsCountable(mixed $value, string $message = ''): iterable
+    public static function allIsCountable($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::isCountable($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<countable|null> $value
      *
-     * @return iterable<countable|null>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrIsCountable(mixed $value, string $message = ''): iterable
+    public static function allNullOrIsCountable($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::isCountable($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable|null $value
      *
-     * @return iterable|null
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrIsIterable(mixed $value, string $message = ''): mixed
+    public static function nullOrIsIterable($value, $message = '')
     {
         null === $value || static::isIterable($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<iterable> $value
      *
-     * @return iterable<iterable>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allIsIterable(mixed $value, string $message = ''): iterable
+    public static function allIsIterable($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::isIterable($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<iterable|null> $value
      *
-     * @return iterable<iterable|null>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrIsIterable(mixed $value, string $message = ''): iterable
+    public static function allNullOrIsIterable($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::isIterable($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
+     * @psalm-template ExpectedType of object
+     * @psalm-param class-string<ExpectedType> $class
+     * @psalm-assert ExpectedType|null $value
      *
-     * @template T of object
-     * @psalm-assert T|null $value
-     *
-     * @psalm-param class-string<T> $class
-     * @return T|null
+     * @param mixed         $value
+     * @param string|object $class
+     * @param string        $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrIsInstanceOf(mixed $value, mixed $class, string $message = ''): mixed
+    public static function nullOrIsInstanceOf($value, $class, $message = '')
     {
         null === $value || static::isInstanceOf($value, $class, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
+     * @psalm-template ExpectedType of object
+     * @psalm-param class-string<ExpectedType> $class
+     * @psalm-assert iterable<ExpectedType> $value
      *
-     * @template T of object
-     * @psalm-assert iterable<T> $value
-     *
-     * @psalm-param class-string<T> $class
-     * @return iterable<T>
+     * @param mixed         $value
+     * @param string|object $class
+     * @param string        $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allIsInstanceOf(mixed $value, mixed $class, string $message = ''): iterable
+    public static function allIsInstanceOf($value, $class, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::isInstanceOf($entry, $class, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
+     * @psalm-template ExpectedType of object
+     * @psalm-param class-string<ExpectedType> $class
+     * @psalm-assert iterable<ExpectedType|null> $value
      *
-     * @template T of object
-     * @psalm-assert iterable<T|null> $value
-     *
-     * @psalm-param class-string<T> $class
-     * @return iterable<T|null>
+     * @param mixed         $value
+     * @param string|object $class
+     * @param string        $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrIsInstanceOf(mixed $value, mixed $class, string $message = ''): iterable
+    public static function allNullOrIsInstanceOf($value, $class, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::isInstanceOf($entry, $class, $message);
         }
-
-        return $value;
     }
 
     /**
-     * @template T of object
-     * @psalm-param class-string<T> $class
-     * @return mixed
+     * @psalm-pure
+     * @psalm-template ExpectedType of object
+     * @psalm-param class-string<ExpectedType> $class
+     *
+     * @param mixed         $value
+     * @param string|object $class
+     * @param string        $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrNotInstanceOf(mixed $value, mixed $class, string $message = ''): mixed
+    public static function nullOrNotInstanceOf($value, $class, $message = '')
     {
         null === $value || static::notInstanceOf($value, $class, $message);
-
-        return $value;
     }
 
     /**
-     * @template T of object
-     * @psalm-param class-string<T> $class
-     * @return mixed
+     * @psalm-pure
+     * @psalm-template ExpectedType of object
+     * @psalm-param class-string<ExpectedType> $class
+     *
+     * @param mixed         $value
+     * @param string|object $class
+     * @param string        $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNotInstanceOf(mixed $value, mixed $class, string $message = ''): iterable
+    public static function allNotInstanceOf($value, $class, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::notInstanceOf($entry, $class, $message);
         }
-
-        return $value;
     }
 
     /**
-     * @template T of object
-     * @psalm-assert iterable<object|null> $value
+     * @psalm-pure
+     * @psalm-template ExpectedType of object
+     * @psalm-param class-string<ExpectedType> $class
+     * @psalm-assert iterable<!ExpectedType|null> $value
      *
-     * @psalm-param class-string<T> $class
-     * @return iterable<object|null>
+     * @param mixed         $value
+     * @param string|object $class
+     * @param string        $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrNotInstanceOf(mixed $value, mixed $class, string $message = ''): iterable
+    public static function allNullOrNotInstanceOf($value, $class, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::notInstanceOf($entry, $class, $message);
         }
-
-        return $value;
     }
 
     /**
-     * @template T of object
-     * @psalm-assert T|null $value
+     * @psalm-pure
+     * @psalm-param array<class-string> $classes
      *
-     * @param T|null $value
-     *
-     * @return T|null
+     * @param mixed                $value
+     * @param array<object|string> $classes
+     * @param string               $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrIsInstanceOfAny(mixed $value, mixed $classes, string $message = ''): mixed
+    public static function nullOrIsInstanceOfAny($value, $classes, $message = '')
     {
         null === $value || static::isInstanceOfAny($value, $classes, $message);
-
-        return $value;
     }
 
     /**
-     * @template T of object
-     * @psalm-assert iterable<T> $value
+     * @psalm-pure
+     * @psalm-param array<class-string> $classes
      *
-     * @param iterable<T> $value
-     *
-     * @return iterable<T>
+     * @param mixed                $value
+     * @param array<object|string> $classes
+     * @param string               $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allIsInstanceOfAny(mixed $value, mixed $classes, string $message = ''): iterable
+    public static function allIsInstanceOfAny($value, $classes, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::isInstanceOfAny($entry, $classes, $message);
         }
-
-        return $value;
     }
 
     /**
-     * @template T of object
-     * @psalm-assert iterable<T|null> $value
+     * @psalm-pure
+     * @psalm-param array<class-string> $classes
      *
-     * @param iterable<T|null> $value
-     *
-     * @return iterable<T|null>
+     * @param mixed                $value
+     * @param array<object|string> $classes
+     * @param string               $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrIsInstanceOfAny(mixed $value, mixed $classes, string $message = ''): iterable
+    public static function allNullOrIsInstanceOfAny($value, $classes, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::isInstanceOfAny($entry, $classes, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
+     * @psalm-template ExpectedType of object
+     * @psalm-param class-string<ExpectedType> $class
+     * @psalm-assert ExpectedType|class-string<ExpectedType>|null $value
      *
-     * @template T of object
-     * @psalm-assert T|class-string<T>|null $value
-     *
-     * @return T|class-string<T>|null
+     * @param object|string|null $value
+     * @param string             $class
+     * @param string             $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrIsAOf(mixed $value, mixed $class, string $message = ''): mixed
+    public static function nullOrIsAOf($value, $class, $message = '')
     {
         null === $value || static::isAOf($value, $class, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
+     * @psalm-template ExpectedType of object
+     * @psalm-param class-string<ExpectedType> $class
+     * @psalm-assert iterable<ExpectedType|class-string<ExpectedType>> $value
      *
-     * @template T of object
-     * @psalm-assert iterable<T|class-string<T>> $value
-     *
-     * @return iterable<T|class-string<T>>
+     * @param iterable<object|string> $value
+     * @param string                  $class
+     * @param string                  $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allIsAOf(mixed $value, mixed $class, string $message = ''): iterable
+    public static function allIsAOf($value, $class, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::isAOf($entry, $class, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
+     * @psalm-template ExpectedType of object
+     * @psalm-param class-string<ExpectedType> $class
+     * @psalm-assert iterable<ExpectedType|class-string<ExpectedType>|null> $value
      *
-     * @template T of object
-     * @psalm-assert iterable<T|class-string<T>|null> $value
-     *
-     * @return iterable<T|class-string<T>|null>
+     * @param iterable<object|string|null> $value
+     * @param string                       $class
+     * @param string                       $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrIsAOf(mixed $value, mixed $class, string $message = ''): iterable
+    public static function allNullOrIsAOf($value, $class, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::isAOf($entry, $class, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
+     * @psalm-template UnexpectedType of object
+     * @psalm-param class-string<UnexpectedType> $class
      *
-     * @template T
-     *
-     * @param T|null $value
-     *
-     * @return mixed
+     * @param object|string|null $value
+     * @param string             $class
+     * @param string             $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrIsNotA(mixed $value, mixed $class, string $message = ''): mixed
+    public static function nullOrIsNotA($value, $class, $message = '')
     {
         null === $value || static::isNotA($value, $class, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
+     * @psalm-template UnexpectedType of object
+     * @psalm-param class-string<UnexpectedType> $class
      *
-     * @template T
-     *
-     * @param iterable<T> $value
-     *
-     * @return mixed
+     * @param iterable<object|string> $value
+     * @param string                  $class
+     * @param string                  $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allIsNotA(mixed $value, mixed $class, string $message = ''): iterable
+    public static function allIsNotA($value, $class, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::isNotA($entry, $class, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
+     * @psalm-template UnexpectedType of object
+     * @psalm-param class-string<UnexpectedType> $class
+     * @psalm-assert iterable<!UnexpectedType|null> $value
+     * @psalm-assert iterable<!class-string<UnexpectedType>|null> $value
      *
-     * @template T
-     * @psalm-assert iterable<object|class-string|null> $value
-     *
-     * @param iterable<T|null> $value
-     *
-     * @return iterable<object|class-string|null>
+     * @param iterable<object|string|null> $value
+     * @param string                       $class
+     * @param string                       $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrIsNotA(mixed $value, mixed $class, string $message = ''): iterable
+    public static function allNullOrIsNotA($value, $class, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::isNotA($entry, $class, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
+     * @psalm-param array<class-string> $classes
      *
      * @param object|string|null $value
      * @param string[]           $classes
-     *
-     * @psalm-param array<class-string> $classes
-     *
-     * @return mixed
+     * @param string             $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrIsAnyOf(mixed $value, mixed $classes, string $message = ''): mixed
+    public static function nullOrIsAnyOf($value, $classes, $message = '')
     {
         null === $value || static::isAnyOf($value, $classes, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
+     * @psalm-param array<class-string> $classes
      *
      * @param iterable<object|string> $value
      * @param string[]                $classes
-     *
-     * @psalm-param array<class-string> $classes
-     *
-     * @return mixed
+     * @param string                  $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allIsAnyOf(mixed $value, mixed $classes, string $message = ''): iterable
+    public static function allIsAnyOf($value, $classes, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::isAnyOf($entry, $classes, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
+     * @psalm-param array<class-string> $classes
      *
      * @param iterable<object|string|null> $value
      * @param string[]                     $classes
-     *
-     * @psalm-param array<class-string> $classes
-     *
-     * @return mixed
+     * @param string                       $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrIsAnyOf(mixed $value, mixed $classes, string $message = ''): iterable
+    public static function allNullOrIsAnyOf($value, $classes, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::isAnyOf($entry, $classes, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert empty $value
      *
-     * @return empty
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrIsEmpty(mixed $value, string $message = ''): mixed
+    public static function nullOrIsEmpty($value, $message = '')
     {
         null === $value || static::isEmpty($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<empty> $value
      *
-     * @return iterable<empty>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allIsEmpty(mixed $value, string $message = ''): iterable
+    public static function allIsEmpty($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::isEmpty($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<empty|null> $value
      *
-     * @return iterable<empty|null>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrIsEmpty(mixed $value, string $message = ''): iterable
+    public static function allNullOrIsEmpty($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::isEmpty($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrNotEmpty(mixed $value, string $message = ''): mixed
+    public static function nullOrNotEmpty($value, $message = '')
     {
         null === $value || static::notEmpty($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNotEmpty(mixed $value, string $message = ''): iterable
+    public static function allNotEmpty($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::notEmpty($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<!empty|null> $value
      *
-     * @return iterable<!empty|null>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrNotEmpty(mixed $value, string $message = ''): iterable
+    public static function allNullOrNotEmpty($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::notEmpty($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<null> $value
      *
-     * @return iterable<null>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNull(mixed $value, string $message = ''): iterable
+    public static function allNull($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::null($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNotNull(mixed $value, string $message = ''): iterable
+    public static function allNotNull($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::notNull($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert true|null $value
      *
-     * @return true|null
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrTrue(mixed $value, string $message = ''): mixed
+    public static function nullOrTrue($value, $message = '')
     {
         null === $value || static::true($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<true> $value
      *
-     * @return iterable<true>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allTrue(mixed $value, string $message = ''): iterable
+    public static function allTrue($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::true($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<true|null> $value
      *
-     * @return iterable<true|null>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrTrue(mixed $value, string $message = ''): iterable
+    public static function allNullOrTrue($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::true($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert false|null $value
      *
-     * @return false|null
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrFalse(mixed $value, string $message = ''): mixed
+    public static function nullOrFalse($value, $message = '')
     {
         null === $value || static::false($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<false> $value
      *
-     * @return iterable<false>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allFalse(mixed $value, string $message = ''): iterable
+    public static function allFalse($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::false($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<false|null> $value
      *
-     * @return iterable<false|null>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrFalse(mixed $value, string $message = ''): iterable
+    public static function allNullOrFalse($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::false($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrNotFalse(mixed $value, string $message = ''): mixed
+    public static function nullOrNotFalse($value, $message = '')
     {
         null === $value || static::notFalse($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNotFalse(mixed $value, string $message = ''): iterable
+    public static function allNotFalse($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::notFalse($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<!false|null> $value
      *
-     * @return iterable<!false|null>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrNotFalse(mixed $value, string $message = ''): iterable
+    public static function allNullOrNotFalse($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::notFalse($entry, $message);
         }
-
-        return $value;
     }
 
     /**
-     * @psalm-pure
-     *
-     * @psalm-param string|null $value
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrIp(mixed $value, string $message = ''): mixed
+    public static function nullOrIp($value, $message = '')
     {
         null === $value || static::ip($value, $message);
-
-        return $value;
     }
 
     /**
-     * @psalm-pure
-     *
-     * @psalm-param iterable<string> $value
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allIp(mixed $value, string $message = ''): iterable
+    public static function allIp($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::ip($entry, $message);
         }
-
-        return $value;
     }
 
     /**
-     * @psalm-pure
-     *
-     * @psalm-param iterable<string|null> $value
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrIp(mixed $value, string $message = ''): iterable
+    public static function allNullOrIp($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::ip($entry, $message);
         }
-
-        return $value;
     }
 
     /**
-     * @psalm-pure
-     *
-     * @psalm-param string|null $value
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrIpv4(mixed $value, string $message = ''): mixed
+    public static function nullOrIpv4($value, $message = '')
     {
         null === $value || static::ipv4($value, $message);
-
-        return $value;
     }
 
     /**
-     * @psalm-pure
-     *
-     * @psalm-param iterable<string> $value
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allIpv4(mixed $value, string $message = ''): iterable
+    public static function allIpv4($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::ipv4($entry, $message);
         }
-
-        return $value;
     }
 
     /**
-     * @psalm-pure
-     *
-     * @psalm-param iterable<string|null> $value
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrIpv4(mixed $value, string $message = ''): iterable
+    public static function allNullOrIpv4($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::ipv4($entry, $message);
         }
-
-        return $value;
     }
 
     /**
-     * @psalm-pure
-     *
-     * @psalm-param string|null $value
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrIpv6(mixed $value, string $message = ''): mixed
+    public static function nullOrIpv6($value, $message = '')
     {
         null === $value || static::ipv6($value, $message);
-
-        return $value;
     }
 
     /**
-     * @psalm-pure
-     *
-     * @psalm-param iterable<string> $value
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allIpv6(mixed $value, string $message = ''): iterable
+    public static function allIpv6($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::ipv6($entry, $message);
         }
-
-        return $value;
     }
 
     /**
-     * @psalm-pure
-     *
-     * @psalm-param iterable<string|null> $value
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrIpv6(mixed $value, string $message = ''): iterable
+    public static function allNullOrIpv6($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::ipv6($entry, $message);
         }
-
-        return $value;
     }
 
     /**
-     * @psalm-pure
-     *
-     * @psalm-param string|null $value
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrEmail(mixed $value, string $message = ''): mixed
+    public static function nullOrEmail($value, $message = '')
     {
         null === $value || static::email($value, $message);
-
-        return $value;
     }
 
     /**
-     * @psalm-pure
-     *
-     * @psalm-param iterable<string> $value
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allEmail(mixed $value, string $message = ''): iterable
+    public static function allEmail($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::email($entry, $message);
         }
-
-        return $value;
     }
 
     /**
-     * @psalm-pure
-     *
-     * @psalm-param iterable<string|null> $value
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrEmail(mixed $value, string $message = ''): iterable
+    public static function allNullOrEmail($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::email($entry, $message);
         }
-
-        return $value;
     }
 
     /**
-     * @return mixed
+     * @param array|null $values
+     * @param string     $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrUniqueValues(mixed $values, string $message = ''): mixed
+    public static function nullOrUniqueValues($values, $message = '')
     {
         null === $values || static::uniqueValues($values, $message);
-
-        return $values;
     }
 
     /**
-     * @return mixed
+     * @param iterable<array> $values
+     * @param string          $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allUniqueValues(mixed $values, string $message = ''): mixed
+    public static function allUniqueValues($values, $message = '')
     {
         static::isIterable($values);
 
         foreach ($values as $entry) {
             static::uniqueValues($entry, $message);
         }
-
-        return $values;
     }
 
     /**
-     * @return mixed
+     * @param iterable<array|null> $values
+     * @param string               $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrUniqueValues(mixed $values, string $message = ''): mixed
+    public static function allNullOrUniqueValues($values, $message = '')
     {
         static::isIterable($values);
 
         foreach ($values as $entry) {
             null === $entry || static::uniqueValues($entry, $message);
         }
-
-        return $values;
     }
 
     /**
-     * @return mixed
+     * @param mixed  $value
+     * @param mixed  $expect
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrEq(mixed $value, mixed $expect, string $message = ''): mixed
+    public static function nullOrEq($value, $expect, $message = '')
     {
         null === $value || static::eq($value, $expect, $message);
-
-        return $value;
     }
 
     /**
-     * @return mixed
+     * @param mixed  $value
+     * @param mixed  $expect
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allEq(mixed $value, mixed $expect, string $message = ''): iterable
+    public static function allEq($value, $expect, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::eq($entry, $expect, $message);
         }
-
-        return $value;
     }
 
     /**
-     * @return mixed
+     * @param mixed  $value
+     * @param mixed  $expect
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrEq(mixed $value, mixed $expect, string $message = ''): iterable
+    public static function allNullOrEq($value, $expect, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::eq($entry, $expect, $message);
         }
-
-        return $value;
     }
 
     /**
-     * @return mixed
+     * @param mixed  $value
+     * @param mixed  $expect
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrNotEq(mixed $value, mixed $expect, string $message = ''): mixed
+    public static function nullOrNotEq($value, $expect, $message = '')
     {
         null === $value || static::notEq($value, $expect, $message);
-
-        return $value;
     }
 
     /**
-     * @return mixed
+     * @param mixed  $value
+     * @param mixed  $expect
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNotEq(mixed $value, mixed $expect, string $message = ''): iterable
+    public static function allNotEq($value, $expect, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::notEq($entry, $expect, $message);
         }
-
-        return $value;
     }
 
     /**
-     * @return mixed
+     * @param mixed  $value
+     * @param mixed  $expect
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrNotEq(mixed $value, mixed $expect, string $message = ''): iterable
+    public static function allNullOrNotEq($value, $expect, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::notEq($entry, $expect, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param mixed  $expect
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrSame(mixed $value, mixed $expect, string $message = ''): mixed
+    public static function nullOrSame($value, $expect, $message = '')
     {
         null === $value || static::same($value, $expect, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param mixed  $expect
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allSame(mixed $value, mixed $expect, string $message = ''): iterable
+    public static function allSame($value, $expect, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::same($entry, $expect, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param mixed  $expect
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrSame(mixed $value, mixed $expect, string $message = ''): iterable
+    public static function allNullOrSame($value, $expect, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::same($entry, $expect, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param mixed  $expect
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrNotSame(mixed $value, mixed $expect, string $message = ''): mixed
+    public static function nullOrNotSame($value, $expect, $message = '')
     {
         null === $value || static::notSame($value, $expect, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param mixed  $expect
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNotSame(mixed $value, mixed $expect, string $message = ''): iterable
+    public static function allNotSame($value, $expect, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::notSame($entry, $expect, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param mixed  $expect
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrNotSame(mixed $value, mixed $expect, string $message = ''): iterable
+    public static function allNullOrNotSame($value, $expect, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::notSame($entry, $expect, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param mixed  $limit
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrGreaterThan(mixed $value, mixed $limit, string $message = ''): mixed
+    public static function nullOrGreaterThan($value, $limit, $message = '')
     {
         null === $value || static::greaterThan($value, $limit, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param mixed  $limit
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allGreaterThan(mixed $value, mixed $limit, string $message = ''): iterable
+    public static function allGreaterThan($value, $limit, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::greaterThan($entry, $limit, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param mixed  $limit
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrGreaterThan(mixed $value, mixed $limit, string $message = ''): iterable
+    public static function allNullOrGreaterThan($value, $limit, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::greaterThan($entry, $limit, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param mixed  $limit
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrGreaterThanEq(mixed $value, mixed $limit, string $message = ''): mixed
+    public static function nullOrGreaterThanEq($value, $limit, $message = '')
     {
         null === $value || static::greaterThanEq($value, $limit, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param mixed  $limit
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allGreaterThanEq(mixed $value, mixed $limit, string $message = ''): iterable
+    public static function allGreaterThanEq($value, $limit, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::greaterThanEq($entry, $limit, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param mixed  $limit
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrGreaterThanEq(mixed $value, mixed $limit, string $message = ''): iterable
+    public static function allNullOrGreaterThanEq($value, $limit, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::greaterThanEq($entry, $limit, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param mixed  $limit
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrLessThan(mixed $value, mixed $limit, string $message = ''): mixed
+    public static function nullOrLessThan($value, $limit, $message = '')
     {
         null === $value || static::lessThan($value, $limit, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param mixed  $limit
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allLessThan(mixed $value, mixed $limit, string $message = ''): iterable
+    public static function allLessThan($value, $limit, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::lessThan($entry, $limit, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param mixed  $limit
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrLessThan(mixed $value, mixed $limit, string $message = ''): iterable
+    public static function allNullOrLessThan($value, $limit, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::lessThan($entry, $limit, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param mixed  $limit
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrLessThanEq(mixed $value, mixed $limit, string $message = ''): mixed
+    public static function nullOrLessThanEq($value, $limit, $message = '')
     {
         null === $value || static::lessThanEq($value, $limit, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param mixed  $limit
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allLessThanEq(mixed $value, mixed $limit, string $message = ''): iterable
+    public static function allLessThanEq($value, $limit, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::lessThanEq($entry, $limit, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param mixed  $limit
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrLessThanEq(mixed $value, mixed $limit, string $message = ''): iterable
+    public static function allNullOrLessThanEq($value, $limit, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::lessThanEq($entry, $limit, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param mixed  $min
+     * @param mixed  $max
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrRange(mixed $value, mixed $min, mixed $max, string $message = ''): mixed
+    public static function nullOrRange($value, $min, $max, $message = '')
     {
         null === $value || static::range($value, $min, $max, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param mixed  $min
+     * @param mixed  $max
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allRange(mixed $value, mixed $min, mixed $max, string $message = ''): iterable
+    public static function allRange($value, $min, $max, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::range($entry, $min, $max, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param mixed  $min
+     * @param mixed  $max
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrRange(mixed $value, mixed $min, mixed $max, string $message = ''): iterable
+    public static function allNullOrRange($value, $min, $max, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::range($entry, $min, $max, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param array  $values
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrOneOf(mixed $value, mixed $values, string $message = ''): mixed
+    public static function nullOrOneOf($value, $values, $message = '')
     {
         null === $value || static::oneOf($value, $values, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param array  $values
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allOneOf(mixed $value, mixed $values, string $message = ''): iterable
+    public static function allOneOf($value, $values, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::oneOf($entry, $values, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param array  $values
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrOneOf(mixed $value, mixed $values, string $message = ''): iterable
+    public static function allNullOrOneOf($value, $values, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::oneOf($entry, $values, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param array  $values
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrInArray(mixed $value, mixed $values, string $message = ''): mixed
+    public static function nullOrInArray($value, $values, $message = '')
     {
         null === $value || static::inArray($value, $values, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param array  $values
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allInArray(mixed $value, mixed $values, string $message = ''): iterable
+    public static function allInArray($value, $values, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::inArray($entry, $values, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param array  $values
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrInArray(mixed $value, mixed $values, string $message = ''): iterable
+    public static function allNullOrInArray($value, $values, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::inArray($entry, $values, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param string|null $value
+     * @param string      $subString
+     * @param string      $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrNotOneOf(mixed $value, mixed $values, string $message = ''): mixed
-    {
-        null === $value || static::notOneOf($value, $values, $message);
-
-        return $value;
-    }
-
-    /**
-     * @psalm-pure
-     *
-     * @return mixed
-     *
-     * @throws InvalidArgumentException
-     */
-    public static function allNotOneOf(mixed $value, mixed $values, string $message = ''): iterable
-    {
-        static::isIterable($value);
-
-        foreach ($value as $entry) {
-            static::notOneOf($entry, $values, $message);
-        }
-
-        return $value;
-    }
-
-    /**
-     * @psalm-pure
-     *
-     * @return mixed
-     *
-     * @throws InvalidArgumentException
-     */
-    public static function allNullOrNotOneOf(mixed $value, mixed $values, string $message = ''): iterable
-    {
-        static::isIterable($value);
-
-        foreach ($value as $entry) {
-            null === $entry || static::notOneOf($entry, $values, $message);
-        }
-
-        return $value;
-    }
-
-    /**
-     * @psalm-pure
-     *
-     * @return mixed
-     *
-     * @throws InvalidArgumentException
-     */
-    public static function nullOrNotInArray(mixed $value, mixed $values, string $message = ''): mixed
-    {
-        null === $value || static::notInArray($value, $values, $message);
-
-        return $value;
-    }
-
-    /**
-     * @psalm-pure
-     *
-     * @return mixed
-     *
-     * @throws InvalidArgumentException
-     */
-    public static function allNotInArray(mixed $value, mixed $values, string $message = ''): iterable
-    {
-        static::isIterable($value);
-
-        foreach ($value as $entry) {
-            static::notInArray($entry, $values, $message);
-        }
-
-        return $value;
-    }
-
-    /**
-     * @psalm-pure
-     *
-     * @return mixed
-     *
-     * @throws InvalidArgumentException
-     */
-    public static function allNullOrNotInArray(mixed $value, mixed $values, string $message = ''): iterable
-    {
-        static::isIterable($value);
-
-        foreach ($value as $entry) {
-            null === $entry || static::notInArray($entry, $values, $message);
-        }
-
-        return $value;
-    }
-
-    /**
-     * @psalm-pure
-     *
-     * @return mixed
-     *
-     * @throws InvalidArgumentException
-     */
-    public static function nullOrContains(mixed $value, mixed $subString, string $message = ''): mixed
+    public static function nullOrContains($value, $subString, $message = '')
     {
         null === $value || static::contains($value, $subString, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string> $value
+     * @param string           $subString
+     * @param string           $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allContains(mixed $value, mixed $subString, string $message = ''): iterable
+    public static function allContains($value, $subString, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::contains($entry, $subString, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string|null> $value
+     * @param string                $subString
+     * @param string                $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrContains(mixed $value, mixed $subString, string $message = ''): iterable
+    public static function allNullOrContains($value, $subString, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::contains($entry, $subString, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param string|null $value
+     * @param string      $subString
+     * @param string      $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrNotContains(mixed $value, mixed $subString, string $message = ''): mixed
+    public static function nullOrNotContains($value, $subString, $message = '')
     {
         null === $value || static::notContains($value, $subString, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string> $value
+     * @param string           $subString
+     * @param string           $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNotContains(mixed $value, mixed $subString, string $message = ''): iterable
+    public static function allNotContains($value, $subString, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::notContains($entry, $subString, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string|null> $value
+     * @param string                $subString
+     * @param string                $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrNotContains(mixed $value, mixed $subString, string $message = ''): iterable
+    public static function allNullOrNotContains($value, $subString, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::notContains($entry, $subString, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param string|null $value
+     * @param string      $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrNotWhitespaceOnly(mixed $value, string $message = ''): mixed
+    public static function nullOrNotWhitespaceOnly($value, $message = '')
     {
         null === $value || static::notWhitespaceOnly($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string> $value
+     * @param string           $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNotWhitespaceOnly(mixed $value, string $message = ''): iterable
+    public static function allNotWhitespaceOnly($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::notWhitespaceOnly($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string|null> $value
+     * @param string                $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrNotWhitespaceOnly(mixed $value, string $message = ''): iterable
+    public static function allNullOrNotWhitespaceOnly($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::notWhitespaceOnly($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param string|null $value
+     * @param string      $prefix
+     * @param string      $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrStartsWith(mixed $value, mixed $prefix, string $message = ''): mixed
+    public static function nullOrStartsWith($value, $prefix, $message = '')
     {
         null === $value || static::startsWith($value, $prefix, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string> $value
+     * @param string           $prefix
+     * @param string           $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allStartsWith(mixed $value, mixed $prefix, string $message = ''): iterable
+    public static function allStartsWith($value, $prefix, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::startsWith($entry, $prefix, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string|null> $value
+     * @param string                $prefix
+     * @param string                $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrStartsWith(mixed $value, mixed $prefix, string $message = ''): iterable
+    public static function allNullOrStartsWith($value, $prefix, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::startsWith($entry, $prefix, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param string|null $value
+     * @param string      $prefix
+     * @param string      $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrNotStartsWith(mixed $value, mixed $prefix, string $message = ''): mixed
+    public static function nullOrNotStartsWith($value, $prefix, $message = '')
     {
         null === $value || static::notStartsWith($value, $prefix, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string> $value
+     * @param string           $prefix
+     * @param string           $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNotStartsWith(mixed $value, mixed $prefix, string $message = ''): iterable
+    public static function allNotStartsWith($value, $prefix, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::notStartsWith($entry, $prefix, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string|null> $value
+     * @param string                $prefix
+     * @param string                $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrNotStartsWith(mixed $value, mixed $prefix, string $message = ''): iterable
+    public static function allNullOrNotStartsWith($value, $prefix, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::notStartsWith($entry, $prefix, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrStartsWithLetter(mixed $value, string $message = ''): mixed
+    public static function nullOrStartsWithLetter($value, $message = '')
     {
         null === $value || static::startsWithLetter($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allStartsWithLetter(mixed $value, string $message = ''): iterable
+    public static function allStartsWithLetter($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::startsWithLetter($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrStartsWithLetter(mixed $value, string $message = ''): iterable
+    public static function allNullOrStartsWithLetter($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::startsWithLetter($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param string|null $value
+     * @param string      $suffix
+     * @param string      $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrEndsWith(mixed $value, mixed $suffix, string $message = ''): mixed
+    public static function nullOrEndsWith($value, $suffix, $message = '')
     {
         null === $value || static::endsWith($value, $suffix, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string> $value
+     * @param string           $suffix
+     * @param string           $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allEndsWith(mixed $value, mixed $suffix, string $message = ''): iterable
+    public static function allEndsWith($value, $suffix, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::endsWith($entry, $suffix, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string|null> $value
+     * @param string                $suffix
+     * @param string                $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrEndsWith(mixed $value, mixed $suffix, string $message = ''): iterable
+    public static function allNullOrEndsWith($value, $suffix, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::endsWith($entry, $suffix, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param string|null $value
+     * @param string      $suffix
+     * @param string      $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrNotEndsWith(mixed $value, mixed $suffix, string $message = ''): mixed
+    public static function nullOrNotEndsWith($value, $suffix, $message = '')
     {
         null === $value || static::notEndsWith($value, $suffix, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string> $value
+     * @param string           $suffix
+     * @param string           $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNotEndsWith(mixed $value, mixed $suffix, string $message = ''): iterable
+    public static function allNotEndsWith($value, $suffix, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::notEndsWith($entry, $suffix, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string|null> $value
+     * @param string                $suffix
+     * @param string                $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrNotEndsWith(mixed $value, mixed $suffix, string $message = ''): iterable
+    public static function allNullOrNotEndsWith($value, $suffix, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::notEndsWith($entry, $suffix, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param string|null $value
+     * @param string      $pattern
+     * @param string      $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrRegex(mixed $value, mixed $pattern, string $message = ''): mixed
+    public static function nullOrRegex($value, $pattern, $message = '')
     {
         null === $value || static::regex($value, $pattern, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string> $value
+     * @param string           $pattern
+     * @param string           $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allRegex(mixed $value, mixed $pattern, string $message = ''): iterable
+    public static function allRegex($value, $pattern, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::regex($entry, $pattern, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string|null> $value
+     * @param string                $pattern
+     * @param string                $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrRegex(mixed $value, mixed $pattern, string $message = ''): iterable
+    public static function allNullOrRegex($value, $pattern, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::regex($entry, $pattern, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param string|null $value
+     * @param string      $pattern
+     * @param string      $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrNotRegex(mixed $value, mixed $pattern, string $message = ''): mixed
+    public static function nullOrNotRegex($value, $pattern, $message = '')
     {
         null === $value || static::notRegex($value, $pattern, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string> $value
+     * @param string           $pattern
+     * @param string           $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNotRegex(mixed $value, mixed $pattern, string $message = ''): iterable
+    public static function allNotRegex($value, $pattern, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::notRegex($entry, $pattern, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string|null> $value
+     * @param string                $pattern
+     * @param string                $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrNotRegex(mixed $value, mixed $pattern, string $message = ''): iterable
+    public static function allNullOrNotRegex($value, $pattern, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::notRegex($entry, $pattern, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrUnicodeLetters(mixed $value, string $message = ''): mixed
+    public static function nullOrUnicodeLetters($value, $message = '')
     {
         null === $value || static::unicodeLetters($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allUnicodeLetters(mixed $value, string $message = ''): iterable
+    public static function allUnicodeLetters($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::unicodeLetters($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrUnicodeLetters(mixed $value, string $message = ''): iterable
+    public static function allNullOrUnicodeLetters($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::unicodeLetters($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrAlpha(mixed $value, string $message = ''): mixed
+    public static function nullOrAlpha($value, $message = '')
     {
         null === $value || static::alpha($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allAlpha(mixed $value, string $message = ''): iterable
+    public static function allAlpha($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::alpha($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrAlpha(mixed $value, string $message = ''): iterable
+    public static function allNullOrAlpha($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::alpha($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param string|null $value
+     * @param string      $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrDigits(mixed $value, string $message = ''): mixed
+    public static function nullOrDigits($value, $message = '')
     {
         null === $value || static::digits($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string> $value
+     * @param string           $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allDigits(mixed $value, string $message = ''): iterable
+    public static function allDigits($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::digits($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string|null> $value
+     * @param string                $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrDigits(mixed $value, string $message = ''): iterable
+    public static function allNullOrDigits($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::digits($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param string|null $value
+     * @param string      $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrAlnum(mixed $value, string $message = ''): mixed
+    public static function nullOrAlnum($value, $message = '')
     {
         null === $value || static::alnum($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string> $value
+     * @param string           $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allAlnum(mixed $value, string $message = ''): iterable
+    public static function allAlnum($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::alnum($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string|null> $value
+     * @param string                $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrAlnum(mixed $value, string $message = ''): iterable
+    public static function allNullOrAlnum($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::alnum($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert lowercase-string|null $value
      *
-     * @return lowercase-string|null
+     * @param string|null $value
+     * @param string      $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrLower(mixed $value, string $message = ''): mixed
+    public static function nullOrLower($value, $message = '')
     {
         null === $value || static::lower($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<lowercase-string> $value
      *
-     * @return iterable<lowercase-string>
+     * @param iterable<string> $value
+     * @param string           $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allLower(mixed $value, string $message = ''): iterable
+    public static function allLower($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::lower($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<lowercase-string|null> $value
      *
-     * @return iterable<lowercase-string|null>
+     * @param iterable<string|null> $value
+     * @param string                $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrLower(mixed $value, string $message = ''): iterable
+    public static function allNullOrLower($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::lower($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param string|null $value
+     * @param string      $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrUpper(mixed $value, string $message = ''): mixed
+    public static function nullOrUpper($value, $message = '')
     {
         null === $value || static::upper($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string> $value
+     * @param string           $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allUpper(mixed $value, string $message = ''): iterable
+    public static function allUpper($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::upper($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<!lowercase-string|null> $value
      *
-     * @return iterable<!lowercase-string|null>
+     * @param iterable<string|null> $value
+     * @param string                $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrUpper(mixed $value, string $message = ''): iterable
+    public static function allNullOrUpper($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::upper($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param string|null $value
+     * @param int         $length
+     * @param string      $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrLength(mixed $value, mixed $length, string $message = ''): mixed
+    public static function nullOrLength($value, $length, $message = '')
     {
         null === $value || static::length($value, $length, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string> $value
+     * @param int              $length
+     * @param string           $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allLength(mixed $value, mixed $length, string $message = ''): iterable
+    public static function allLength($value, $length, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::length($entry, $length, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string|null> $value
+     * @param int                   $length
+     * @param string                $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrLength(mixed $value, mixed $length, string $message = ''): iterable
+    public static function allNullOrLength($value, $length, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::length($entry, $length, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param string|null $value
+     * @param int|float   $min
+     * @param string      $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrMinLength(mixed $value, mixed $min, string $message = ''): mixed
+    public static function nullOrMinLength($value, $min, $message = '')
     {
         null === $value || static::minLength($value, $min, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string> $value
+     * @param int|float        $min
+     * @param string           $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allMinLength(mixed $value, mixed $min, string $message = ''): iterable
+    public static function allMinLength($value, $min, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::minLength($entry, $min, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string|null> $value
+     * @param int|float             $min
+     * @param string                $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrMinLength(mixed $value, mixed $min, string $message = ''): iterable
+    public static function allNullOrMinLength($value, $min, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::minLength($entry, $min, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param string|null $value
+     * @param int|float   $max
+     * @param string      $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrMaxLength(mixed $value, mixed $max, string $message = ''): mixed
+    public static function nullOrMaxLength($value, $max, $message = '')
     {
         null === $value || static::maxLength($value, $max, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string> $value
+     * @param int|float        $max
+     * @param string           $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allMaxLength(mixed $value, mixed $max, string $message = ''): iterable
+    public static function allMaxLength($value, $max, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::maxLength($entry, $max, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string|null> $value
+     * @param int|float             $max
+     * @param string                $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrMaxLength(mixed $value, mixed $max, string $message = ''): iterable
+    public static function allNullOrMaxLength($value, $max, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::maxLength($entry, $max, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param string|null $value
+     * @param int|float   $min
+     * @param int|float   $max
+     * @param string      $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrLengthBetween(mixed $value, mixed $min, mixed $max, string $message = ''): mixed
+    public static function nullOrLengthBetween($value, $min, $max, $message = '')
     {
         null === $value || static::lengthBetween($value, $min, $max, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string> $value
+     * @param int|float        $min
+     * @param int|float        $max
+     * @param string           $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allLengthBetween(mixed $value, mixed $min, mixed $max, string $message = ''): iterable
+    public static function allLengthBetween($value, $min, $max, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::lengthBetween($entry, $min, $max, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string|null> $value
+     * @param int|float             $min
+     * @param int|float             $max
+     * @param string                $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrLengthBetween(mixed $value, mixed $min, mixed $max, string $message = ''): iterable
+    public static function allNullOrLengthBetween($value, $min, $max, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::lengthBetween($entry, $min, $max, $message);
         }
-
-        return $value;
     }
 
     /**
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrFileExists(mixed $value, string $message = ''): mixed
+    public static function nullOrFileExists($value, $message = '')
     {
         null === $value || static::fileExists($value, $message);
-
-        return $value;
     }
 
     /**
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allFileExists(mixed $value, string $message = ''): iterable
+    public static function allFileExists($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::fileExists($entry, $message);
         }
-
-        return $value;
     }
 
     /**
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrFileExists(mixed $value, string $message = ''): iterable
+    public static function allNullOrFileExists($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::fileExists($entry, $message);
         }
-
-        return $value;
     }
 
     /**
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrFile(mixed $value, string $message = ''): mixed
+    public static function nullOrFile($value, $message = '')
     {
         null === $value || static::file($value, $message);
-
-        return $value;
     }
 
     /**
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allFile(mixed $value, string $message = ''): iterable
+    public static function allFile($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::file($entry, $message);
         }
-
-        return $value;
     }
 
     /**
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrFile(mixed $value, string $message = ''): iterable
+    public static function allNullOrFile($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::file($entry, $message);
         }
-
-        return $value;
     }
 
     /**
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrDirectory(mixed $value, string $message = ''): mixed
+    public static function nullOrDirectory($value, $message = '')
     {
         null === $value || static::directory($value, $message);
-
-        return $value;
     }
 
     /**
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allDirectory(mixed $value, string $message = ''): iterable
+    public static function allDirectory($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::directory($entry, $message);
         }
-
-        return $value;
     }
 
     /**
-     * @return mixed
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrDirectory(mixed $value, string $message = ''): iterable
+    public static function allNullOrDirectory($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::directory($entry, $message);
         }
-
-        return $value;
     }
 
     /**
-     * @return mixed
+     * @param string|null $value
+     * @param string      $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrReadable(mixed $value, string $message = ''): mixed
+    public static function nullOrReadable($value, $message = '')
     {
         null === $value || static::readable($value, $message);
-
-        return $value;
     }
 
     /**
-     * @return mixed
+     * @param iterable<string> $value
+     * @param string           $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allReadable(mixed $value, string $message = ''): iterable
+    public static function allReadable($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::readable($entry, $message);
         }
-
-        return $value;
     }
 
     /**
-     * @return mixed
+     * @param iterable<string|null> $value
+     * @param string                $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrReadable(mixed $value, string $message = ''): iterable
+    public static function allNullOrReadable($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::readable($entry, $message);
         }
-
-        return $value;
     }
 
     /**
-     * @return mixed
+     * @param string|null $value
+     * @param string      $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrWritable(mixed $value, string $message = ''): mixed
+    public static function nullOrWritable($value, $message = '')
     {
         null === $value || static::writable($value, $message);
-
-        return $value;
     }
 
     /**
-     * @return mixed
+     * @param iterable<string> $value
+     * @param string           $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allWritable(mixed $value, string $message = ''): iterable
+    public static function allWritable($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::writable($entry, $message);
         }
-
-        return $value;
     }
 
     /**
-     * @return mixed
+     * @param iterable<string|null> $value
+     * @param string                $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrWritable(mixed $value, string $message = ''): iterable
+    public static function allNullOrWritable($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::writable($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-assert class-string|null $value
      *
-     * @return class-string|null
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrClassExists(mixed $value, string $message = ''): mixed
+    public static function nullOrClassExists($value, $message = '')
     {
         null === $value || static::classExists($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-assert iterable<class-string> $value
      *
-     * @return iterable<class-string>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allClassExists(mixed $value, string $message = ''): iterable
+    public static function allClassExists($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::classExists($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-assert iterable<class-string|null> $value
      *
-     * @return iterable<class-string|null>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrClassExists(mixed $value, string $message = ''): iterable
+    public static function allNullOrClassExists($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::classExists($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
+     * @psalm-template ExpectedType of object
+     * @psalm-param class-string<ExpectedType> $class
+     * @psalm-assert class-string<ExpectedType>|ExpectedType|null $value
      *
-     * @template ExpectedType of object
-     * @psalm-assert class-string<ExpectedType>|null $value
-     *
-     * @param class-string<ExpectedType> $class
-     *
-     * @return class-string<ExpectedType>|null
+     * @param mixed         $value
+     * @param string|object $class
+     * @param string        $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrSubclassOf(mixed $value, mixed $class, string $message = ''): mixed
+    public static function nullOrSubclassOf($value, $class, $message = '')
     {
         null === $value || static::subclassOf($value, $class, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
+     * @psalm-template ExpectedType of object
+     * @psalm-param class-string<ExpectedType> $class
+     * @psalm-assert iterable<class-string<ExpectedType>|ExpectedType> $value
      *
-     * @template ExpectedType of object
-     * @psalm-assert iterable<class-string<ExpectedType>> $value
-     *
-     * @param class-string<ExpectedType> $class
-     *
-     * @return iterable<class-string<ExpectedType>>
+     * @param mixed         $value
+     * @param string|object $class
+     * @param string        $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allSubclassOf(mixed $value, mixed $class, string $message = ''): iterable
+    public static function allSubclassOf($value, $class, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::subclassOf($entry, $class, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
+     * @psalm-template ExpectedType of object
+     * @psalm-param class-string<ExpectedType> $class
+     * @psalm-assert iterable<class-string<ExpectedType>|ExpectedType|null> $value
      *
-     * @template ExpectedType of object
-     * @psalm-assert iterable<class-string<ExpectedType>|null> $value
-     *
-     * @param class-string<ExpectedType> $class
-     *
-     * @return iterable<class-string<ExpectedType>|null>
+     * @param mixed         $value
+     * @param string|object $class
+     * @param string        $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrSubclassOf(mixed $value, mixed $class, string $message = ''): iterable
+    public static function allNullOrSubclassOf($value, $class, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::subclassOf($entry, $class, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-assert class-string|null $value
      *
-     * @return class-string|null
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrInterfaceExists(mixed $value, string $message = ''): mixed
+    public static function nullOrInterfaceExists($value, $message = '')
     {
         null === $value || static::interfaceExists($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-assert iterable<class-string> $value
      *
-     * @return iterable<class-string>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allInterfaceExists(mixed $value, string $message = ''): iterable
+    public static function allInterfaceExists($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::interfaceExists($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-assert iterable<class-string|null> $value
      *
-     * @return iterable<class-string|null>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrInterfaceExists(mixed $value, string $message = ''): iterable
+    public static function allNullOrInterfaceExists($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::interfaceExists($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
+     * @psalm-template ExpectedType of object
+     * @psalm-param class-string<ExpectedType> $interface
+     * @psalm-assert class-string<ExpectedType>|null $value
      *
-     * @template ExpectedType of object
-     * @psalm-assert class-string<ExpectedType>|ExpectedType|null $value
-     *
-     * @param class-string<ExpectedType>|ExpectedType|null $value
-     * @param class-string<ExpectedType>                   $interface
-     *
-     * @return class-string<ExpectedType>|ExpectedType|null
+     * @param mixed  $value
+     * @param mixed  $interface
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrImplementsInterface(mixed $value, mixed $interface, string $message = ''): mixed
+    public static function nullOrImplementsInterface($value, $interface, $message = '')
     {
         null === $value || static::implementsInterface($value, $interface, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
+     * @psalm-template ExpectedType of object
+     * @psalm-param class-string<ExpectedType> $interface
+     * @psalm-assert iterable<class-string<ExpectedType>> $value
      *
-     * @template ExpectedType of object
-     * @psalm-assert iterable<class-string<ExpectedType>|ExpectedType> $value
-     *
-     * @param iterable<class-string<ExpectedType>|ExpectedType> $value
-     * @param class-string<ExpectedType>                        $interface
-     *
-     * @return iterable<class-string<ExpectedType>|ExpectedType>
+     * @param mixed  $value
+     * @param mixed  $interface
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allImplementsInterface(mixed $value, mixed $interface, string $message = ''): iterable
+    public static function allImplementsInterface($value, $interface, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::implementsInterface($entry, $interface, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
+     * @psalm-template ExpectedType of object
+     * @psalm-param class-string<ExpectedType> $interface
+     * @psalm-assert iterable<class-string<ExpectedType>|null> $value
      *
-     * @template ExpectedType of object
-     * @psalm-assert iterable<class-string<ExpectedType>|ExpectedType|null> $value
-     *
-     * @param iterable<class-string<ExpectedType>|ExpectedType|null> $value
-     * @param class-string<ExpectedType>                             $interface
-     *
-     * @return iterable<class-string<ExpectedType>|ExpectedType|null>
+     * @param mixed  $value
+     * @param mixed  $interface
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrImplementsInterface(mixed $value, mixed $interface, string $message = ''): iterable
+    public static function allNullOrImplementsInterface($value, $interface, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::implementsInterface($entry, $interface, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
+     * @psalm-param class-string|object|null $classOrObject
      *
      * @param string|object|null $classOrObject
-     *
-     * @return mixed
+     * @param mixed              $property
+     * @param string             $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrPropertyExists(mixed $classOrObject, mixed $property, string $message = ''): mixed
+    public static function nullOrPropertyExists($classOrObject, $property, $message = '')
     {
         null === $classOrObject || static::propertyExists($classOrObject, $property, $message);
-
-        return $classOrObject;
     }
 
     /**
      * @psalm-pure
+     * @psalm-param iterable<class-string|object> $classOrObject
      *
      * @param iterable<string|object> $classOrObject
-     *
-     * @return mixed
+     * @param mixed                   $property
+     * @param string                  $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allPropertyExists(mixed $classOrObject, mixed $property, string $message = ''): mixed
+    public static function allPropertyExists($classOrObject, $property, $message = '')
     {
         static::isIterable($classOrObject);
 
         foreach ($classOrObject as $entry) {
             static::propertyExists($entry, $property, $message);
         }
-
-        return $classOrObject;
     }
 
     /**
      * @psalm-pure
+     * @psalm-param iterable<class-string|object|null> $classOrObject
      *
      * @param iterable<string|object|null> $classOrObject
-     *
-     * @return mixed
+     * @param mixed                        $property
+     * @param string                       $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrPropertyExists(mixed $classOrObject, mixed $property, string $message = ''): mixed
+    public static function allNullOrPropertyExists($classOrObject, $property, $message = '')
     {
         static::isIterable($classOrObject);
 
         foreach ($classOrObject as $entry) {
             null === $entry || static::propertyExists($entry, $property, $message);
         }
-
-        return $classOrObject;
     }
 
     /**
      * @psalm-pure
-     *
-     * @param string|object|null $classOrObject
-     *
      * @psalm-param class-string|object|null $classOrObject
      *
-     * @return mixed
+     * @param string|object|null $classOrObject
+     * @param mixed              $property
+     * @param string             $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrPropertyNotExists(mixed $classOrObject, mixed $property, string $message = ''): mixed
+    public static function nullOrPropertyNotExists($classOrObject, $property, $message = '')
     {
         null === $classOrObject || static::propertyNotExists($classOrObject, $property, $message);
-
-        return $classOrObject;
     }
 
     /**
      * @psalm-pure
-     *
-     * @param iterable<string|object> $classOrObject
-     *
      * @psalm-param iterable<class-string|object> $classOrObject
      *
-     * @return mixed
+     * @param iterable<string|object> $classOrObject
+     * @param mixed                   $property
+     * @param string                  $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allPropertyNotExists(mixed $classOrObject, mixed $property, string $message = ''): mixed
+    public static function allPropertyNotExists($classOrObject, $property, $message = '')
     {
         static::isIterable($classOrObject);
 
         foreach ($classOrObject as $entry) {
             static::propertyNotExists($entry, $property, $message);
         }
-
-        return $classOrObject;
     }
 
     /**
      * @psalm-pure
-     *
-     * @param iterable<string|object|null> $classOrObject
-     *
      * @psalm-param iterable<class-string|object|null> $classOrObject
      *
-     * @return mixed
+     * @param iterable<string|object|null> $classOrObject
+     * @param mixed                        $property
+     * @param string                       $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrPropertyNotExists(mixed $classOrObject, mixed $property, string $message = ''): mixed
+    public static function allNullOrPropertyNotExists($classOrObject, $property, $message = '')
     {
         static::isIterable($classOrObject);
 
         foreach ($classOrObject as $entry) {
             null === $entry || static::propertyNotExists($entry, $property, $message);
         }
-
-        return $classOrObject;
     }
 
     /**
      * @psalm-pure
-     *
-     * @param string|object|null $classOrObject
-     *
      * @psalm-param class-string|object|null $classOrObject
      *
-     * @return mixed
+     * @param string|object|null $classOrObject
+     * @param mixed              $method
+     * @param string             $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrMethodExists(mixed $classOrObject, mixed $method, string $message = ''): mixed
+    public static function nullOrMethodExists($classOrObject, $method, $message = '')
     {
         null === $classOrObject || static::methodExists($classOrObject, $method, $message);
-
-        return $classOrObject;
     }
 
     /**
      * @psalm-pure
-     *
-     * @param iterable<string|object> $classOrObject
-     *
      * @psalm-param iterable<class-string|object> $classOrObject
      *
-     * @return mixed
+     * @param iterable<string|object> $classOrObject
+     * @param mixed                   $method
+     * @param string                  $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allMethodExists(mixed $classOrObject, mixed $method, string $message = ''): mixed
+    public static function allMethodExists($classOrObject, $method, $message = '')
     {
         static::isIterable($classOrObject);
 
         foreach ($classOrObject as $entry) {
             static::methodExists($entry, $method, $message);
         }
-
-        return $classOrObject;
     }
 
     /**
      * @psalm-pure
-     *
-     * @param iterable<string|object|null> $classOrObject
-     *
      * @psalm-param iterable<class-string|object|null> $classOrObject
      *
-     * @return mixed
+     * @param iterable<string|object|null> $classOrObject
+     * @param mixed                        $method
+     * @param string                       $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrMethodExists(mixed $classOrObject, mixed $method, string $message = ''): mixed
+    public static function allNullOrMethodExists($classOrObject, $method, $message = '')
     {
         static::isIterable($classOrObject);
 
         foreach ($classOrObject as $entry) {
             null === $entry || static::methodExists($entry, $method, $message);
         }
-
-        return $classOrObject;
     }
 
     /**
      * @psalm-pure
-     *
-     * @param string|object|null $classOrObject
-     *
      * @psalm-param class-string|object|null $classOrObject
      *
-     * @return mixed
+     * @param string|object|null $classOrObject
+     * @param mixed              $method
+     * @param string             $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrMethodNotExists(mixed $classOrObject, mixed $method, string $message = ''): mixed
+    public static function nullOrMethodNotExists($classOrObject, $method, $message = '')
     {
         null === $classOrObject || static::methodNotExists($classOrObject, $method, $message);
-
-        return $classOrObject;
     }
 
     /**
      * @psalm-pure
-     *
-     * @param iterable<string|object> $classOrObject
-     *
      * @psalm-param iterable<class-string|object> $classOrObject
      *
-     * @return mixed
+     * @param iterable<string|object> $classOrObject
+     * @param mixed                   $method
+     * @param string                  $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allMethodNotExists(mixed $classOrObject, mixed $method, string $message = ''): mixed
+    public static function allMethodNotExists($classOrObject, $method, $message = '')
     {
         static::isIterable($classOrObject);
 
         foreach ($classOrObject as $entry) {
             static::methodNotExists($entry, $method, $message);
         }
-
-        return $classOrObject;
     }
 
     /**
      * @psalm-pure
-     *
-     * @param iterable<string|object|null> $classOrObject
-     *
      * @psalm-param iterable<class-string|object|null> $classOrObject
      *
-     * @return mixed
+     * @param iterable<string|object|null> $classOrObject
+     * @param mixed                        $method
+     * @param string                       $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrMethodNotExists(mixed $classOrObject, mixed $method, string $message = ''): mixed
+    public static function allNullOrMethodNotExists($classOrObject, $method, $message = '')
     {
         static::isIterable($classOrObject);
 
         foreach ($classOrObject as $entry) {
             null === $entry || static::methodNotExists($entry, $method, $message);
         }
-
-        return $classOrObject;
     }
 
     /**
      * @psalm-pure
      *
+     * @param array|null $array
      * @param string|int $key
-     *
-     * @return mixed
+     * @param string     $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrKeyExists(mixed $array, string|int $key, string $message = ''): mixed
+    public static function nullOrKeyExists($array, $key, $message = '')
     {
         null === $array || static::keyExists($array, $key, $message);
-
-        return $array;
     }
 
     /**
      * @psalm-pure
      *
-     * @param string|int $key
-     *
-     * @return mixed
+     * @param iterable<array> $array
+     * @param string|int      $key
+     * @param string          $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allKeyExists(mixed $array, string|int $key, string $message = ''): mixed
+    public static function allKeyExists($array, $key, $message = '')
     {
         static::isIterable($array);
 
         foreach ($array as $entry) {
             static::keyExists($entry, $key, $message);
         }
-
-        return $array;
     }
 
     /**
      * @psalm-pure
      *
-     * @param string|int $key
-     *
-     * @return mixed
+     * @param iterable<array|null> $array
+     * @param string|int           $key
+     * @param string               $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrKeyExists(mixed $array, string|int $key, string $message = ''): mixed
+    public static function allNullOrKeyExists($array, $key, $message = '')
     {
         static::isIterable($array);
 
         foreach ($array as $entry) {
             null === $entry || static::keyExists($entry, $key, $message);
         }
-
-        return $array;
     }
 
     /**
      * @psalm-pure
      *
+     * @param array|null $array
      * @param string|int $key
-     *
-     * @return mixed
+     * @param string     $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrKeyNotExists(mixed $array, string|int $key, string $message = ''): mixed
+    public static function nullOrKeyNotExists($array, $key, $message = '')
     {
         null === $array || static::keyNotExists($array, $key, $message);
-
-        return $array;
     }
 
     /**
      * @psalm-pure
      *
-     * @param string|int $key
-     *
-     * @return mixed
+     * @param iterable<array> $array
+     * @param string|int      $key
+     * @param string          $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allKeyNotExists(mixed $array, string|int $key, string $message = ''): mixed
+    public static function allKeyNotExists($array, $key, $message = '')
     {
         static::isIterable($array);
 
         foreach ($array as $entry) {
             static::keyNotExists($entry, $key, $message);
         }
-
-        return $array;
     }
 
     /**
      * @psalm-pure
      *
-     * @param string|int $key
-     *
-     * @return mixed
+     * @param iterable<array|null> $array
+     * @param string|int           $key
+     * @param string               $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrKeyNotExists(mixed $array, string|int $key, string $message = ''): mixed
+    public static function allNullOrKeyNotExists($array, $key, $message = '')
     {
         static::isIterable($array);
 
         foreach ($array as $entry) {
             null === $entry || static::keyNotExists($entry, $key, $message);
         }
-
-        return $array;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert array-key|null $value
      *
-     * @return array-key|null
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrValidArrayKey(mixed $value, string $message = ''): mixed
+    public static function nullOrValidArrayKey($value, $message = '')
     {
         null === $value || static::validArrayKey($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<array-key> $value
      *
-     * @return iterable<array-key>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allValidArrayKey(mixed $value, string $message = ''): iterable
+    public static function allValidArrayKey($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::validArrayKey($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
-     *
      * @psalm-assert iterable<array-key|null> $value
      *
-     * @return iterable<array-key|null>
+     * @param mixed  $value
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrValidArrayKey(mixed $value, string $message = ''): iterable
+    public static function allNullOrValidArrayKey($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::validArrayKey($entry, $message);
         }
-
-        return $value;
     }
 
     /**
-     * @return mixed
+     * @param Countable|array|null $array
+     * @param int                  $number
+     * @param string               $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrCount(mixed $array, mixed $number, string $message = ''): mixed
+    public static function nullOrCount($array, $number, $message = '')
     {
         null === $array || static::count($array, $number, $message);
-
-        return $array;
     }
 
     /**
-     * @return mixed
+     * @param iterable<Countable|array> $array
+     * @param int                       $number
+     * @param string                    $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allCount(mixed $array, mixed $number, string $message = ''): mixed
+    public static function allCount($array, $number, $message = '')
     {
         static::isIterable($array);
 
         foreach ($array as $entry) {
             static::count($entry, $number, $message);
         }
-
-        return $array;
     }
 
     /**
-     * @return mixed
+     * @param iterable<Countable|array|null> $array
+     * @param int                            $number
+     * @param string                         $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrCount(mixed $array, mixed $number, string $message = ''): mixed
+    public static function allNullOrCount($array, $number, $message = '')
     {
         static::isIterable($array);
 
         foreach ($array as $entry) {
             null === $entry || static::count($entry, $number, $message);
         }
-
-        return $array;
     }
 
     /**
-     * @return mixed
+     * @param Countable|array|null $array
+     * @param int|float            $min
+     * @param string               $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrMinCount(mixed $array, mixed $min, string $message = ''): mixed
+    public static function nullOrMinCount($array, $min, $message = '')
     {
         null === $array || static::minCount($array, $min, $message);
-
-        return $array;
     }
 
     /**
-     * @return mixed
+     * @param iterable<Countable|array> $array
+     * @param int|float                 $min
+     * @param string                    $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allMinCount(mixed $array, mixed $min, string $message = ''): mixed
+    public static function allMinCount($array, $min, $message = '')
     {
         static::isIterable($array);
 
         foreach ($array as $entry) {
             static::minCount($entry, $min, $message);
         }
-
-        return $array;
     }
 
     /**
-     * @return mixed
+     * @param iterable<Countable|array|null> $array
+     * @param int|float                      $min
+     * @param string                         $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrMinCount(mixed $array, mixed $min, string $message = ''): mixed
+    public static function allNullOrMinCount($array, $min, $message = '')
     {
         static::isIterable($array);
 
         foreach ($array as $entry) {
             null === $entry || static::minCount($entry, $min, $message);
         }
-
-        return $array;
     }
 
     /**
-     * @return mixed
+     * @param Countable|array|null $array
+     * @param int|float            $max
+     * @param string               $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrMaxCount(mixed $array, mixed $max, string $message = ''): mixed
+    public static function nullOrMaxCount($array, $max, $message = '')
     {
         null === $array || static::maxCount($array, $max, $message);
-
-        return $array;
     }
 
     /**
-     * @return mixed
+     * @param iterable<Countable|array> $array
+     * @param int|float                 $max
+     * @param string                    $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allMaxCount(mixed $array, mixed $max, string $message = ''): mixed
+    public static function allMaxCount($array, $max, $message = '')
     {
         static::isIterable($array);
 
         foreach ($array as $entry) {
             static::maxCount($entry, $max, $message);
         }
-
-        return $array;
     }
 
     /**
-     * @return mixed
+     * @param iterable<Countable|array|null> $array
+     * @param int|float                      $max
+     * @param string                         $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrMaxCount(mixed $array, mixed $max, string $message = ''): mixed
+    public static function allNullOrMaxCount($array, $max, $message = '')
     {
         static::isIterable($array);
 
         foreach ($array as $entry) {
             null === $entry || static::maxCount($entry, $max, $message);
         }
-
-        return $array;
     }
 
     /**
-     * @return mixed
+     * @param Countable|array|null $array
+     * @param int|float            $min
+     * @param int|float            $max
+     * @param string               $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrCountBetween(mixed $array, mixed $min, mixed $max, string $message = ''): mixed
+    public static function nullOrCountBetween($array, $min, $max, $message = '')
     {
         null === $array || static::countBetween($array, $min, $max, $message);
-
-        return $array;
     }
 
     /**
-     * @return mixed
+     * @param iterable<Countable|array> $array
+     * @param int|float                 $min
+     * @param int|float                 $max
+     * @param string                    $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allCountBetween(mixed $array, mixed $min, mixed $max, string $message = ''): mixed
+    public static function allCountBetween($array, $min, $max, $message = '')
     {
         static::isIterable($array);
 
         foreach ($array as $entry) {
             static::countBetween($entry, $min, $max, $message);
         }
-
-        return $array;
     }
 
     /**
-     * @return mixed
+     * @param iterable<Countable|array|null> $array
+     * @param int|float                      $min
+     * @param int|float                      $max
+     * @param string                         $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrCountBetween(mixed $array, mixed $min, mixed $max, string $message = ''): mixed
+    public static function allNullOrCountBetween($array, $min, $max, $message = '')
     {
         static::isIterable($array);
 
         foreach ($array as $entry) {
             null === $entry || static::countBetween($entry, $min, $max, $message);
         }
-
-        return $array;
     }
 
     /**
      * @psalm-pure
+     * @psalm-assert list|null $array
      *
-     * @psalm-assert list<mixed>|null $array
-     *
-     * @return list<mixed>|null
+     * @param mixed  $array
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrIsList(mixed $array, string $message = ''): mixed
+    public static function nullOrIsList($array, $message = '')
     {
         null === $array || static::isList($array, $message);
-
-        return $array;
     }
 
     /**
      * @psalm-pure
+     * @psalm-assert iterable<list> $array
      *
-     * @psalm-assert iterable<list<mixed>> $array
-     *
-     * @return iterable<list<mixed>>
+     * @param mixed  $array
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allIsList(mixed $array, string $message = ''): mixed
+    public static function allIsList($array, $message = '')
     {
         static::isIterable($array);
 
         foreach ($array as $entry) {
             static::isList($entry, $message);
         }
-
-        return $array;
     }
 
     /**
      * @psalm-pure
+     * @psalm-assert iterable<list|null> $array
      *
-     * @psalm-assert iterable<list<mixed>|null> $array
-     *
-     * @return iterable<list<mixed>|null>
+     * @param mixed  $array
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrIsList(mixed $array, string $message = ''): mixed
+    public static function allNullOrIsList($array, $message = '')
     {
         static::isIterable($array);
 
         foreach ($array as $entry) {
             null === $entry || static::isList($entry, $message);
         }
-
-        return $array;
     }
 
     /**
      * @psalm-pure
+     * @psalm-assert non-empty-list|null $array
      *
-     * @psalm-assert non-empty-list<mixed>|null $array
-     *
-     * @return non-empty-list<mixed>|null
+     * @param mixed  $array
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrIsNonEmptyList(mixed $array, string $message = ''): mixed
+    public static function nullOrIsNonEmptyList($array, $message = '')
     {
         null === $array || static::isNonEmptyList($array, $message);
-
-        return $array;
     }
 
     /**
      * @psalm-pure
+     * @psalm-assert iterable<non-empty-list> $array
      *
-     * @psalm-assert iterable<non-empty-list<mixed>> $array
-     *
-     * @return iterable<non-empty-list<mixed>>
+     * @param mixed  $array
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allIsNonEmptyList(mixed $array, string $message = ''): mixed
+    public static function allIsNonEmptyList($array, $message = '')
     {
         static::isIterable($array);
 
         foreach ($array as $entry) {
             static::isNonEmptyList($entry, $message);
         }
-
-        return $array;
     }
 
     /**
      * @psalm-pure
+     * @psalm-assert iterable<non-empty-list|null> $array
      *
-     * @psalm-assert iterable<non-empty-list<mixed>|null> $array
-     *
-     * @return iterable<non-empty-list<mixed>|null>
+     * @param mixed  $array
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrIsNonEmptyList(mixed $array, string $message = ''): mixed
+    public static function allNullOrIsNonEmptyList($array, $message = '')
     {
         static::isIterable($array);
 
         foreach ($array as $entry) {
             null === $entry || static::isNonEmptyList($entry, $message);
         }
-
-        return $array;
     }
 
     /**
      * @psalm-pure
-     *
-     * @template T
+     * @psalm-template T
+     * @psalm-param mixed|array<T>|null $array
      * @psalm-assert array<string, T>|null $array
      *
-     * @param mixed|array<array-key, T>|null $array
-     *
-     * @return array<string, T>|null
+     * @param mixed  $array
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrIsMap(mixed $array, string $message = ''): mixed
+    public static function nullOrIsMap($array, $message = '')
     {
         null === $array || static::isMap($array, $message);
-
-        return $array;
     }
 
     /**
      * @psalm-pure
-     *
-     * @template T
+     * @psalm-template T
+     * @psalm-param iterable<mixed|array<T>> $array
      * @psalm-assert iterable<array<string, T>> $array
      *
-     * @param iterable<mixed|array<array-key, T>> $array
-     *
-     * @return iterable<array<string, T>>
+     * @param mixed  $array
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allIsMap(mixed $array, string $message = ''): mixed
+    public static function allIsMap($array, $message = '')
     {
         static::isIterable($array);
 
         foreach ($array as $entry) {
             static::isMap($entry, $message);
         }
-
-        return $array;
     }
 
     /**
      * @psalm-pure
-     *
-     * @template T
+     * @psalm-template T
+     * @psalm-param iterable<mixed|array<T>|null> $array
      * @psalm-assert iterable<array<string, T>|null> $array
      *
-     * @param iterable<mixed|array<array-key, T>|null> $array
-     *
-     * @return iterable<array<string, T>|null>
+     * @param mixed  $array
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrIsMap(mixed $array, string $message = ''): mixed
+    public static function allNullOrIsMap($array, $message = '')
     {
         static::isIterable($array);
 
         foreach ($array as $entry) {
             null === $entry || static::isMap($entry, $message);
         }
-
-        return $array;
-    }
-
-    /**
-     * @psalm-assert callable|null $callable
-     *
-     * @param Closure|callable|null $callable
-     *
-     * @return callable|null
-     *
-     * @throws InvalidArgumentException
-     */
-    public static function nullOrIsStatic(mixed $callable, string $message = ''): mixed
-    {
-        null === $callable || static::isStatic($callable, $message);
-
-        return $callable;
-    }
-
-    /**
-     * @psalm-assert iterable<callable> $callable
-     *
-     * @param iterable<Closure|callable> $callable
-     *
-     * @return iterable<callable>
-     *
-     * @throws InvalidArgumentException
-     */
-    public static function allIsStatic(mixed $callable, string $message = ''): mixed
-    {
-        static::isIterable($callable);
-
-        foreach ($callable as $entry) {
-            static::isStatic($entry, $message);
-        }
-
-        return $callable;
-    }
-
-    /**
-     * @psalm-assert iterable<callable|null> $callable
-     *
-     * @param iterable<Closure|callable|null> $callable
-     *
-     * @return iterable<callable|null>
-     *
-     * @throws InvalidArgumentException
-     */
-    public static function allNullOrIsStatic(mixed $callable, string $message = ''): mixed
-    {
-        static::isIterable($callable);
-
-        foreach ($callable as $entry) {
-            null === $entry || static::isStatic($entry, $message);
-        }
-
-        return $callable;
-    }
-
-    /**
-     * @psalm-assert callable|null $callable
-     *
-     * @param Closure|callable|null $callable
-     *
-     * @return callable|null
-     *
-     * @throws InvalidArgumentException
-     */
-    public static function nullOrNotStatic(mixed $callable, string $message = ''): mixed
-    {
-        null === $callable || static::notStatic($callable, $message);
-
-        return $callable;
-    }
-
-    /**
-     * @psalm-assert iterable<callable> $callable
-     *
-     * @param iterable<Closure|callable> $callable
-     *
-     * @return iterable<callable>
-     *
-     * @throws InvalidArgumentException
-     */
-    public static function allNotStatic(mixed $callable, string $message = ''): mixed
-    {
-        static::isIterable($callable);
-
-        foreach ($callable as $entry) {
-            static::notStatic($entry, $message);
-        }
-
-        return $callable;
-    }
-
-    /**
-     * @psalm-assert iterable<callable|null> $callable
-     *
-     * @param iterable<Closure|callable|null> $callable
-     *
-     * @return iterable<callable|null>
-     *
-     * @throws InvalidArgumentException
-     */
-    public static function allNullOrNotStatic(mixed $callable, string $message = ''): mixed
-    {
-        static::isIterable($callable);
-
-        foreach ($callable as $entry) {
-            null === $entry || static::notStatic($entry, $message);
-        }
-
-        return $callable;
     }
 
     /**
      * @psalm-pure
+     * @psalm-template T
+     * @psalm-param mixed|array<T>|null $array
      *
-     * @template T
-     *
-     * @param array<string, T>|null $array
-     *
-     * @return mixed
+     * @param mixed  $array
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrIsNonEmptyMap(mixed $array, string $message = ''): mixed
+    public static function nullOrIsNonEmptyMap($array, $message = '')
     {
         null === $array || static::isNonEmptyMap($array, $message);
-
-        return $array;
     }
 
     /**
      * @psalm-pure
+     * @psalm-template T
+     * @psalm-param iterable<mixed|array<T>> $array
      *
-     * @template T
-     *
-     * @param iterable<array<string, T>> $array
-     *
-     * @return mixed
+     * @param mixed  $array
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allIsNonEmptyMap(mixed $array, string $message = ''): mixed
+    public static function allIsNonEmptyMap($array, $message = '')
     {
         static::isIterable($array);
 
         foreach ($array as $entry) {
             static::isNonEmptyMap($entry, $message);
         }
-
-        return $array;
     }
 
     /**
      * @psalm-pure
-     *
-     * @template T
+     * @psalm-template T
+     * @psalm-param iterable<mixed|array<T>|null> $array
      * @psalm-assert iterable<array<string, T>|null> $array
      * @psalm-assert iterable<!empty|null> $array
      *
-     * @param iterable<array<string, T>|null> $array
-     *
-     * @return iterable<!empty|null>
+     * @param mixed  $array
+     * @param string $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrIsNonEmptyMap(mixed $array, string $message = ''): mixed
+    public static function allNullOrIsNonEmptyMap($array, $message = '')
     {
         static::isIterable($array);
 
         foreach ($array as $entry) {
             null === $entry || static::isNonEmptyMap($entry, $message);
         }
-
-        return $array;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param string|null $value
+     * @param string      $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrUuid(mixed $value, string $message = ''): mixed
+    public static function nullOrUuid($value, $message = '')
     {
         null === $value || static::uuid($value, $message);
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string> $value
+     * @param string           $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allUuid(mixed $value, string $message = ''): iterable
+    public static function allUuid($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             static::uuid($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-pure
      *
-     * @return mixed
+     * @param iterable<string|null> $value
+     * @param string                $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrUuid(mixed $value, string $message = ''): iterable
+    public static function allNullOrUuid($value, $message = '')
     {
         static::isIterable($value);
 
         foreach ($value as $entry) {
             null === $entry || static::uuid($entry, $message);
         }
-
-        return $value;
     }
 
     /**
      * @psalm-param class-string<Throwable> $class
-     * @return mixed
+     *
+     * @param Closure|null $expression
+     * @param string       $class
+     * @param string       $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function nullOrThrows(mixed $expression, string $class = 'Throwable', string $message = ''): mixed
+    public static function nullOrThrows($expression, $class = 'Exception', $message = '')
     {
         null === $expression || static::throws($expression, $class, $message);
-
-        return $expression;
     }
 
     /**
      * @psalm-param class-string<Throwable> $class
-     * @return mixed
+     *
+     * @param iterable<Closure> $expression
+     * @param string            $class
+     * @param string            $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allThrows(mixed $expression, string $class = 'Throwable', string $message = ''): mixed
+    public static function allThrows($expression, $class = 'Exception', $message = '')
     {
         static::isIterable($expression);
 
         foreach ($expression as $entry) {
             static::throws($entry, $class, $message);
         }
-
-        return $expression;
     }
 
     /**
      * @psalm-param class-string<Throwable> $class
-     * @return mixed
+     *
+     * @param iterable<Closure|null> $expression
+     * @param string                 $class
+     * @param string                 $message
      *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function allNullOrThrows(mixed $expression, string $class = 'Throwable', string $message = ''): mixed
+    public static function allNullOrThrows($expression, $class = 'Exception', $message = '')
     {
         static::isIterable($expression);
 
         foreach ($expression as $entry) {
             null === $entry || static::throws($entry, $class, $message);
         }
-
-        return $expression;
     }
 }
